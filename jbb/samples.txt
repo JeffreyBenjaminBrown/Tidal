@@ -1,0 +1,56 @@
+lrwxrwxrwx 1 jeff jeff   82 Nov  9 13:43 can -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bin
+lrwxrwxrwx 1 jeff jeff   90 Nov  9 14:29 clap -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/4-smallest/cp
+lrwxrwxrwx 1 jeff jeff   81 Nov  9 13:44 crash -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/cc
+lrwxrwxrwx 1 jeff jeff   92 Nov  9 13:59 crow -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/4-smallest/crow
+-rw-rw-r-- 1 jeff jeff   74 May 19 17:26 Dirt-Samples.quark
+lrwxrwxrwx 1 jeff jeff   90 Nov  9 14:01 hatc -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/4-smallest/hc
+lrwxrwxrwx 1 jeff jeff   81 Nov  9 14:07 hato -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/ho
+lrwxrwxrwx 1 jeff jeff   84 Nov  9 13:29 noise_ades3 -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/ades3
+lrwxrwxrwx 1 jeff jeff   81 Nov  9 13:46 ride -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/cr
+
+bow:
+total 4
+lrwxrwxrwx 1 jeff jeff 95 Nov  9 13:31 big.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/arp/000_arp2.wav
+
+cow:
+total 4
+lrwxrwxrwx 1 jeff jeff 107 Nov  9 13:52 001.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/drumtraks/002_DT Cowbell.wav
+
+hit:
+total 4
+lrwxrwxrwx 1 jeff jeff 105 Nov  9 14:11 james.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/1-biggest/hh/004_hh3hit3.wav
+
+kick:
+total 24
+lrwxrwxrwx 1 jeff jeff  92 Nov  9 13:33 big.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/auto/kick.wav
+lrwxrwxrwx 1 jeff jeff 101 Nov  9 19:39 clean.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bassdm/007_BT3A0D0.WAV
+lrwxrwxrwx 1 jeff jeff 103 Nov  9 20:09 gabba.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/4-smallest/gabba/000_0.wav
+lrwxrwxrwx 1 jeff jeff  93 Nov  9 14:38 noisy.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bd/BT7A0D3.wav
+lrwxrwxrwx 1 jeff jeff  97 Nov  9 13:48 rubber.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/dr_few/006_021.WAV
+lrwxrwxrwx 1 jeff jeff 112 Nov  9 14:14 thin_808_sub.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/1-biggest/jungbass/thin_808_sub.wav
+
+krakl:
+total 12
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:56 001_5.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bend/001_5.wav
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:56 002_6.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bend/002_6.wav
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:56 003_8.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bend/003_8.wav
+
+snare:
+total 12
+lrwxrwxrwx 1 jeff jeff  97 Nov  9 13:51 ahh.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/drum/001_drum2.wav
+lrwxrwxrwx 1 jeff jeff  99 Nov  9 19:52 crisp.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/dr2/005_DR110SNR.WAV
+lrwxrwxrwx 1 jeff jeff 105 Nov  9 13:53 normal.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/drumtraks/009_DT Snare.wav
+
+tom:
+total 12
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:25 elec,huge.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/808lt/LT50.WAV
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:23 elec,low.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/808ht/HT00.WAV
+lrwxrwxrwx 1 jeff jeff 93 Nov  9 13:21 elec,tiny.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/808hc/HC00.WAV
+
+wood:
+total 4
+lrwxrwxrwx 1 jeff jeff 89 Nov  9 13:17 elec-wood.wav -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/808/RS.WAV
+
+zz_unused:
+total 4
+lrwxrwxrwx 1 jeff jeff 85 Nov  9 13:35 bassdm -> /home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples-too-big/3/bassdm

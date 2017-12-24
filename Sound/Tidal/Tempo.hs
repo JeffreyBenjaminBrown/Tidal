@@ -70,6 +70,7 @@ readTempo :: String -> Tempo
 readTempo x = Tempo (read a) (read b) (read c) (read d) (read e)
   where (a:b:c:d:e:_) = wordsBy (== ',') x
 
+-- | "upcomingBeatInSeconds" would be a good name --jbb
 logicalTime :: Tempo -> Double -> Double
 logicalTime t b = changeT + timeDelta
   where beatDelta = b - (beat t)
@@ -85,6 +86,7 @@ tempoMVar = do now <- getCurrentTime
   where f mv change _ = do swapMVar mv change
                            return ()
 
+-- | "getCurrentBeat" would be a good name --jbb
 beatNow :: Tempo -> IO (Double)
 beatNow t = do now <- getCurrentTime
                let delta = realToFrac $ diffUTCTime now (at t)
@@ -154,6 +156,17 @@ cpsUtils' = do (mTempo, mCps, mNudge) <- runClient
                                     now <- beatNow tempo
                                     return $ toRational now
                return (cpsSetter, nudger, currentTime)
+
+-- | does the same thing, but exposes (returns) more internals
+cpsUtils'' :: IO (MVar Tempo, MVar Double, MVar Double
+                 , Double -> IO (), Double -> IO ()
+                 , IO Rational)
+cpsUtils'' = do (mTempo, mCps, mNudge) <- runClient
+                let getNow = toRational <$>
+                      (readMVar mTempo >>= beatNow)
+                return ( mTempo, mCps, mNudge
+                       , putMVar mCps, putMVar mNudge
+                       , getNow)
 
 -- backward compatibility
 cpsUtils = do (cpsSetter, _, currentTime) <- cpsUtils'

@@ -1,0 +1,5 @@
+nonHaskellWordChar="[^_'a-zA-Z0-9\d]"
+
+find . -name "*.hs" -print0 -o -name "*.cabal" -print0 -o -name "*.txt" -print0 -o -name "*.md" -print0 | xargs -0 sed -i -r "s/($nonHaskellWordChar|^)foo($nonHaskellWordChar|$)/\1baz\2/g" *
+
+find . -name "*.hs" -print0 -o -name "*.cabal" -print0 -o -name "*.txt" -print0 -o -name "*.md" -print0 | xargs -0 egrep "(^|$nonHaskellWordChar)foo($|$nonHaskellWordChar)"

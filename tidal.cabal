@@ -21,22 +21,39 @@ Description: Tidal is a domain specific language for live coding pattern.
 library
   default-language:    Haskell2010
 
-  Exposed-modules:     Sound.Tidal.Bjorklund
-                       Sound.Tidal.Strategies
+  Exposed-modules:
+                       -- Sound.Tidal.Bjorklund
+                       -- Sound.Tidal.Strategies
                        Sound.Tidal.Dirt
+                       Sound.Tidal.Epic
+                       Sound.Tidal.Epic.Abbreviations
+                       Sound.Tidal.Epic.CombineEpics
+                       Sound.Tidal.Epic.DirtNetwork
+                       Sound.Tidal.Epic.Instances
+                       Sound.Tidal.Epic.Params
+                       Sound.Tidal.Epic.Parse.Cmd
+                       Sound.Tidal.Epic.Parse.File
+                       Sound.Tidal.Epic.Parse.Utils
+                       Sound.Tidal.Epic.Scales
+                       Sound.Tidal.Epic.SeqCommand
+                       Sound.Tidal.Epic.Sounds
+                       Sound.Tidal.Epic.Test
+                       Sound.Tidal.Epic.Transform
+                       Sound.Tidal.Epic.Types
+                       Sound.Tidal.Epic.Util
                        Sound.Tidal.Pattern
                        Sound.Tidal.Stream
                        Sound.Tidal.OscStream
                        Sound.Tidal.Parse
                        Sound.Tidal.Tempo
                        Sound.Tidal.Time
-                       Sound.Tidal.Context
+                       -- Sound.Tidal.Context
                        Sound.Tidal.Utils
                        Sound.Tidal.SuperCollider
                        Sound.Tidal.Params
-                       Sound.Tidal.Transition
-                       Sound.Tidal.Scales
-                       Sound.Tidal.Chords
+                       -- Sound.Tidal.Transition
+                       -- Sound.Tidal.Scales
+                       -- Sound.Tidal.Chords
                        Sound.Tidal.Sieve
                        Sound.Tidal.Version
                        -- Sound.Tidal.PatternList
@@ -54,6 +71,13 @@ library
     , safe
     , websockets > 0.8
     , mtl >= 2.1
+
+              -- jbb
+              , stm
+              , HUnit
+              , megaparsec
+              , Unique
+
 
 source-repository head
   type:     git

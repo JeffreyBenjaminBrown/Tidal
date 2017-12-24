@@ -132,7 +132,8 @@ start backend shape
        forkIO $ clockedTick ticksPerCycle ot
        return patternM
 
--- variant of start where history of patterns is available
+-- | variant of start where history of patterns is available
+-- "startVoice" would be a good name, where e.g. d1 is a voice. --jbb
 state :: Backend a -> Shape -> IO (MVar (ParamPattern, [ParamPattern]))
 state backend shape
   = do patternsM <- newMVar (silence, [])
@@ -264,6 +265,7 @@ d1 $ sometimes (*** [speed "2", cutoff "2", shape "1.5"]) $ sound "arpy*4" ### [
 (+++) = foldl (|+|)
 (///) = foldl (|/|)
 
+-- | "historyPusher" would be a good name. --jbb
 setter :: MVar (a, [a]) -> a -> IO ()
 setter ds p = do ps <- takeMVar ds
                  putMVar ds $ (p, p:snd ps)
