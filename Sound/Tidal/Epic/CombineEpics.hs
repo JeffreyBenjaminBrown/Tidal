@@ -34,7 +34,7 @@ mergeEpics intOp floatOp (Epic ap af) (Epic bp bf) = Epic period func where
   func arc = mergeEvents intOp floatOp aEvs bEvs where
     s = sortOn $ fst . fst :: [Ev a] -> [Ev a]
       -- AMBITION ? if ParamEpics were guaranteed to produce sorted lists,
-      -- this would not have to use `s`
+      -- aEvs and bEvs would not have to use `s`
     aEvs = s $ af arc :: [Ev ParamMap]
     bEvs = s $ bf arc :: [Ev ParamMap]
 

@@ -38,8 +38,8 @@ data CmdBlock = CmdBlock {
   } deriving (Show, Eq, Ord)
 
 blocksToEpic0, blocksToEpic :: [CmdBlock] -> ParamEpic
-blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . normalizeBlocks
-blocksToEpic  = foldl1 (+-) . map blockToEpic  . normalizeBlocks
+blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . scanAccumBlocks
+blocksToEpic  = foldl1 (+-) . map blockToEpic  . scanAccumBlocks
 
 -- PITFALL: Uses the empty map to represent silence.
 blockToEpic0, blockToEpic :: (Dur, ParamMap) -> ParamEpic
@@ -48,13 +48,15 @@ blockToEpic0 (dur, map) =
 blockToEpic  (dur, map) =
   if M.null map then durSilence dur else loopa dur map
 
--- ASSUMES: Until a duration is specified, duration defaults to 1.
-normalizeBlocks :: [CmdBlock] -> [(Dur, ParamMap)]
-normalizeBlocks bs = _normalizeBlocks (1, M.empty) bs
+-- | ASSUMES: Until a duration is specified, duration defaults to 1.
+-- I called this "scanAccum" because it resembles scanl and mapAccum:
+-- mapAccum is to map as scanAccum is to scanl.
+scanAccumBlocks :: [CmdBlock] -> [(Dur, ParamMap)]
+scanAccumBlocks bs = _scanAccumBlocks (1, M.empty) bs
 
-_normalizeBlocks :: (Dur, ParamMap) -> [CmdBlock] -> [(Dur, ParamMap)]
-_normalizeBlocks priorPersistentCmds [] = []
-_normalizeBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
+_scanAccumBlocks :: (Dur, ParamMap) -> [CmdBlock] -> [(Dur, ParamMap)]
+_scanAccumBlocks priorPersistentCmds [] = []
+_scanAccumBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
   let nextPriorMap = M.union persist priorMap
       nowMap = M.unions [once, persist, priorMap]
       nowDur = maybe priorDur id mdur
@@ -62,7 +64,7 @@ _normalizeBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
       ignoreIfSilent m = if sil then M.empty else m
       -- PITFALL: Uses the empty map to represent silence.
   in (nowDur, ignoreIfSilent nowMap)
-     : _normalizeBlocks (nowDur, nextPriorMap) bs
+     : _scanAccumBlocks (nowDur, nextPriorMap) bs
 
 -- todo ? this should process a list, one elt at a time,
 -- using pattern matching, instead of this unreadable idiom.

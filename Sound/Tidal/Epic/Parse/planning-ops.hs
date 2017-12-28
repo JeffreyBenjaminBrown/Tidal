@@ -3,5 +3,5 @@ data SeqExpr = SeqExprEpic (Epic ParamMap)
              | forall a. SeqExprOp2 (Epic a -> Epic a -> Epic a)
   maybe make precedence part of those operator constructors
 
-change _normalizeBlocks:
+change _scanAccumBlocks:
   It has been :: (Dur, ParamMap) -> [CmdBlock] -> [(Dur, ParamMap)].

@@ -14,7 +14,7 @@ clap' = loope b clap -- a (1/4)-second loop of the clap sample
 p1 = cat $ repli 4 can' -- 4 can's; 1 second long
 q1 = cat $ repli 3 clap' -- 3 clap's; 3/4 seconds long
 f1 = gain $ cata b $ map (*0.7) [0.8, 0.6, 1]
-  -- a 3/4-second loop where the gain changes
+  -- a 3/4-second loop of gain changes
 v0 $ p1 +- q1 &+ f1 -- in voice 0, play p1, then play the merge of q1 and f1
 
 bowEpic = cat $ repli 4 $ loope b bow

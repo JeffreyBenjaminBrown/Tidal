@@ -3,7 +3,6 @@
 
 module Sound.Tidal.Epic.Parse.CustomStreamTest where
 
-import           Data.List.NonEmpty (NonEmpty (..))
 import           Data.List (foldl')
 import           Data.Proxy (Proxy(..))
 import           Data.Semigroup ((<>))
