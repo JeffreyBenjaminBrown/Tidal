@@ -20,49 +20,52 @@ _onSound s e = Epic d $ \arc -> fmap zeroDur $ f arc
         zeroDur ((t,_),e) = ((t,t),e)
 
 -- | == samples
-bow = for 0 $ fromList [(sound_p, VS "bow")
+arp = for 0 $ fromList [(sound_p, VS "arp")
                        , (sustain_p, VF 5)]
 can = for 0 $ fromList [(sound_p, VS "can")
                        , (sustain_p, VF 5)]
-clap = for 0 $ fromList [(sound_p, VS "clap")
+cp = for 0 $ fromList [(sound_p, VS "cp")
                         , (sustain_p, VF 5)]
 cow = for 0 $ fromList [(sound_p, VS "cow")
                        , (sustain_p, VF 5)]
-crash = for 0 $ fromList [(sound_p, VS "crash")
+cr = for 0 $ fromList [(sound_p, VS "cr")
                          , (sustain_p, VF 5)]
 crow = for 0 $ fromList [(sound_p, VS "crow")
                         , (sustain_p, VF 5)]
 
-hatc = for 0 $ fromList [(sound_p, VS "hatc")
+hc = for 0 $ fromList [(sound_p, VS "hc")
                         , (sustain_p, VF 5)]
-hato = for 0 $ fromList [(sound_p, VS "hato")
+ho = for 0 $ fromList [(sound_p, VS "ho")
                         , (sustain_p, VF 5)]
-hit = for 0 $ fromList [(sound_p, VS "hit")
-                       , (sustain_p, VF 5)]
 
-kick = for 0 $ fromList [(sound_p, VS "kick")
-                        , (sustain_p, VF 5), (sample_p, VI 1)]
-kickb = for 0 $ fromList [(sound_p, VS "kick")
-                         , (sustain_p, VF 5)]
-kickg = for 0 $ fromList [(sound_p, VS "kick")
-                         , (sustain_p, VF 5), (sample_p, VI 2)]
-kickn = for 0 $ fromList [(sound_p, VS "kick")
-                         , (sustain_p, VF 5), (sample_p, VI 3)]
-kickr = for 0 $ fromList [(sound_p, VS "kick")
-                         , (sustain_p, VF 5), (sample_p, VI 4)]
-kickt = for 0 $ fromList [(sound_p, VS "kick")
-                         , (sustain_p, VF 5), (sample_p, VI 5)]
+-- | = The rest of these are broken.
+-- See Tidal/jbb/samples.txt for what they used to point to.
 
-snare = for 0 $ fromList [(sound_p, VS "snare")
-                         , (sustain_p, VF 5), (sample_p, VI 1)]
-snarea = for 0 $ fromList [(sound_p, VS "snare")
-                          , (sustain_p, VF 5), (sample_p, VI 0)]
-snaren = for 0 $ fromList [(sound_p, VS "snare")
-                          , (sustain_p, VF 5), (sample_p, VI 2)]
-
-toml = for 0 $ fromList [(sound_p, VS "tom")
-                        , (sustain_p, VF 5), (sample_p, VI 0)]
-tom = for 0 $ fromList [(sound_p, VS "tom")
-                       , (sustain_p, VF 5), (sample_p, VI 1)]
-tomh = for 0 $ fromList [(sound_p, VS "tom")
-                        , (sustain_p, VF 5), (sample_p, VI 2)]
+-- hit = for 0 $ fromList [(sound_p, VS "hit"), (sustain_p, VF 5)]
+--
+-- kick = for 0 $ fromList [(sound_p, VS "kick")
+--                         , (sustain_p, VF 5), (sample_p, VI 1)]
+-- kickb = for 0 $ fromList [(sound_p, VS "kick")
+--                          , (sustain_p, VF 5)]
+-- kickg = for 0 $ fromList [(sound_p, VS "kick")
+--                          , (sustain_p, VF 5), (sample_p, VI 2)]
+-- kickn = for 0 $ fromList [(sound_p, VS "kick")
+--                          , (sustain_p, VF 5), (sample_p, VI 3)]
+-- kickr = for 0 $ fromList [(sound_p, VS "kick")
+--                          , (sustain_p, VF 5), (sample_p, VI 4)]
+-- kickt = for 0 $ fromList [(sound_p, VS "kick")
+--                          , (sustain_p, VF 5), (sample_p, VI 5)]
+-- 
+-- snare = for 0 $ fromList [(sound_p, VS "snare")
+--                          , (sustain_p, VF 5), (sample_p, VI 1)]
+-- snarea = for 0 $ fromList [(sound_p, VS "snare")
+--                           , (sustain_p, VF 5), (sample_p, VI 0)]
+-- snaren = for 0 $ fromList [(sound_p, VS "snare")
+--                           , (sustain_p, VF 5), (sample_p, VI 2)]
+-- 
+-- toml = for 0 $ fromList [(sound_p, VS "tom")
+--                         , (sustain_p, VF 5), (sample_p, VI 0)]
+-- tom = for 0 $ fromList [(sound_p, VS "tom")
+--                        , (sustain_p, VF 5), (sample_p, VI 1)]
+-- tomh = for 0 $ fromList [(sound_p, VS "tom")
+--                         , (sustain_p, VF 5), (sample_p, VI 2)]
