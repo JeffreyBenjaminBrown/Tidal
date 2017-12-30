@@ -71,9 +71,9 @@ instance Enum (Func -> Func -> Func) where toEnum = const $ \_ _ -> id
 instance Eq Func                     where (==) _ _ = False
 instance Eq (Func -> Func)           where (==) _ _ = False
 instance Eq (Func -> Func -> Func)   where (==) _ _ = False
-instance Ord Func                    where (<=) _ _ = True
-instance Ord (Func -> Func)          where (<=) _ _ = True
-instance Ord (Func -> Func -> Func)  where (<=) _ _ = True
+instance Ord Func                    where (<=) _ _ = False
+instance Ord (Func -> Func)          where (<=) _ _ = False
+instance Ord (Func -> Func -> Func)  where (<=) _ _ = False
 
 
 -- | = The FuncOrOp (EpicOrOp) type.
