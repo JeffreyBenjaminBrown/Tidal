@@ -68,9 +68,9 @@ instance Enum (Func -> Func)         where toEnum = const id
                                            fromEnum = const 0
 instance Enum (Func -> Func -> Func) where toEnum = const $ \_ _ -> id
                                            fromEnum = const 0
-instance Eq Func                     where (==) _ _ = True
-instance Eq (Func -> Func)           where (==) _ _ = True
-instance Eq (Func -> Func -> Func)   where (==) _ _ = True
+instance Eq Func                     where (==) _ _ = False
+instance Eq (Func -> Func)           where (==) _ _ = False
+instance Eq (Func -> Func -> Func)   where (==) _ _ = False
 instance Ord Func                    where (<=) _ _ = True
 instance Ord (Func -> Func)          where (<=) _ _ = True
 instance Ord (Func -> Func -> Func)  where (<=) _ _ = True
