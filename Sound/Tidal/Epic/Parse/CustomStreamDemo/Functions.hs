@@ -29,6 +29,7 @@ import           Data.Void (Void)
 import           Text.Megaparsec
 import           Text.Megaparsec.Char (satisfy)
 import           Text.Megaparsec.Expr (makeExprParser, Operator(..))
+import           Text.Megaparsec.Pos
 
 
 func :: Parser Func
@@ -62,12 +63,7 @@ isUnaryOp _ = False
 isBinaryOp (BinaryOp _) = True
 isBinaryOp _ = False
 
-instance Enum Func                   where toEnum = const id
-                                           fromEnum = const 0
-instance Enum (Func -> Func)         where toEnum = const id
-                                           fromEnum = const 0
-instance Enum (Func -> Func -> Func) where toEnum = const $ \_ _ -> id
-                                           fromEnum = const 0
+-- | TODO: Use newtypes for these instances.
 instance Eq Func                     where (==) _ _ = False
 instance Eq (Func -> Func)           where (==) _ _ = False
 instance Eq (Func -> Func -> Func)   where (==) _ _ = False
@@ -76,21 +72,11 @@ instance Ord (Func -> Func)          where (<=) _ _ = False
 instance Ord (Func -> Func -> Func)  where (<=) _ _ = False
 
 
--- | = The FuncOrOp (EpicOrOp) type.
+-- | = The FuncOrOp (think EpicOrOp) type -- the thing to parse.
 data FuncOrOp = FuncNotOp Func
               | UnaryOp (Func -> Func)
               | BinaryOp (Func -> Func -> Func) deriving (Eq, Ord)
 
--- | This instance is also dumb, just enough to enable parsing.
-instance Enum FuncOrOp where toEnum 0 = FuncNotOp id
-                             toEnum 1 = UnaryOp id
-                             toEnum 2 = BinaryOp $ \_ _ -> id
-                             fromEnum (FuncNotOp _) = 0
-                             fromEnum (UnaryOp _) = 1
-                             fromEnum (BinaryOp _) = 2
-
-
--- | = Things needed for parsing FuncOrOps
 type Parser = Parsec Void [FuncOrOp]
 
 -- | nearly identical to "instance Stream String" from Text.Megaparsec.Stream
@@ -112,18 +98,9 @@ instance Stream [FuncOrOp] where
     | otherwise = Just (splitAt n s)
   takeWhile_ = span
 
--- | copied from Megaparsec.Stream, from which it is not exported
-defaultAdvance1 :: Enum t
-  => Pos               -- ^ Tab width
-  -> SourcePos         -- ^ Current position
-  -> t                 -- ^ Current token
-  -> SourcePos         -- ^ Incremented position
-defaultAdvance1 width (SourcePos n l c) t = npos
-  where
-    w  = unPos width
-    c' = unPos c
-    npos =
-      case fromEnum t of
-        10 -> SourcePos n (l <> pos1) pos1
-        9  -> SourcePos n l (mkPos $ c' + w - ((c' - 1) `rem` w))
-        _  -> SourcePos n l (c <> pos1)
+defaultAdvance1 :: Pos               -- ^ Tab width
+                -> SourcePos         -- ^ Current position
+                -> t                 -- ^ Current token
+                -> SourcePos         -- ^ Incremented position
+defaultAdvance1 _ (SourcePos n l c) _ = SourcePos n l $ c <> pos1
+  -- this just adds one to c. l never advances to some putative next line.
