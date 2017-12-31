@@ -13,6 +13,7 @@ import Sound.Tidal.Epic.DirtNetwork as E
 import Sound.Tidal.Epic.Params as E
 import Sound.Tidal.Epic.Parse.Util as E
 import Sound.Tidal.Epic.Parse.Cmd as E
+import Sound.Tidal.Epic.Parse.EpicOrOp as E
 import Sound.Tidal.Epic.Parse.File as E
 import Sound.Tidal.Epic.Scales as E
 import Sound.Tidal.Epic.SeqCommand as E
