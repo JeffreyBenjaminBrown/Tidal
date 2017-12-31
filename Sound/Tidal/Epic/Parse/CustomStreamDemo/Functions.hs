@@ -49,14 +49,13 @@ type Parser = Parsec Void [FuncOrOp]
 
 -- | = Parsing
 func :: Parser Func
-func = -- it <|> bracket func where it =
-  makeExprParser funcNotOp
-  [ [ Prefix unaryOp ]
-  , [ InfixL binaryOp ]
-  ]
+func = it <|> bracket func where it = makeExprParser funcNotOp
+                                      [ [ Prefix unaryOp ]
+                                      , [ InfixL binaryOp ]
+                                      ]
 
 funcNotOp :: Parser Func
-funcNotOp = it <|> bracket funcNotOp where
+funcNotOp = it <|> bracket func where
   it = do FuncNotOp (FuncWrap f) <- satisfy isFuncNotOp
           return f
 

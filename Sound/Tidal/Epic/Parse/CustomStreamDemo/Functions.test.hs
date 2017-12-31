@@ -1,4 +1,8 @@
--- One demonstration:
+-- As far as I can tell, this works perfectly for well-formed streams.
+-- However, it will "successfully" parse at least some ill-formed streams;
+-- see the section marked "errors".
+
+-- | = One demonstration
 f a = a + 1              -- below I will (polymorphically) call f "+1"
 u f = \a -> f a * 2
 b f g = \a -> f a + g a  -- below I will (polymorphically) call b "+"
@@ -13,7 +17,7 @@ stream = [f', b', u', f']
   -- = \a -> 3a + 3
 Right g = parse func "" stream
 
--- Equivalent expressions, using brackets
+-- | = Equivalent expressions, using brackets
 l = LeftBracket
 r = RightBracket
 stream = [l, f', r, b', u', f']
@@ -26,21 +30,10 @@ stream = [ l, f', r,
            l, b', r,
            l, u', r,
            l, f', r]
--- the above all work
-
--- This works unless I allow the entire func parser to be bracketed.
--- In that case, it only parses the first line (the first f').
 stream = [ l, l, f', r, r,
            l, b', r,
            l, u', r,
            l, f', r]
-
--- this parses as f = (+1) even though it's ill-formed (too many ls).
-stream = [ l, l, f', r, r,
-           l, l, b', r,
-           l, u', r,
-           l, f', r]
-
 stream = [ l, l, f', r, r,
            l, l, b', r, r,
            l, l, u', r, r,
@@ -51,3 +44,18 @@ stream = [l, l, l,
                    l, l, u', r, r,
                    l, l, f', r, r,
            r, r, r]
+
+
+-- | = Errors. Note that these are all ill-formed streams.
+
+-- This is ill-formed (too many ls), and parses wrong.
+stream = [ l, l, f', r, r,
+           l, l, b', r,
+           l, u', r,
+           l, f', r]
+
+-- This will not parse.
+stream = [ l, l, l, f', r, r]
+
+-- but this will
+stream = [ l, l, f', r, r, r]
