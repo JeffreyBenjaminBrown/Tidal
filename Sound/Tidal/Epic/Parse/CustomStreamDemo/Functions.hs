@@ -41,30 +41,38 @@ newtype BinaryWrap = BinaryWrap (Func -> Func -> Func)
 
 data FuncOrOp = FuncNotOp FuncWrap
               | UnaryOp UnaryWrap
-              | BinaryOp BinaryWrap deriving (Eq, Ord)
+              | BinaryOp BinaryWrap
+              | LeftBracket | RightBracket deriving (Eq, Ord)
 
 type Parser = Parsec Void [FuncOrOp]
 
 
 -- | = Parsing
 func :: Parser Func
-func = makeExprParser funcNotOp
+func = -- it <|> bracket func where it =
+  makeExprParser funcNotOp
   [ [ Prefix unaryOp ]
   , [ InfixL binaryOp ]
   ]
 
 funcNotOp :: Parser Func
-funcNotOp = do FuncNotOp (FuncWrap f) <- satisfy isFuncNotOp
-               return f
+funcNotOp = it <|> bracket funcNotOp where
+  it = do FuncNotOp (FuncWrap f) <- satisfy isFuncNotOp
+          return f
 
 unaryOp :: Parser (Func -> Func)
-unaryOp = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
-             return op
+unaryOp = it <|> bracket unaryOp where
+  it = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
+          return op
 
 binaryOp :: Parser (Func -> Func -> Func)
-binaryOp = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
-              return op
+binaryOp = it <|> bracket binaryOp 
+  where it = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
+                return op
 
+bracket :: Parser a -> Parser a
+bracket p = try $ between (satisfy isLeftBracket) (satisfy isRightBracket) p
+                   
 
 -- | = Basic type manipulations
 isFuncNotOp, isUnaryOp, isBinaryOp :: FuncOrOp -> Bool
@@ -74,6 +82,10 @@ isUnaryOp (UnaryOp _) = True
 isUnaryOp _ = False
 isBinaryOp (BinaryOp _) = True
 isBinaryOp _ = False
+isLeftBracket LeftBracket = True
+isLeftBracket _ = False
+isRightBracket RightBracket = True
+isRightBracket _ = False
 
 funcNotOp' :: Func                   -> FuncOrOp
 funcNotOp' = FuncNotOp . FuncWrap
