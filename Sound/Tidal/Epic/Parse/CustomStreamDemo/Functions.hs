@@ -2,7 +2,7 @@
 -- > f a = a + 1              -- below I will (polymorphically) call f "+1"
 -- > u f = \a -> f a * 2
 -- > b f g = \a -> f a + g a  -- below I will (polymorphically) call b "+"
--- > stream = [FuncNotOp f, BinaryOp b, UnaryOp u, FuncNotOp f]
+-- > stream = [funcNotOp' f, binaryOp' b, unaryOp' u, funcNotOp' f]
 -- >   -- = f `b` u f (because unary ops bind before binary ones)
 -- >   -- = (+1) + u (+1)
 -- >   -- = (+1) + \a -> (a+1)*2
@@ -32,6 +32,21 @@ import           Text.Megaparsec.Expr (makeExprParser, Operator(..))
 import           Text.Megaparsec.Pos
 
 
+-- | = Types
+type Func = Float -> Float
+
+newtype FuncWrap = FuncWrap Func
+newtype UnaryWrap = UnaryWrap (Func -> Func)
+newtype BinaryWrap = BinaryWrap (Func -> Func -> Func)
+
+data FuncOrOp = FuncNotOp FuncWrap
+              | UnaryOp UnaryWrap
+              | BinaryOp BinaryWrap deriving (Eq, Ord)
+
+type Parser = Parsec Void [FuncOrOp]
+
+
+-- | = Parsing
 func :: Parser Func
 func = makeExprParser funcNotOp
   [ [ Prefix unaryOp ]
@@ -39,22 +54,19 @@ func = makeExprParser funcNotOp
   ]
 
 funcNotOp :: Parser Func
-funcNotOp = do FuncNotOp f <- satisfy isFuncNotOp
+funcNotOp = do FuncNotOp (FuncWrap f) <- satisfy isFuncNotOp
                return f
 
 unaryOp :: Parser (Func -> Func)
-unaryOp = do UnaryOp op <- satisfy isUnaryOp
+unaryOp = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
              return op
 
 binaryOp :: Parser (Func -> Func -> Func)
-binaryOp = do BinaryOp op <- satisfy isBinaryOp
+binaryOp = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
               return op
 
 
--- | = The Func (think of it as Epic) type.
--- Its instances for Enum, Eq and Ord are dumb, just enough to enable parsing.
-type Func = Float -> Float
-
+-- | = Basic type manipulations
 isFuncNotOp, isUnaryOp, isBinaryOp :: FuncOrOp -> Bool
 isFuncNotOp (FuncNotOp _) = True
 isFuncNotOp _ = False
@@ -63,21 +75,23 @@ isUnaryOp _ = False
 isBinaryOp (BinaryOp _) = True
 isBinaryOp _ = False
 
--- | TODO: Use newtypes for these instances.
-instance Eq Func                     where (==) _ _ = False
-instance Eq (Func -> Func)           where (==) _ _ = False
-instance Eq (Func -> Func -> Func)   where (==) _ _ = False
-instance Ord Func                    where (<=) _ _ = False
-instance Ord (Func -> Func)          where (<=) _ _ = False
-instance Ord (Func -> Func -> Func)  where (<=) _ _ = False
+funcNotOp' :: Func                   -> FuncOrOp
+funcNotOp' = FuncNotOp . FuncWrap
+unaryOp'   :: (Func -> Func)         -> FuncOrOp
+unaryOp' = UnaryOp . UnaryWrap
+binaryOp'  :: (Func -> Func -> Func) -> FuncOrOp
+binaryOp' = BinaryOp . BinaryWrap
 
 
--- | = The FuncOrOp (think EpicOrOp) type -- the thing to parse.
-data FuncOrOp = FuncNotOp Func
-              | UnaryOp (Func -> Func)
-              | BinaryOp (Func -> Func -> Func) deriving (Eq, Ord)
+-- | = Instances, and things only used for instances
+-- The instances for Eq and Ord are dumb, just enough to enable parsing.
+instance Eq FuncWrap    where (==) _ _ = False
+instance Eq UnaryWrap   where (==) _ _ = False
+instance Eq BinaryWrap  where (==) _ _ = False
 
-type Parser = Parsec Void [FuncOrOp]
+instance Ord FuncWrap   where (<=) _ _ = False
+instance Ord UnaryWrap  where (<=) _ _ = False
+instance Ord BinaryWrap where (<=) _ _ = False
 
 -- | nearly identical to "instance Stream String" from Text.Megaparsec.Stream
 instance Stream [FuncOrOp] where
