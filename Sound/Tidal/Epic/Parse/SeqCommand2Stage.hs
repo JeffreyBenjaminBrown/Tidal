@@ -3,6 +3,7 @@ module Sound.Tidal.Epic.Parse.SeqCommand2Stage where
 import qualified Data.Set as S
 import           Data.Map (Map(..))
 import qualified Data.Map as M
+import           Data.Monoid ((<>), mempty)
 
 import           Sound.Tidal.Epic.Abbreviations
 import           Sound.Tidal.Epic.Params
@@ -50,10 +51,11 @@ import qualified Sound.Tidal.Params      as P
 
 -- >>> TODO: Define newtypes to make monoids out of "a" and "Map a b".
 -- Maps are not Monoids, so use a newtype, and define (<>) = Map.union.
--- For general values (e.g. scales), define (<>) = flip const.
+-- For general values (e.g. scales), define (<>) = const.
 
 -- | A CxDurMonoid in a list of them relies on the earlier ones for meaning.
--- Cx = "context". "Monoid" because t should be a monoid, 
+-- Cx = "context". "Monoid" because t must be a monoid for
+-- cxDurScanAccum to work; it's the whole point of this type.
 data CxDurMonoid t = CxDurMonoid -- ^ t is usually Map, esp. ParamMap
   { cxDurMonoidDur     :: Maybe Dur
   , cxDurMonoidTemp    :: t -- ^ applies only to the current CxDurMonoid
@@ -65,7 +67,7 @@ data CxDurMonoid t = CxDurMonoid -- ^ t is usually Map, esp. ParamMap
 -- | Like CxDurMonoid, but context-free.
 -- An DurMonoid in a list does not rely on earlier DurMonoids for meaning.
 data DurMonoid t = DurMonoid { durMonoidDur :: Maybe Dur
-                               , durMonoid  :: t}
+                             , durMonoid  :: t}
 
 data EpicOp t = CmdOpUnary  (Epic t -> Epic t)
               | CmdOpBinary (Epic t -> Epic t -> Epic t)
@@ -73,33 +75,35 @@ data EpicOp t = CmdOpUnary  (Epic t -> Epic t)
 data Cmd2s t = CmdMap (DurMonoid t)
              | CmdOp (EpicOp t)
              | LeftBracket2s | RightBracket2s
+             -- >>> TODO: remove the 2s once the namespace is free.
 
--- -- | ASSUMES: Until a duration is specified, duration defaults to 1.
--- -- I called this "scanAccum" by analogy with scanl and mapAccum:
--- -- mapAccum is to map as scanAccum is to scanl.
--- scanAccumBlocks :: [CmdBlock] -> [(Dur, ParamMap)]
--- scanAccumBlocks bs = _scanAccumBlocks (1, M.empty) bs
+-- | ASSUMES: Until a duration is specified, duration defaults to 1.
+-- I called this "scanAccum" by analogy with scanl and mapAccum:
+-- mapAccum is to map as scanAccum is to scanl.
 
--- _scanAccumBlocks :: Monoid t =>
---   (Dur, t) -> [CxDurMonoid t] -> [(Dur, Map a b)]
--- _scanAccumBlocks priorPersistentCmds [] = []
--- _scanAccumBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
---   let nextPriorMap = M.union persist priorMap
---       nowMap = M.unions [once, persist, priorMap]
---       nowDur = maybe priorDur id mdur
---       ignoreIfSilent :: ParamMap -> ParamMap
---       ignoreIfSilent m = if sil then M.empty else m
---       -- PITFALL: Uses the empty map to represent silence.
---   in (nowDur, ignoreIfSilent nowMap)
---      : _scanAccumBlocks (nowDur, nextPriorMap) bs
+cxDurScanAccum :: Monoid t => [CxDurMonoid t] -> [(Dur, t)]
+cxDurScanAccum bs = _cxDurScanAccum (1, mempty) bs
 
--- blocksToEpic0, blocksToEpic :: [CmdBlock] -> ParamEpic
--- blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . scanAccumBlocks
--- blocksToEpic  = foldl1 (+-) . map blockToEpic  . scanAccumBlocks
+-- | TODO >>> Use maybe rather than mempty.
+_cxDurScanAccum :: Monoid t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
+_cxDurScanAccum priorPersistentCmds [] = []
+_cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur persist once sil : bs) =
+  let next = persist <> prevMap
+      now = foldl1 (<>) [once, persist, prevMap]
+      nowDur = maybe prevDur id mdur
+      ignoreIfSilent :: Monoid t => t -> t
+      ignoreIfSilent m = if sil then mempty else m
+      -- PITFALL: mempty makes sense for maps, but not for scales.
+  in (nowDur, ignoreIfSilent now)
+     : _cxDurScanAccum (nowDur, next) bs
 
--- -- PITFALL: Uses the empty map to represent silence.
--- blockToEpic0, blockToEpic :: (Dur, ParamMap) -> ParamEpic
+-- PITFALL: Uses the empty map to represent silence.
+-- blockToEpic0, blockToEpic :: (Dur, t) -> Epic t
 -- blockToEpic0 (dur, map) =
 --   if M.null map then durSilence dur else loop0 dur map
 -- blockToEpic  (dur, map) =
 --   if M.null map then durSilence dur else loopa dur map
+
+-- blocksToEpic0, blocksToEpic :: [CmdBlock] -> ParamEpic
+-- blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . cxDurScanAccum
+-- blocksToEpic  = foldl1 (+-) . map blockToEpic  . cxDurScanAccum
