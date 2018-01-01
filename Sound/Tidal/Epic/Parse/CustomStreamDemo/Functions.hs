@@ -17,11 +17,15 @@
 -- 9.0
 
 {-# LANGUAGE TypeFamilies
-           , FlexibleInstances #-}
+           , FlexibleInstances
+           , RankNTypes
+           #-}
 
-module Sound.Tidal.Epic.Parse.CustomStreamDemo.Functions where
+module Functions where
 
+import           Control.Lens
 import           Data.List (foldl')
+import           Data.Maybe (isJust)
 import           Data.Proxy (Proxy(..))
 import           Data.Semigroup ((<>))
 import           Data.Void (Void)
@@ -43,6 +47,17 @@ data FuncOrOp = FuncNotOp FuncWrap
               | UnaryOp UnaryWrap
               | BinaryOp BinaryWrap
               | LeftBracket | RightBracket deriving (Eq, Ord)
+
+-- These instances for Eq and Ord are dumb, just enough to enable parsing.
+instance Eq FuncWrap    where (==) _ _ = False
+instance Eq UnaryWrap   where (==) _ _ = False
+instance Eq BinaryWrap  where (==) _ _ = False
+
+instance Ord FuncWrap   where (<=) _ _ = False
+instance Ord UnaryWrap  where (<=) _ _ = False
+instance Ord BinaryWrap where (<=) _ _ = False
+
+makePrisms ''FuncOrOp  -- this needs to follow those Eq, Ord instances
 
 type Parser = Parsec Void [FuncOrOp]
 
@@ -73,17 +88,13 @@ bracket p = try $ between (satisfy isLeftBracket) (satisfy isRightBracket) p
 
 
 -- | = Basic type manipulations
-isFuncNotOp, isUnaryOp, isBinaryOp :: FuncOrOp -> Bool
-isFuncNotOp (FuncNotOp _) = True
-isFuncNotOp _ = False
-isUnaryOp (UnaryOp _) = True
-isUnaryOp _ = False
-isBinaryOp (BinaryOp _) = True
-isBinaryOp _ = False
-isLeftBracket LeftBracket = True
-isLeftBracket _ = False
-isRightBracket RightBracket = True
-isRightBracket _ = False
+isFuncNotOp, isUnaryOp, isBinaryOp, isLeftBracket, isRightBracket :: FuncOrOp -> Bool
+-- These could use more Template Haskell.
+isFuncNotOp =    isJust . (^? _FuncNotOp)
+isUnaryOp =      isJust . (^? _UnaryOp)
+isBinaryOp =     isJust . (^? _BinaryOp)
+isLeftBracket =  isJust . (^? _LeftBracket)
+isRightBracket = isJust . (^? _RightBracket)
 
 funcNotOp' :: Func                   -> FuncOrOp
 funcNotOp' = FuncNotOp . FuncWrap
@@ -93,20 +104,12 @@ binaryOp'  :: (Func -> Func -> Func) -> FuncOrOp
 binaryOp' = BinaryOp . BinaryWrap
 
 
--- | = Instances, and things only used for instances
--- The instances for Eq and Ord are dumb, just enough to enable parsing.
-instance Eq FuncWrap    where (==) _ _ = False
-instance Eq UnaryWrap   where (==) _ _ = False
-instance Eq BinaryWrap  where (==) _ _ = False
-
-instance Ord FuncWrap   where (<=) _ _ = False
-instance Ord UnaryWrap  where (<=) _ _ = False
-instance Ord BinaryWrap where (<=) _ _ = False
-
--- | nearly identical to "instance Stream String" from Text.Megaparsec.Stream
+-- | = The Stream instance for [FuncOrOp], and something it needs.
+-- All differences from "instance Stream String" in Text.Megaparsec.Stream
+-- are marked
 instance Stream [FuncOrOp] where
-  type Token [FuncOrOp] = FuncOrOp -- ^ one difference
-  type Tokens [FuncOrOp] = [FuncOrOp] -- ^ another difference
+  type Token [FuncOrOp] = FuncOrOp -- ^ a difference
+  type Tokens [FuncOrOp] = [FuncOrOp] -- ^ a difference
   tokenToChunk Proxy = pure
   tokensToChunk Proxy = id
   chunkToTokens Proxy = id
@@ -117,11 +120,12 @@ instance Stream [FuncOrOp] where
   take1_ [] = Nothing
   take1_ (t:ts) = Just (t, ts)
   takeN_ n s
-    | n <= 0    = Just ([], s) -- ^ one more difference ([] instead of "")
+    | n <= 0    = Just ([], s) -- ^ a difference ([] instead of "")
     | null s    = Nothing
     | otherwise = Just (splitAt n s)
   takeWhile_ = span
 
+-- a difference (simpler -- it always advances by one)
 defaultAdvance1 :: Pos               -- ^ Tab width
                 -> SourcePos         -- ^ Current position
                 -> t                 -- ^ Current token

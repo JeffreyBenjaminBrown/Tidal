@@ -76,6 +76,7 @@ library
               -- jbb
               , stm
               , HUnit
+              , lens
               , megaparsec
               , scientific
               , Unique
