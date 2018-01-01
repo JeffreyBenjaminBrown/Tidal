@@ -48,11 +48,6 @@ import qualified Sound.Tidal.Params      as P
 
 -- = todo ? split module: The Cmd2s type appears below and not above.
 
-
--- >>> TODO: Define newtypes to make monoids out of "a" and "Map a b".
--- Maps are not Monoids, so use a newtype, and define (<>) = Map.union.
--- For general values (e.g. scales), wrap in Maybe, define <> = const <$>?
-
 class Monoid' a where mempty' :: a
                       mappend' :: a -> a -> a
                       null' :: a -> Bool
@@ -63,8 +58,8 @@ instance Ord a => Monoid' (Map a b) where mempty' = M.empty
 
 instance Monoid' (Maybe a) where mempty' = Nothing
                                  mappend' Nothing Nothing = Nothing
-                                 mappend' Nothing b = b
-                                 mappend' a b = a
+                                 mappend' Nothing b       = b
+                                 mappend' a       b       = a
                                  null' = isNothing
 
 -- | A CxDurMonoid in a list of them relies on the earlier ones for meaning.
@@ -101,7 +96,7 @@ cxDurScanAccum bs = _cxDurScanAccum (1, mempty') bs
 -- | TODO >>> Use maybe rather than mempty.
 _cxDurScanAccum :: Monoid' t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
 _cxDurScanAccum priorPersistentCmds [] = []
-_cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur persist once sil : bs) =
+_cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur once persist sil : bs) =
   let next = mappend' persist prevMap
       now = foldl1 mappend' [once, persist, prevMap]
       nowDur = maybe prevDur id mdur
