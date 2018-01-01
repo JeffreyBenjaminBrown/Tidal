@@ -48,14 +48,13 @@ type Parser = Parsec Void [FuncOrOp]
 
 
 -- | = Parsing
-func :: Parser Func
-func = it <|> bracket func where it = makeExprParser funcNotOp
-                                      [ [ Prefix unaryOp ]
-                                      , [ InfixL binaryOp ]
-                                      ]
+funcExpr :: Parser Func
+funcExpr = makeExprParser func [ [ Prefix unaryOp ]
+                               , [ InfixL binaryOp ]
+                               ]
 
-funcNotOp :: Parser Func
-funcNotOp = it <|> bracket func where
+func :: Parser Func
+func = it <|> bracket funcExpr where
   it = do FuncNotOp (FuncWrap f) <- satisfy isFuncNotOp
           return f
 
@@ -71,7 +70,7 @@ binaryOp = it <|> bracket binaryOp
 
 bracket :: Parser a -> Parser a
 bracket p = try $ between (satisfy isLeftBracket) (satisfy isRightBracket) p
-                   
+
 
 -- | = Basic type manipulations
 isFuncNotOp, isUnaryOp, isBinaryOp :: FuncOrOp -> Bool

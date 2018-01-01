@@ -9,6 +9,8 @@ b f g = \a -> f a + g a  -- below I will (polymorphically) call b "+"
 f' = funcNotOp' f
 u' = unaryOp' u
 b' = binaryOp' b
+l = LeftBracket
+r = RightBracket
 stream = [f', b', u', f']
   -- = f `b` u f (because unary ops bind before binary ones)
   -- = (+1) + u (+1)
@@ -16,10 +18,9 @@ stream = [f', b', u', f']
   -- = \a -> (a+1)*2 + (a+1)
   -- = \a -> 3a + 3
 Right g = parse func "" stream
+map g [0..5]
 
 -- | = Equivalent expressions, using brackets
-l = LeftBracket
-r = RightBracket
 stream = [l, f', r, b', u', f']
 stream = [l, f', r, l, b', r, u', f']
 stream = [l, f', r, l, b', r, l, u', r, f']

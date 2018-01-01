@@ -1,4 +1,4 @@
--- >>> TODO: Brackets
+-- >>> TODO: Brackets (modeled by Functions.hs)
 
 -- -- Demonstration:
 -- f = loope 0.2 can -- a 0.2-measure loop of the can sample
