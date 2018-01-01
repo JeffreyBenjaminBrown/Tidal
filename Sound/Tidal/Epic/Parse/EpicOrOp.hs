@@ -5,14 +5,14 @@
            , FlexibleInstances #-}
 
 module Sound.Tidal.Epic.Parse.EpicOrOp
-  (parseEpicOrOps
-  , EpicOrOp(..) -- ^ This only makes LeftBracket and RightBracket available.
-    -- The other constructors rely on the *Wrap types, which are not exported.
-    -- Instead of those, use epicNotOp', unaryOp', binaryOp'.
-  , epicNotOp', unaryOp', binaryOp'
+  (parseEpicExpr
+  , EpicOrOp(LeftBracket, RightBracket) -- The other constructors
+    -- (EpicNotOp, UnaryOp, BinaryOp) require the non-exported *Wrap types.
+    -- Instead of those constructors, use epicNotOp, unaryOp, binaryOp.
+  , epicNotOp, unaryOp, binaryOp
 
   -- | = These I only export when running EpicOrOp.test.hs
-  -- , epicNotOp, unaryOp, binaryOp
+  -- , parseEpic, parseUnaryOp, parseBinaryOp
   )
 where
 
@@ -43,23 +43,23 @@ type Parser a = Parsec Void [EpicOrOp a]
 
 
 -- | = Parsing
-parseEpicOrOps :: Parser a (Epic a)
-parseEpicOrOps = makeExprParser epicNotOp [ [ Prefix unaryOp ]
-                                          , [ InfixL binaryOp ]
-                                          ]
+parseEpicExpr :: Parser a (Epic a)
+parseEpicExpr = makeExprParser parseEpic [ [ Prefix parseUnaryOp ]
+                                         , [ InfixL parseBinaryOp ]
+                                         ]
 
-epicNotOp :: Parser a (Epic a)
-epicNotOp = it <|> bracket parseEpicOrOps
+parseEpic :: Parser a (Epic a)
+parseEpic = it <|> bracket parseEpicExpr
   where it = do EpicNotOp (EpicWrap f) <- satisfy isEpicNotOp
                 return f
 
-unaryOp :: Parser a (Epic a -> Epic a)
-unaryOp = it <|> bracket unaryOp
+parseUnaryOp :: Parser a (Epic a -> Epic a)
+parseUnaryOp = it <|> bracket parseUnaryOp
   where it = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
                 return op
 
-binaryOp :: Parser a (Epic a -> Epic a -> Epic a)
-binaryOp = it <|> bracket binaryOp
+parseBinaryOp :: Parser a (Epic a -> Epic a -> Epic a)
+parseBinaryOp = it <|> bracket parseBinaryOp
   where it = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
                 return op
 
@@ -74,12 +74,12 @@ isBinaryOp (BinaryOp _) = True     ; isBinaryOp _ = False
 isLeftBracket LeftBracket = True   ; isLeftBracket _ = False
 isRightBracket RightBracket = True ; isRightBracket _ = False
 
-epicNotOp' :: Epic a                   -> EpicOrOp a
-epicNotOp' = EpicNotOp . EpicWrap
-unaryOp'   :: (Epic a -> Epic a)         -> EpicOrOp a
-unaryOp' = UnaryOp . UnaryWrap
-binaryOp'  :: (Epic a -> Epic a -> Epic a) -> EpicOrOp a
-binaryOp' = BinaryOp . BinaryWrap
+epicNotOp :: Epic a                       -> EpicOrOp a
+epicNotOp = EpicNotOp . EpicWrap
+unaryOp   :: (Epic a -> Epic a)           -> EpicOrOp a
+unaryOp   = UnaryOp   . UnaryWrap
+binaryOp  :: (Epic a -> Epic a -> Epic a) -> EpicOrOp a
+binaryOp  = BinaryOp  . BinaryWrap
 
 
 -- | = Instances, and things only used for instances
