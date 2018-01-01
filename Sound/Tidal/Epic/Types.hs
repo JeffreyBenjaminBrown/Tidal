@@ -4,8 +4,6 @@ import Data.Typeable
 import Sound.Tidal.Epic.Types.Reimports
 
 
-type Dur = Time
-
 type Ev a = (Arc,a) -- like Event, but only one arc
 
 -- | Like a Pattern, but period-aware, and maybe without cycling
