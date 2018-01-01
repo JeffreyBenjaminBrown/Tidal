@@ -1,20 +1,19 @@
--- >>> TODO: Brackets (modeled by Functions.hs)
-
--- -- Demonstration:
--- f = loope 0.2 can -- a 0.2-measure loop of the can sample
--- u = fast 2        -- (u f) is a 0.1-measure loop of the can sample
--- b = (+-)          -- concatenation
--- stream = [epicNotOp' f, binaryOp' b, unaryOp' u, epicNotOp' f]
---   -- = f `b` u f (because unary ops bind before binary ones)
---   -- = a 0.3 second loop of two can samples, one twice as long as the other
--- Right g = parse parseEpicOrOps "" stream
--- v1 g -- if v1 is a voice, then this will make that sound
+-- For a demonstration, see EpicOrOp.test.hs, but first search this file
+-- for "EpicOrOp.test.hs" and uncomment the line below it.
 
 {-# LANGUAGE TypeFamilies
            , FlexibleInstances #-}
 
 module Sound.Tidal.Epic.Parse.EpicOrOp
-  (parseEpicOrOps, EpicOrOp, epicNotOp', unaryOp', binaryOp')
+  (parseEpicOrOps
+  , EpicOrOp(..) -- ^ This only makes LeftBracket and RightBracket available.
+    -- The other constructors rely on the *Wrap types, which are not exported.
+    -- Instead of those, use epicNotOp', unaryOp', binaryOp'.
+  , epicNotOp', unaryOp', binaryOp'
+
+  -- | = These I only export when running EpicOrOp.test.hs
+  -- , epicNotOp, unaryOp, binaryOp
+  )
 where
 
 import           Data.List (foldl')
@@ -37,39 +36,43 @@ newtype BinaryWrap a = BinaryWrap (Epic a -> Epic a -> Epic a)
 
 data EpicOrOp a = EpicNotOp (EpicWrap a)
                 | UnaryOp (UnaryWrap a)
-                | BinaryOp (BinaryWrap a) deriving (Eq, Ord)
+                | BinaryOp (BinaryWrap a)
+                | LeftBracket | RightBracket deriving (Eq, Ord)
 
 type Parser a = Parsec Void [EpicOrOp a]
 
 
 -- | = Parsing
 parseEpicOrOps :: Parser a (Epic a)
-parseEpicOrOps = makeExprParser epicNotOp
-  [ [ Prefix unaryOp ]
-  , [ InfixL binaryOp ]
-  ]
+parseEpicOrOps = makeExprParser epicNotOp [ [ Prefix unaryOp ]
+                                          , [ InfixL binaryOp ]
+                                          ]
 
 epicNotOp :: Parser a (Epic a)
-epicNotOp = do EpicNotOp (EpicWrap f) <- satisfy isEpicNotOp
-               return f
+epicNotOp = it <|> bracket parseEpicOrOps
+  where it = do EpicNotOp (EpicWrap f) <- satisfy isEpicNotOp
+                return f
 
 unaryOp :: Parser a (Epic a -> Epic a)
-unaryOp = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
-             return op
+unaryOp = it <|> bracket unaryOp
+  where it = do UnaryOp (UnaryWrap op) <- satisfy isUnaryOp
+                return op
 
 binaryOp :: Parser a (Epic a -> Epic a -> Epic a)
-binaryOp = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
-              return op
+binaryOp = it <|> bracket binaryOp
+  where it = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
+                return op
 
+bracket :: Parser a x -> Parser a x
+bracket = try . between (satisfy isLeftBracket) (satisfy isRightBracket)
 
 -- | = Basic type manipulations
 isEpicNotOp, isUnaryOp, isBinaryOp :: EpicOrOp a -> Bool
-isEpicNotOp (EpicNotOp _) = True
-isEpicNotOp _ = False
-isUnaryOp (UnaryOp _) = True
-isUnaryOp _ = False
-isBinaryOp (BinaryOp _) = True
-isBinaryOp _ = False
+isEpicNotOp (EpicNotOp _) = True   ; isEpicNotOp _ = False
+isUnaryOp (UnaryOp _) = True       ; isUnaryOp _ = False
+isBinaryOp (BinaryOp _) = True     ; isBinaryOp _ = False
+isLeftBracket LeftBracket = True   ; isLeftBracket _ = False
+isRightBracket RightBracket = True ; isRightBracket _ = False
 
 epicNotOp' :: Epic a                   -> EpicOrOp a
 epicNotOp' = EpicNotOp . EpicWrap

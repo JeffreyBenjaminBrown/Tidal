@@ -89,7 +89,8 @@ bracket p = try $ between (satisfy isLeftBracket) (satisfy isRightBracket) p
 
 -- | = Basic type manipulations
 isFuncNotOp, isUnaryOp, isBinaryOp, isLeftBracket, isRightBracket :: FuncOrOp -> Bool
--- These could use more Template Haskell.
+-- For greater brevity, these could use some Template Haskell.
+-- But using Prisms at all here is not clearly worth it.
 isFuncNotOp =    isJust . (^? _FuncNotOp)
 isUnaryOp =      isJust . (^? _UnaryOp)
 isBinaryOp =     isJust . (^? _BinaryOp)
