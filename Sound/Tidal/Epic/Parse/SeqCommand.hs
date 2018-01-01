@@ -1,4 +1,4 @@
-module Sound.Tidal.Epic.SeqCommand
+module Sound.Tidal.Epic.Parse.SeqCommand
   ( Dur
   , Cmd(..)
   , CmdBlock(..)
@@ -17,8 +17,6 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 import qualified Sound.Tidal.Params      as P
 
-
-type Dur = Time
 
 -- | A Cmd from which a (melodic) sequence is generated.
 -- Some commands only apply once, to the current block.

@@ -16,10 +16,10 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Params
-import Sound.Tidal.Epic.Parse.Util (
-  Parser(..), ratio, lexeme, sc, anyWord, double, ignore)
-import Sound.Tidal.Epic.SeqCommand (
-  Cmd(..), CmdBlock(..), blocksToEpic, blocksToEpic0, toCmdBlock)
+import Sound.Tidal.Epic.Parse.Util (Parser(..)
+  , ratio, lexeme, sc, anyWord, double, ignore)
+import Sound.Tidal.Epic.Parse.SeqCommand (Cmd(..), CmdBlock(..)
+  , blocksToEpic, blocksToEpic0, toCmdBlock)
 
 
 parseParamMapSeq, parseParamMapSeq0, p, p0 :: String -> ParamEpic
