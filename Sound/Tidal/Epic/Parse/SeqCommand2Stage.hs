@@ -3,7 +3,7 @@ module Sound.Tidal.Epic.Parse.SeqCommand2Stage where
 import qualified Data.Set as S
 import           Data.Map (Map(..))
 import qualified Data.Map as M
-import           Data.Monoid ((<>), mempty)
+import           Data.Maybe (isNothing)
 
 import           Sound.Tidal.Epic.Abbreviations
 import           Sound.Tidal.Epic.Params
@@ -51,10 +51,24 @@ import qualified Sound.Tidal.Params      as P
 
 -- >>> TODO: Define newtypes to make monoids out of "a" and "Map a b".
 -- Maps are not Monoids, so use a newtype, and define (<>) = Map.union.
--- For general values (e.g. scales), define (<>) = const.
+-- For general values (e.g. scales), wrap in Maybe, define <> = const <$>?
+
+class Monoid' a where mempty' :: a
+                      mappend' :: a -> a -> a
+                      null' :: a -> Bool
+
+instance Ord a => Monoid' (Map a b) where mempty' = M.empty
+                                          mappend' = M.union
+                                          null' = M.null
+
+instance Monoid' (Maybe a) where mempty' = Nothing
+                                 mappend' Nothing Nothing = Nothing
+                                 mappend' Nothing b = b
+                                 mappend' a b = a
+                                 null' = isNothing
 
 -- | A CxDurMonoid in a list of them relies on the earlier ones for meaning.
--- Cx = "context". "Monoid" because t must be a monoid for
+-- Cx = "context". "Monoid" because t must be a Monoid' for
 -- cxDurScanAccum to work; it's the whole point of this type.
 data CxDurMonoid t = CxDurMonoid -- ^ t is usually Map, esp. ParamMap
   { cxDurMonoidDur     :: Maybe Dur
@@ -81,23 +95,21 @@ data Cmd2s t = CmdMap (DurMonoid t)
 -- I called this "scanAccum" by analogy with scanl and mapAccum:
 -- mapAccum is to map as scanAccum is to scanl.
 
-cxDurScanAccum :: Monoid t => [CxDurMonoid t] -> [(Dur, t)]
-cxDurScanAccum bs = _cxDurScanAccum (1, mempty) bs
+cxDurScanAccum :: Monoid' t => [CxDurMonoid t] -> [(Dur, t)]
+cxDurScanAccum bs = _cxDurScanAccum (1, mempty') bs
 
 -- | TODO >>> Use maybe rather than mempty.
-_cxDurScanAccum :: Monoid t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
+_cxDurScanAccum :: Monoid' t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
 _cxDurScanAccum priorPersistentCmds [] = []
 _cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur persist once sil : bs) =
-  let next = persist <> prevMap
-      now = foldl1 (<>) [once, persist, prevMap]
+  let next = mappend' persist prevMap
+      now = foldl1 mappend' [once, persist, prevMap]
       nowDur = maybe prevDur id mdur
-      ignoreIfSilent :: Monoid t => t -> t
-      ignoreIfSilent m = if sil then mempty else m
-      -- PITFALL: mempty makes sense for maps, but not for scales.
+      ignoreIfSilent :: Monoid' t => t -> t
+      ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
      : _cxDurScanAccum (nowDur, next) bs
 
--- PITFALL: Uses the empty map to represent silence.
 -- blockToEpic0, blockToEpic :: (Dur, t) -> Epic t
 -- blockToEpic0 (dur, map) =
 --   if M.null map then durSilence dur else loop0 dur map
