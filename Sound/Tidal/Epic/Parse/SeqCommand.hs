@@ -27,43 +27,6 @@ data Cmd = CmdDur          Dur
          | CmdSilent
          deriving (Show, Eq, Ord)
 
--- | Cmds in the same CmdBlock are concurrent
-data CmdBlock = CmdBlock {
-  cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
-  , cmdBlockSilent     :: Bool
-  , cmdBlockOnceMap    :: ParamMap
-  , cmdBlockPersistMap :: ParamMap
-  } deriving (Show, Eq, Ord)
-
-blocksToEpic0, blocksToEpic :: [CmdBlock] -> ParamEpic
-blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . scanAccumBlocks
-blocksToEpic  = foldl1 (+-) . map blockToEpic  . scanAccumBlocks
-
--- PITFALL: Uses the empty map to represent silence.
-blockToEpic0, blockToEpic :: (Dur, ParamMap) -> ParamEpic
-blockToEpic0 (dur, map) =
-  if M.null map then durSilence dur else loop0 dur map
-blockToEpic  (dur, map) =
-  if M.null map then durSilence dur else loopa dur map
-
--- | ASSUMES: Until a duration is specified, duration defaults to 1.
--- I called this "scanAccum" because it resembles scanl and mapAccum:
--- mapAccum is to map as scanAccum is to scanl.
-scanAccumBlocks :: [CmdBlock] -> [(Dur, ParamMap)]
-scanAccumBlocks bs = _scanAccumBlocks (1, M.empty) bs
-
-_scanAccumBlocks :: (Dur, ParamMap) -> [CmdBlock] -> [(Dur, ParamMap)]
-_scanAccumBlocks priorPersistentCmds [] = []
-_scanAccumBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
-  let nextPriorMap = M.union persist priorMap
-      nowMap = M.unions [once, persist, priorMap]
-      nowDur = maybe priorDur id mdur
-      ignoreIfSilent :: ParamMap -> ParamMap
-      ignoreIfSilent m = if sil then M.empty else m
-      -- PITFALL: Uses the empty map to represent silence.
-  in (nowDur, ignoreIfSilent nowMap)
-     : _scanAccumBlocks (nowDur, nextPriorMap) bs
-
 -- todo ? this should process a list, one elt at a time,
 -- using pattern matching, instead of this unreadable idiom.
 toCmdBlock :: S.Set Cmd -> CmdBlock
@@ -86,3 +49,44 @@ toCmdBlock s = CmdBlock dur silent persist once where
   fromCmdParam CmdSilent = M.empty -- nor should this happen
   fromCmdParam (CmdParamOnce m) = m
   fromCmdParam (CmdParamPersist m) = m
+
+
+-- = todo ? split module: The Cmd type appears below and not above.
+
+
+-- | Cmds in the same CmdBlock are concurrent
+data CmdBlock = CmdBlock {
+  cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
+  , cmdBlockSilent     :: Bool
+  , cmdBlockOnceMap    :: ParamMap
+  , cmdBlockPersistMap :: ParamMap
+  } deriving (Show, Eq, Ord)
+
+-- | ASSUMES: Until a duration is specified, duration defaults to 1.
+-- I called this "scanAccum" because it resembles scanl and mapAccum:
+-- mapAccum is to map as scanAccum is to scanl.
+scanAccumBlocks :: [CmdBlock] -> [(Dur, ParamMap)]
+scanAccumBlocks bs = _scanAccumBlocks (1, M.empty) bs
+
+_scanAccumBlocks :: (Dur, ParamMap) -> [CmdBlock] -> [(Dur, ParamMap)]
+_scanAccumBlocks priorPersistentCmds [] = []
+_scanAccumBlocks (priorDur, priorMap) (CmdBlock mdur sil persist once : bs) =
+  let nextPriorMap = M.union persist priorMap
+      nowMap = M.unions [once, persist, priorMap]
+      nowDur = maybe priorDur id mdur
+      ignoreIfSilent :: ParamMap -> ParamMap
+      ignoreIfSilent m = if sil then M.empty else m
+      -- PITFALL: Uses the empty map to represent silence.
+  in (nowDur, ignoreIfSilent nowMap)
+     : _scanAccumBlocks (nowDur, nextPriorMap) bs
+
+blocksToEpic0, blocksToEpic :: [CmdBlock] -> ParamEpic
+blocksToEpic0 = foldl1 (+-) . map blockToEpic0 . scanAccumBlocks
+blocksToEpic  = foldl1 (+-) . map blockToEpic  . scanAccumBlocks
+
+-- PITFALL: Uses the empty map to represent silence.
+blockToEpic0, blockToEpic :: (Dur, ParamMap) -> ParamEpic
+blockToEpic0 (dur, map) =
+  if M.null map then durSilence dur else loop0 dur map
+blockToEpic  (dur, map) =
+  if M.null map then durSilence dur else loopa dur map
