@@ -19,6 +19,7 @@ import Sound.Tidal.Epic.Parse.Cmd
 import Sound.Tidal.Epic.Scales
 import Sound.Tidal.Epic.Parse.SeqCommand
 import Sound.Tidal.Epic.Parse.SeqCommand2Stage
+import Sound.Tidal.Epic.Parse.Types
 import Sound.Tidal.Epic.Sounds
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Util
@@ -53,15 +54,15 @@ main = runTestTT $ TestList
   ]
 
 testCxDurScanAccum = TestCase $ do
-  let (cdm, j,n,t,f) = (CxDurMonoid, Just, Nothing, True, False)
-      cdms1 = [cdm n n n f] :: [CxDurMonoid (Maybe Int)] 
-  assertBool "1" $ _cxDurScanAccum cdms1 == map toDurMonoid [(1,n)]
+  let (cdm, j,n,t,f) = (AccumEpicLang, Just, Nothing, True, False)
+      cdms1 = [cdm n n n f] :: [AccumEpicLang (Maybe Int)] 
+  assertBool "1" $ _cxDurScanAccum cdms1 == map (uncurry DurMonoid) [(1,n)]
   let cdms2 = [ cdm (j 2) n     (j 3) f
               , cdm n     n     n     f
               , cdm (j 1) (j 4) (j 5) f
               , cdm n     n     n     f
               , cdm n     n     n     t]
-  assertBool "2" $ _cxDurScanAccum cdms2 == map toDurMonoid
+  assertBool "2" $ _cxDurScanAccum cdms2 == map (uncurry DurMonoid)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do

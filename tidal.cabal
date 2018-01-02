@@ -36,6 +36,7 @@ library
                        Sound.Tidal.Epic.Parse.File
                        Sound.Tidal.Epic.Parse.SeqCommand
                        Sound.Tidal.Epic.Parse.SeqCommand2Stage
+                       Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Utils
                        Sound.Tidal.Epic.Scales
                        Sound.Tidal.Epic.Sounds

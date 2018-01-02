@@ -1,9 +1,6 @@
 -- For a demonstration, see EpicOrOp.test.hs, but first search this file
 -- for "EpicOrOp.test.hs" and uncomment the line below it.
 
-{-# LANGUAGE TypeFamilies
-           , FlexibleInstances #-}
-
 module Sound.Tidal.Epic.Parse.EpicOrOp
   (parseEpicExpr
   , EpicOrOp(LeftBracket, RightBracket) -- The other constructors
@@ -16,33 +13,19 @@ module Sound.Tidal.Epic.Parse.EpicOrOp
   )
 where
 
-import           Data.List (foldl')
-import           Data.Proxy (Proxy(..))
-import           Data.Semigroup ((<>))
 import           Data.Void (Void)
 
 import           Text.Megaparsec
 import           Text.Megaparsec.Char (satisfy)
 import           Text.Megaparsec.Expr (makeExprParser, Operator(..))
-import           Text.Megaparsec.Pos
 
 import           Sound.Tidal.Epic.Types
-
-
--- | = Types
-newtype EpicWrap a = EpicWrap (Epic a)
-newtype UnaryWrap a = UnaryWrap (Epic a -> Epic a)
-newtype BinaryWrap a = BinaryWrap (Epic a -> Epic a -> Epic a)
-
-data EpicOrOp a = EpicNotOp (EpicWrap a)
-                | UnaryOp (UnaryWrap a)
-                | BinaryOp (BinaryWrap a)
-                | LeftBracket | RightBracket deriving (Eq, Ord)
-
-type Parser a = Parsec Void [EpicOrOp a]
+import           Sound.Tidal.Epic.Parse.Types
 
 
 -- | = Parsing
+type Parser a = Parsec Void [EpicOrOp a]
+
 parseEpicExpr :: Parser a (Epic a)
 parseEpicExpr = makeExprParser parseEpic [ [ Prefix parseUnaryOp ]
                                          , [ InfixL parseBinaryOp ]
@@ -80,40 +63,3 @@ unaryOp   :: (Epic a -> Epic a)           -> EpicOrOp a
 unaryOp   = UnaryOp   . UnaryWrap
 binaryOp  :: (Epic a -> Epic a -> Epic a) -> EpicOrOp a
 binaryOp  = BinaryOp  . BinaryWrap
-
-
--- | = Instances, and things only used for instances
--- The instances for Eq and Ord are dumb, just enough to enable parsing.
-instance Eq (EpicWrap   a) where (==) _ _ = False
-instance Eq (UnaryWrap  a) where (==) _ _ = False
-instance Eq (BinaryWrap a) where (==) _ _ = False
-
-instance Ord (EpicWrap   a) where (<=) _ _ = False
-instance Ord (UnaryWrap  a) where (<=) _ _ = False
-instance Ord (BinaryWrap a) where (<=) _ _ = False
-
--- | nearly identical to "instance Stream String" from Text.Megaparsec.Stream
-instance Stream [EpicOrOp a] where
-  type Token [EpicOrOp a] = EpicOrOp a -- ^ one difference
-  type Tokens [EpicOrOp a] = [EpicOrOp a] -- ^ another difference
-  tokenToChunk Proxy = pure
-  tokensToChunk Proxy = id
-  chunkToTokens Proxy = id
-  chunkLength Proxy = length
-  chunkEmpty Proxy = null
-  advance1 Proxy = defaultAdvance1
-  advanceN Proxy w = foldl' (defaultAdvance1 w)
-  take1_ [] = Nothing
-  take1_ (t:ts) = Just (t, ts)
-  takeN_ n s
-    | n <= 0    = Just ([], s) -- ^ one more difference ([] instead of "")
-    | null s    = Nothing
-    | otherwise = Just (splitAt n s)
-  takeWhile_ = span
-
-defaultAdvance1 :: Pos               -- ^ Tab width
-                -> SourcePos         -- ^ Current position
-                -> t                 -- ^ Current token
-                -> SourcePos         -- ^ Incremented position
-defaultAdvance1 _ (SourcePos n l c) _ = SourcePos n l $ c <> pos1
-  -- this just adds one to c. l never advances to some putative next line.
