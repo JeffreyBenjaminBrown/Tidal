@@ -1,9 +1,9 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TupleSections, ScopedTypeVariables #-}
 
 module Sound.Tidal.Epic.Util where
 
 import Control.Arrow (first)
-import Data.List (sortOn)
+import Data.List (sortOn, partition)
 import Data.List.Unique (sortUniq)
 import qualified Data.Map as M
 import Data.Ratio
@@ -12,6 +12,18 @@ import qualified Data.Set as S
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 
+
+toPartitions :: forall a b.
+  (a->Bool) -> ([a]->[b]) -> ([a]->[b]) -> [a] -> [b]
+toPartitions test f g as = -- ^ do f to what passes, g to what fails the test
+  let (for_f, for_g) = partition test as
+      (did_f, did_g) = (f for_f, g for_g)
+      reconstruct :: [a] -> [b] -> [b] -> [b]
+      reconstruct [] _ _ = []
+      reconstruct (o:originals) did_f did_g = case test o of
+        True  -> head did_f : reconstruct originals (tail did_f) did_g
+        False -> head did_g : reconstruct originals did_f        (tail did_g)
+  in reconstruct as did_f did_g
 
 -- | ASSUMES a <= b and c <= d.
 overlap :: Arc -> Arc -> Maybe Arc

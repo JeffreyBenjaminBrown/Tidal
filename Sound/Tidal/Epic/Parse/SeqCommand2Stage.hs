@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Sound.Tidal.Epic.Parse.SeqCommand2Stage where
 
 import qualified Data.Set as S
@@ -10,6 +12,8 @@ import           Sound.Tidal.Epic.Params
 import           Sound.Tidal.Epic.Transform (durSilence)
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
+import           Sound.Tidal.Epic.Util (toPartitions)
+
 import qualified Sound.Tidal.Params      as P
 
 
@@ -75,11 +79,17 @@ data CxDurMonoid t = CxDurMonoid -- ^ t is usually Map, esp. ParamMap
 
 -- | Like CxDurMonoid, but context-free.
 -- An DurMonoid in a list does not rely on earlier DurMonoids for meaning.
-data DurMonoid t = DurMonoid { durMonoidDur :: Maybe Dur
-                             , durMonoid  :: t}
+data DurMonoid t = DurMonoid { durMonoidDur :: Dur
+                             , durMonoid :: t} deriving Eq
+toDurMonoid (dur, t) = DurMonoid dur t
 
 data EpicOp t = CmdOpUnary  (Epic t -> Epic t)
               | CmdOpBinary (Epic t -> Epic t -> Epic t)
+
+data CxCmd2s t = CxCmdMap (CxDurMonoid t)
+               | CxCmdOp (EpicOp t)
+               | CxLeftBracket2s | CxRightBracket2s
+               -- >>> TODO: remove the 2s once the namespace is free.
 
 data Cmd2s t = CmdMap (DurMonoid t)
              | CmdOp (EpicOp t)
@@ -90,20 +100,31 @@ data Cmd2s t = CmdMap (DurMonoid t)
 -- I called this "scanAccum" by analogy with scanl and mapAccum:
 -- mapAccum is to map as scanAccum is to scanl.
 
-cxDurScanAccum :: Monoid' t => [CxDurMonoid t] -> [(Dur, t)]
-cxDurScanAccum bs = _cxDurScanAccum (1, mempty') bs
+cxDurScanAccum :: forall t. Monoid' t => [CxCmd2s t] -> [Cmd2s t]
+cxDurScanAccum bs = toPartitions test f (map toCmd2s) bs
+  where test (CxCmdMap _) = True
+        test _ = False
+        unwrapCxDurMonoid :: CxCmd2s t -> CxDurMonoid t
+        unwrapCxDurMonoid (CxCmdMap x) = x -- partial; okay thanks to test
+        f = map CmdMap . _cxDurScanAccum . map unwrapCxDurMonoid
+        toCmd2s :: CxCmd2s t -> Cmd2s t
+        toCmd2s (CxCmdOp x) = CmdOp x
+        toCmd2s CxLeftBracket2s  = LeftBracket2s
+        toCmd2s CxRightBracket2s = RightBracket2s
 
--- | TODO >>> Use maybe rather than mempty.
-_cxDurScanAccum :: Monoid' t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
-_cxDurScanAccum priorPersistentCmds [] = []
-_cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur once persist sil : bs) =
+_cxDurScanAccum :: Monoid' t => [CxDurMonoid t] -> [DurMonoid t]
+_cxDurScanAccum bs = map toDurMonoid $ __cxDurScanAccum (1, mempty') bs
+
+__cxDurScanAccum :: Monoid' t => (Dur, t) -> [CxDurMonoid t] -> [(Dur, t)]
+__cxDurScanAccum priorPersistentCmds [] = []
+__cxDurScanAccum (prevDur, prevMap) (CxDurMonoid mdur once persist sil : bs) =
   let next = mappend' persist prevMap
       now = foldl1 mappend' [once, persist, prevMap]
       nowDur = maybe prevDur id mdur
       ignoreIfSilent :: Monoid' t => t -> t
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
-     : _cxDurScanAccum (nowDur, next) bs
+     : __cxDurScanAccum (nowDur, next) bs
 
 -- blockToEpic0, blockToEpic :: (Dur, t) -> Epic t
 -- blockToEpic0 (dur, map) =
