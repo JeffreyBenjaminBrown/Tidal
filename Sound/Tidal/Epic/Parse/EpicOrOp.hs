@@ -2,7 +2,7 @@
 -- for "EpicOrOp.test.hs" and uncomment the line below it.
 
 module Sound.Tidal.Epic.Parse.EpicOrOp
-  (parseEpicExpr
+  ( parseEpicExpr
   , EpicOrOp(LeftBracket, RightBracket) -- The other constructors
     -- (EpicNotOp, UnaryOp, BinaryOp) require the non-exported *Wrap types.
     -- Instead of those constructors, use epicNotOp, unaryOp, binaryOp.
@@ -10,8 +10,7 @@ module Sound.Tidal.Epic.Parse.EpicOrOp
 
   -- | = These I only export when running EpicOrOp.test.hs
   -- , parseEpic, parseUnaryOp, parseBinaryOp
-  )
-where
+  ) where
 
 import           Data.Void (Void)
 

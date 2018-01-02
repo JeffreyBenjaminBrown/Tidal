@@ -16,32 +16,30 @@ import           Sound.Tidal.Epic.Types
 
 
 -- | An AccumEpicLang in a list relies on earlier ones for meaning.
-data AccumEpicLang t = AccumEpicLang -- ^ t is usually Map, esp. ParamMap
+data AccumEpicLang a = AccumEpicLang -- ^ a is usually Map, esp. ParamMap
   { accumLangDur     :: Maybe Dur
-  , accumLangTemp    :: t -- ^ applies only to the current AccumEpicLang
-  , accumLangPersist :: t -- ^ applies now and carries to the next
-  , accumLangSilent  :: Bool -- ^ except: if True, neither t applies now
+  , accumLangTemp    :: a -- ^ applies only to the current AccumEpicLang
+  , accumLangPersist :: a -- ^ applies now and carries to the next
+  , accumLangSilent  :: Bool -- ^ except: if True, neither a applies now
                                -- (The persistent one still persists.)
   } deriving (Show, Eq, Ord)
 
 -- | Like AccumEpicLang, but context-free: A DurMonoid in a list
 -- does not rely on earlier DurMonoids for meaning.
-data DurMonoid t = DurMonoid { durMonoidDur :: Dur
-                             , durMonoid :: t} deriving Eq
-
--- >>> TODO ? Subsume these constructors into AccumLang and EpicOrOpIsh
-data EpicOp t = CmdOpUnary  (Epic t -> Epic t)
-              | CmdOpBinary (Epic t -> Epic t -> Epic t)
+data DurMonoid a = DurMonoid { durMonoidDur :: Dur
+                             , durMonoid :: a} deriving Eq
 
 -- | Almost an EpicOrOp; just needs scan-accumulation
-data AccumLang t = CxCmdMap (AccumEpicLang t)
-               | CxCmdOp (EpicOp t)
-               | CxLeftBracket2s | CxRightBracket2s
-               -- todo: remove the 2s once the namespace is free.
+data AccumLang a = CxCmdMap (AccumEpicLang a)
+                 | CxCmdUnOp (Epic a -> Epic a)
+                 | CxCmdBinOp (Epic a -> Epic a -> Epic a)
+                 | CxLeftBracket2s | CxRightBracket2s
+                 -- todo: remove the 2s once the namespace is free.
 
 -- TODO: unify with EpicOrOp
-data EpicOrOpIsh t = CmdMap (DurMonoid t)
-                   | CmdOp (EpicOp t)
+data EpicOrOpIsh a = CmdMap (DurMonoid a)
+                   | CmdUnOp (Epic a -> Epic a)
+                   | CmdBinOp (Epic a -> Epic a -> Epic a)
                    | LeftBracket2s | RightBracket2s
                    -- todo: remove the 2s once the namespace is free.
 

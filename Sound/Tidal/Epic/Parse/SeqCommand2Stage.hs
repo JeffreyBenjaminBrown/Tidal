@@ -17,11 +17,13 @@ cxDurScanAccum :: forall t. Monoidoid t => [AccumLang t] -> [EpicOrOpIsh t]
 cxDurScanAccum bs = toPartitions test f (map toEpicOrOpIsh) bs
   where test (CxCmdMap _) = True
         test _ = False
-        unwrapAccumEpicLang :: AccumLang t -> AccumEpicLang t
-        unwrapAccumEpicLang (CxCmdMap x) = x -- partial; okay thanks to test
         f = map CmdMap . _cxDurScanAccum . map unwrapAccumEpicLang
+  -- combined, the next two partial functions cover all AccumLang constructors
+        unwrapAccumEpicLang :: AccumLang t -> AccumEpicLang t
+        unwrapAccumEpicLang (CxCmdMap x) = x
         toEpicOrOpIsh :: AccumLang t -> EpicOrOpIsh t
-        toEpicOrOpIsh (CxCmdOp x) = CmdOp x
+        toEpicOrOpIsh (CxCmdUnOp x) = CmdUnOp x
+        toEpicOrOpIsh (CxCmdBinOp x) = CmdBinOp x
         toEpicOrOpIsh CxLeftBracket2s  = LeftBracket2s
         toEpicOrOpIsh CxRightBracket2s = RightBracket2s
 
