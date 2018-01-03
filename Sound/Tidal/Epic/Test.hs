@@ -16,6 +16,7 @@ import Sound.Tidal.Epic.DirtNetwork
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Cmd
+import Sound.Tidal.Epic.Parse.Cmd2s
 import Sound.Tidal.Epic.Scales
 import Sound.Tidal.Epic.Parse.SeqCommand
 import Sound.Tidal.Epic.Parse.SeqCommand2Stage
@@ -52,6 +53,7 @@ main = runTestTT $ TestList
   , TestLabel "testSilence" testSilence
   , TestLabel "test_ScanAccumLang" test_ScanAccumLang
   , TestLabel "testScanAccumLang" testScanAccumLang
+  , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
   ]
 
 testScanAccumLang = TestCase $ do
@@ -127,6 +129,19 @@ testBlocksToEpic = TestCase $ do
     [ ((0 % 1,0 % 1),M.fromList [(sound_p,VS "bow"),(deg_p,VF 3.5)
                                 ,(speed_p,VF 2.0)])
     , ((1 % 1,1 % 1),M.fromList [(sound_p,VS "bow"),(speed_p,VF 4.0)]) ]
+
+testCmdToAccumEpicLang = TestCase $ do
+  let dur = 1
+      soundMap = M.singleton sound_p $ VS "hatc"
+      speedMap = M.singleton speed_p $ VF 2
+      degMap = M.singleton deg_p $ VF 3
+      parseBitSet = S.fromList [ Cmd2sDur dur
+                               , Cmd2sPersist soundMap
+                               , Cmd2sPersist degMap
+                               , Cmd2sOnce speedMap ]
+      seqBit = AccumEpicLang
+               (Just dur) speedMap (M.union soundMap degMap) False
+  assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet
 
 testToCmdBlock = TestCase $ do
   let dur = 1

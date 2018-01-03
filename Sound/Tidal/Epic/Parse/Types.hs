@@ -41,9 +41,9 @@ data CmdBlock = CmdBlock {
 data Cmd2s o = Cmd2sDur     Dur
              | Cmd2sOnce    o
              | Cmd2sPersist o
-             | Cmd2sFast    Int
-             | Cmd2sStack | Cmd2sCat
-             | Cmd2sSilent deriving (Show, Eq, Ord)
+             | Cmd2sSilent
+             | Cmd2sFast | Cmd2sStack | Cmd2sCat -- operators
+             deriving (Show, Eq, Ord)
 
 -- | = type variables `i` and `o` = "inner" and "outer"
 

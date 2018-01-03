@@ -28,9 +28,8 @@ toCmdBlock s = CmdBlock dur silent persist once where
   isDur (CmdDur _)        = True; isDur _    = False
   isSilent CmdSilent      = True; isSilent _ = False
   isOnce (CmdParamOnce _) = True; isOnce _   = False
-  dur = case S.toList durCmds of
-    (CmdDur t):_ -> Just t
-    _            -> Nothing
+  dur = case S.toList durCmds of (CmdDur t):_ -> Just t
+                                 _            -> Nothing
   silent = if S.null silentCmds then False else True
   once = M.unions $ cmdToParamMap <$> S.toList onceCmds
   persist = M.unions $ cmdToParamMap <$> S.toList persistCmds
