@@ -13,20 +13,21 @@ import           Sound.Tidal.Epic.Util (toPartitions)
 -- I called this "scanAccum" by analogy with scanl and mapAccum:
 -- mapAccum is to map as scanAccum is to scanl.
 
+
 cxDurScanAccum :: forall i o. Monoidoid i o =>
   [AccumLang i o] -> [EpicOrOpIsh i o]
 cxDurScanAccum bs = toPartitions test f (map toEpicOrOpIsh) bs
-  where test (CxCmdMap _) = True
+  where test (AccumLangTerm _) = True
         test _ = False
-        f = map CmdMap . _cxDurScanAccum . map unwrapAccumEpicLang
+        f = map CmdTerm . _cxDurScanAccum . map unwrapAccumEpicLang
   -- combined, the next two partial functions cover all AccumLang constructors
         unwrapAccumEpicLang :: AccumLang i o -> AccumEpicLang o
-        unwrapAccumEpicLang (CxCmdMap x) = x
+        unwrapAccumEpicLang (AccumLangTerm x) = x
         toEpicOrOpIsh :: AccumLang i o -> EpicOrOpIsh i o
-        toEpicOrOpIsh (CxCmdUnOp x)  = CmdUnOp x
-        toEpicOrOpIsh (CxCmdBinOp x) = CmdBinOp x
-        toEpicOrOpIsh CxLeftBracket2s  = LeftBracket2s
-        toEpicOrOpIsh CxRightBracket2s = RightBracket2s
+        toEpicOrOpIsh (AccumLangUnOp x)  = CmdUnOp x
+        toEpicOrOpIsh (AccumLangBinOp x) = CmdBinOp x
+        toEpicOrOpIsh AccumLangLeftBracket  = CmdLeftBracket
+        toEpicOrOpIsh AccumLangRightBracket = CmdRightBracket
 
 _cxDurScanAccum :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
 _cxDurScanAccum bs = map (uncurry Timed) $

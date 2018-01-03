@@ -33,17 +33,17 @@ data Timed a = Timed { durMonoidDur :: Dur
                      , durMonoid :: a} deriving Eq
 
 -- | Almost an EpicOrOp; just needs scan-accumulation
-data AccumLang i o = CxCmdMap (AccumEpicLang o)
-  | CxCmdUnOp (Epic i -> Epic i)
-  | CxCmdBinOp (Epic i -> Epic i -> Epic i)
-  | CxLeftBracket2s | CxRightBracket2s
+data AccumLang i o = AccumLangTerm (AccumEpicLang o)
+  | AccumLangUnOp (Epic i -> Epic i)
+  | AccumLangBinOp (Epic i -> Epic i -> Epic i)
+  | AccumLangLeftBracket | AccumLangRightBracket
   -- todo: remove the 2s once the namespace is free.
 
 -- TODO: unify with EpicOrOp
-data EpicOrOpIsh i o = CmdMap (Timed o)
+data EpicOrOpIsh i o = CmdTerm (Timed o)
   | CmdUnOp (Epic i -> Epic i)
   | CmdBinOp (Epic i -> Epic i -> Epic i)
-  | LeftBracket2s | RightBracket2s
+  | CmdLeftBracket | CmdRightBracket
   -- todo: remove the 2s once the namespace is free.
 
 -- | = EpicOrOp
