@@ -15,17 +15,9 @@ import           Sound.Tidal.Epic.Params
 import           Sound.Tidal.Epic.Transform (durSilence)
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
+import           Sound.Tidal.Epic.Parse.Types (Cmd(..),CmdBlock(..))
 import qualified Sound.Tidal.Params      as P
 
-
--- | A Cmd from which a (melodic) sequence is generated.
--- Some commands only apply once, to the current block.
--- Others apply to this one and the succeeding ones, until overridden.
-data Cmd = CmdDur          Dur
-         | CmdParamPersist ParamMap
-         | CmdParamOnce    ParamMap
-         | CmdSilent
-         deriving (Show, Eq, Ord)
 
 -- todo ? this should process a list, one elt at a time,
 -- using pattern matching, instead of this unreadable idiom.
@@ -51,16 +43,8 @@ toCmdBlock s = CmdBlock dur silent persist once where
   fromCmdParam (CmdParamPersist m) = m
 
 
--- = todo ? split module: The Cmd type appears below and not above.
+-- = todo ? split module: The Cmd type appears above and not below.
 
-
--- | Cmds in the same CmdBlock are concurrent
-data CmdBlock = CmdBlock {
-  cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
-  , cmdBlockSilent     :: Bool
-  , cmdBlockOnceMap    :: ParamMap
-  , cmdBlockPersistMap :: ParamMap
-  } deriving (Show, Eq, Ord)
 
 -- | ASSUMES: Until a duration is specified, duration defaults to 1.
 -- I called this "scanAccum" because it resembles scanl and mapAccum:

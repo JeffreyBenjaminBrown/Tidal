@@ -18,6 +18,26 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
+-- | = Cmds: the thing a user types, in the old (1-stage) parse strategy
+
+-- | A Cmd from which a (melodic) sequence is generated.
+-- Some commands only apply once, to the current block.
+-- Others apply to this one and the succeeding ones, until overridden.
+data Cmd = CmdDur          Dur
+         | CmdParamPersist ParamMap
+         | CmdParamOnce    ParamMap
+         | CmdSilent
+         deriving (Show, Eq, Ord)
+
+-- | Cmds in the same CmdBlock are concurrent
+data CmdBlock = CmdBlock {
+  cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
+  , cmdBlockSilent     :: Bool
+  , cmdBlockOnceMap    :: ParamMap
+  , cmdBlockPersistMap :: ParamMap
+  } deriving (Show, Eq, Ord)
+
+
 -- | = type variables `i` and `o` = "inner" and "outer"
 
 data Timed o = Timed { timedDur :: Dur
