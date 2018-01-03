@@ -60,10 +60,11 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
   } deriving (Show, Eq, Ord)
 
 -- | Almost an EpicOrOp; just needs scan-accumulation
-data AccumLang i o = AccumLangTerm (AccumEpicLang o)
-  | AccumLangUnOp (Epic i -> Epic i)
-  | AccumLangBinOp (Epic i -> Epic i -> Epic i)
-  | AccumLangLeftBracket | AccumLangRightBracket
+data Lang i o = LangTerm (AccumEpicLang o)
+  | LangUnOp (Epic i -> Epic i)
+  | LangBinOp (Epic i -> Epic i -> Epic i)
+  | LangLeftBracket | LangRightBracket
+
 
 -- | = EpicOrOp
 newtype EpicWrap a = EpicWrap (Epic a)

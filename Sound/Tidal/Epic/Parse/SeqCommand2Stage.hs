@@ -10,39 +10,39 @@ import           Sound.Tidal.Epic.Types
 import           Sound.Tidal.Epic.Util (toPartitions)
 
 
-scanAccumLang :: forall i o. Monoidoid i o => [AccumLang i o] -> [EpicOrOp i]
-  -- ^ the real work is in _scanAccumLang; the rest of this is (un)wrapping
-scanAccumLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
-  where test (AccumLangTerm _) = True
+scanLang :: forall i o. Monoidoid i o => [Lang i o] -> [EpicOrOp i]
+  -- ^ the real work is in _scanLang; the rest of this is (un)wrapping
+scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
+  where test (LangTerm _) = True
         test _ = False
-        epicLangToEpicOrOp :: [AccumLang i o] -> [EpicOrOp i]
+        epicLangToEpicOrOp :: [Lang i o] -> [EpicOrOp i]
         epicLangToEpicOrOp = map (EpicNotOp . EpicWrap . timedToEpic)
-                             . _scanAccumLang . map unwrapAccumEpicLang
+                             . _scanLang . map unwrapAccumEpicLang
         timedToEpic :: Timed o -> Epic i
         timedToEpic timedo = let payload = timedPayload timedo
                                  dur = timedDur timedo
           in if null' payload then durSilence dur
              else loopa dur $ unwrap payload
-  -- the next two partial funcs cover all AccumLang constructors
-        unwrapAccumEpicLang :: AccumLang i o -> AccumEpicLang o
-        unwrapAccumEpicLang (AccumLangTerm x) = x
-        toEpicOrOp          :: AccumLang i o -> EpicOrOp i
-        toEpicOrOp (AccumLangUnOp x)  = UnaryOp (UnaryWrap x)
-        toEpicOrOp (AccumLangBinOp x) = BinaryOp (BinaryWrap x)
-        toEpicOrOp AccumLangLeftBracket  = LeftBracket
-        toEpicOrOp AccumLangRightBracket = RightBracket
+  -- the next two partial funcs cover all Lang constructors
+        unwrapAccumEpicLang :: Lang i o -> AccumEpicLang o
+        unwrapAccumEpicLang (LangTerm x) = x
+        toEpicOrOp          :: Lang i o -> EpicOrOp i
+        toEpicOrOp (LangUnOp x)  = UnaryOp (UnaryWrap x)
+        toEpicOrOp (LangBinOp x) = BinaryOp (BinaryWrap x)
+        toEpicOrOp LangLeftBracket  = LeftBracket
+        toEpicOrOp LangRightBracket = RightBracket
 
-_scanAccumLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
-_scanAccumLang bs = map (uncurry Timed) $
-  __scanAccumLang (1, mempty') bs
+_scanLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
+_scanLang bs = map (uncurry Timed) $
+  __scanLang (1, mempty') bs
 
-__scanAccumLang :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
-__scanAccumLang priorPersistentCmds [] = []
-__scanAccumLang (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
+__scanLang :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
+__scanLang priorPersistentCmds [] = []
+__scanLang (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
   let next = mappend' keep prevMap
       now = foldl1 mappend' [temp, keep, prevMap]
       nowDur = maybe prevDur id mdur
       ignoreIfSilent :: forall i o. Monoidoid i o => o -> o
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
-     : __scanAccumLang (nowDur, next) bs
+     : __scanLang (nowDur, next) bs
