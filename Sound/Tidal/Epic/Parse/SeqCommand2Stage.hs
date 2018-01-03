@@ -13,15 +13,16 @@ import           Sound.Tidal.Epic.Util (toPartitions)
 -- I called this "scanAccum" by analogy with scanl and mapAccum:
 -- mapAccum is to map as scanAccum is to scanl.
 
-cxDurScanAccum :: forall i o. Monoidoid i o =>[AccumLang o] -> [EpicOrOpIsh o]
+cxDurScanAccum :: forall i o. Monoidoid i o =>
+  [AccumLang i o] -> [EpicOrOpIsh i o]
 cxDurScanAccum bs = toPartitions test f (map toEpicOrOpIsh) bs
   where test (CxCmdMap _) = True
         test _ = False
         f = map CmdMap . _cxDurScanAccum . map unwrapAccumEpicLang
   -- combined, the next two partial functions cover all AccumLang constructors
-        unwrapAccumEpicLang :: AccumLang o -> AccumEpicLang o
+        unwrapAccumEpicLang :: AccumLang i o -> AccumEpicLang o
         unwrapAccumEpicLang (CxCmdMap x) = x
-        toEpicOrOpIsh :: AccumLang o -> EpicOrOpIsh o
+        toEpicOrOpIsh :: AccumLang i o -> EpicOrOpIsh i o
         toEpicOrOpIsh (CxCmdUnOp x)  = CmdUnOp x
         toEpicOrOpIsh (CxCmdBinOp x) = CmdBinOp x
         toEpicOrOpIsh CxLeftBracket2s  = LeftBracket2s
@@ -31,13 +32,13 @@ _cxDurScanAccum :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
 _cxDurScanAccum bs = map (uncurry Timed) $
   __cxDurScanAccum (1, mempty') bs
 
-__cxDurScanAccum :: Monoidoid a t => (Dur,t) -> [AccumEpicLang t] -> [(Dur,t)]
+__cxDurScanAccum :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
 __cxDurScanAccum priorPersistentCmds [] = []
-__cxDurScanAccum (prevDur, prevMap) (AccumEpicLang mdur once persist sil : bs) =
-  let next = mappend' persist prevMap
-      now = foldl1 mappend' [once, persist, prevMap]
+__cxDurScanAccum (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
+  let next = mappend' keep prevMap
+      now = foldl1 mappend' [temp, keep, prevMap]
       nowDur = maybe prevDur id mdur
-      ignoreIfSilent :: forall a t. Monoidoid a t => t -> t
+      ignoreIfSilent :: forall i o. Monoidoid i o => o -> o
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
      : __cxDurScanAccum (nowDur, next) bs
