@@ -31,12 +31,19 @@ data Cmd = CmdDur          Dur
 
 -- | Cmds in the same CmdBlock are concurrent
 data CmdBlock = CmdBlock {
+  -- PITFALL: these fields are ordered very differently from AccumEpicLang's
   cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
   , cmdBlockSilent     :: Bool
   , cmdBlockOnceMap    :: ParamMap
   , cmdBlockPersistMap :: ParamMap
   } deriving (Show, Eq, Ord)
 
+data Cmd2s o = Cmd2sDur     Dur
+             | Cmd2sOnce    o
+             | Cmd2sPersist o
+             | Cmd2sFast    Int
+             | Cmd2sStack | Cmd2sCat
+             | Cmd2sSilent deriving (Show, Eq, Ord)
 
 -- | = type variables `i` and `o` = "inner" and "outer"
 

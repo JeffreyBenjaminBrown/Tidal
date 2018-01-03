@@ -19,8 +19,6 @@ import           Sound.Tidal.Epic.Parse.Types (Cmd(..),CmdBlock(..))
 import qualified Sound.Tidal.Params      as P
 
 
--- todo ? this should process a list, one elt at a time,
--- using pattern matching, instead of this unreadable idiom.
 toCmdBlock :: S.Set Cmd -> CmdBlock
 toCmdBlock s = CmdBlock dur silent persist once where
   (durCmds, nonDurCmds) = S.partition isDur s
@@ -34,13 +32,13 @@ toCmdBlock s = CmdBlock dur silent persist once where
     (CmdDur t):_ -> Just t
     _            -> Nothing
   silent = if S.null silentCmds then False else True
-  once = M.unions $ fromCmdParam <$> S.toList onceCmds
-  persist = M.unions $ fromCmdParam <$> S.toList persistCmds
-  fromCmdParam :: Cmd -> ParamMap
-  fromCmdParam (CmdDur _) = error "fromCmdParam given a duration"
-  fromCmdParam CmdSilent = M.empty -- nor should this happen
-  fromCmdParam (CmdParamOnce m) = m
-  fromCmdParam (CmdParamPersist m) = m
+  once = M.unions $ cmdToParamMap <$> S.toList onceCmds
+  persist = M.unions $ cmdToParamMap <$> S.toList persistCmds
+  cmdToParamMap :: Cmd -> ParamMap
+  cmdToParamMap (CmdDur _) = error "cmdToParamMap given a duration"
+  cmdToParamMap CmdSilent = error "cmdToParamMap given silence"
+  cmdToParamMap (CmdParamOnce m) = m
+  cmdToParamMap (CmdParamPersist m) = m
 
 
 -- = todo ? split module: The Cmd type appears above and not below.
