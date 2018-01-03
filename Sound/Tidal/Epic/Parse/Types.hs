@@ -37,7 +37,6 @@ data AccumLang i o = AccumLangTerm (AccumEpicLang o)
   | AccumLangUnOp (Epic i -> Epic i)
   | AccumLangBinOp (Epic i -> Epic i -> Epic i)
   | AccumLangLeftBracket | AccumLangRightBracket
-  -- todo: remove the 2s once the namespace is free.
 
 -- | = EpicOrOp
 newtype EpicWrap a = EpicWrap (Epic a)

@@ -54,7 +54,6 @@ main = runTestTT $ TestList
   , TestLabel "testScanAccumLang" testScanAccumLang
   ]
 
-
 testScanAccumLang = TestCase $ do
   let (j,n,t,f) = (Just, Nothing,True,False)
       cdm = [ AccumLangTerm (AccumEpicLang (j 2) n (j 3) f)

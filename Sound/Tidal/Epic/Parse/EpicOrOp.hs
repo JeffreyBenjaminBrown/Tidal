@@ -18,6 +18,7 @@ import           Text.Megaparsec
 import           Text.Megaparsec.Char (satisfy)
 import           Text.Megaparsec.Expr (makeExprParser, Operator(..))
 
+import           Sound.Tidal.Epic.Abbreviations ((+-))
 import           Sound.Tidal.Epic.Types
 import           Sound.Tidal.Epic.Parse.Types
 
@@ -26,9 +27,10 @@ import           Sound.Tidal.Epic.Parse.Types
 type Parser a = Parsec Void [EpicOrOp a]
 
 parseEpicExpr :: Parser a (Epic a)
-parseEpicExpr = makeExprParser parseEpic [ [ Prefix parseUnaryOp ]
-                                         , [ InfixL parseBinaryOp ]
-                                         ]
+parseEpicExpr = makeExprParser (foldl1 (+-) <$> some parseEpic)
+  [ [ Prefix parseUnaryOp ]
+  , [ InfixL parseBinaryOp ]
+  ]
 
 parseEpic :: Parser a (Epic a)
 parseEpic = it <|> bracket parseEpicExpr
