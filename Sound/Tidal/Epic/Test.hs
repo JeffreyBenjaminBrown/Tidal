@@ -50,19 +50,31 @@ main = runTestTT $ TestList
   , TestLabel "testSyFreq" testSyFreq
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
   , TestLabel "testSilence" testSilence
-  , TestLabel "testCxDurScanAccum" testCxDurScanAccum
+  , TestLabel "test_ScanAccumLang" test_ScanAccumLang
+  , TestLabel "testScanAccumLang" testScanAccumLang
   ]
 
-testCxDurScanAccum = TestCase $ do
+
+testScanAccumLang = TestCase $ do
+  let (j,n,t,f) = (Just, Nothing,True,False)
+      cdm = [ AccumLangTerm (AccumEpicLang (j 2) n (j 3) f)
+            , AccumLangUnOp (+1)
+            , AccumLangLeftBracket
+            ] -- scanAccumLang doesn't match brackets, just converts them
+      [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
+        = scanAccumLang cdm
+  assertBool "1" $ eArc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
+
+test_ScanAccumLang = TestCase $ do
   let (cdm, j,n,t,f) = (AccumEpicLang, Just, Nothing, True, False)
       cdms1 = [cdm n n n f] :: [AccumEpicLang (Maybe Int)] 
-  assertBool "1" $ _cxDurScanAccum cdms1 == map (uncurry Timed) [(1,n)]
+  assertBool "1" $ _scanAccumLang cdms1 == map (uncurry Timed) [(1,n)]
   let cdms2 = [ cdm (j 2) n     (j 3) f
               , cdm n     n     n     f
               , cdm (j 1) (j 4) (j 5) f
               , cdm n     n     n     f
               , cdm n     n     n     t]
-  assertBool "2" $ _cxDurScanAccum cdms2 == map (uncurry Timed)
+  assertBool "2" $ _scanAccumLang cdms2 == map (uncurry Timed)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do

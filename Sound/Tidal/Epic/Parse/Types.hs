@@ -18,32 +18,25 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
--- | An AccumEpicLang in a list relies on earlier ones for meaning.
-data AccumEpicLang a = AccumEpicLang -- ^ a is usually Map, esp. ParamMap
-  { accumLangDur     :: Maybe Dur
-  , accumLangTemp    :: a -- ^ applies only to the current AccumEpicLang
-  , accumLangPersist :: a -- ^ applies now and carries to the next
-  , accumLangSilent  :: Bool -- ^ except: if True, neither a applies now
-                               -- (The persistent one still persists.)
-  } deriving (Show, Eq, Ord)
+-- | = type variables `i` and `o` = "inner" and "outer"
 
--- | Like AccumEpicLang, but context-free: A Timed in a list
--- does not rely on earlier Timeds for meaning.
-data Timed a = Timed { durMonoidDur :: Dur
-                     , durMonoid :: a} deriving Eq
+data Timed o = Timed { timedDur :: Dur
+                     , timedPayload :: o} deriving Eq
+
+-- | An AccumEpicLang in a list relies on earlier ones for meaning.
+data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
+  { accumLangDur     :: Maybe Dur
+  , accumLangTemp    :: o -- ^ applies only to the current AccumEpicLang
+  , accumLangPersist :: o -- ^ applies now and carries to the next
+  , accumLangSilent  :: Bool -- ^ except: if True, neither `o` applies now
+                               -- (The persistent `o` still persists.)
+  } deriving (Show, Eq, Ord)
 
 -- | Almost an EpicOrOp; just needs scan-accumulation
 data AccumLang i o = AccumLangTerm (AccumEpicLang o)
   | AccumLangUnOp (Epic i -> Epic i)
   | AccumLangBinOp (Epic i -> Epic i -> Epic i)
   | AccumLangLeftBracket | AccumLangRightBracket
-  -- todo: remove the 2s once the namespace is free.
-
--- TODO: unify with EpicOrOp
-data EpicOrOpIsh i o = CmdTerm (Timed o)
-  | CmdUnOp (Epic i -> Epic i)
-  | CmdBinOp (Epic i -> Epic i -> Epic i)
-  | CmdLeftBracket | CmdRightBracket
   -- todo: remove the 2s once the namespace is free.
 
 -- | = EpicOrOp
@@ -58,11 +51,11 @@ data EpicOrOp a = EpicNotOp (EpicWrap a)
 
 
 -- | == Instances
-class Monoidoid inner a | a -> inner where
-  mempty' :: a
-  mappend' :: a -> a -> a
-  null' :: a -> Bool
-  unwrap :: a -> inner -- could fail if null'
+class Monoidoid inner o | o -> inner where
+  mempty' :: o
+  mappend' :: o -> o -> o
+  null' :: o -> Bool
+  unwrap :: o -> inner -- could fail if null'
 
 instance Ord a => Monoidoid (M.Map a b) (M.Map a b) where
   mempty' = M.empty
@@ -70,7 +63,7 @@ instance Ord a => Monoidoid (M.Map a b) (M.Map a b) where
   null' = M.null
   unwrap = id
 
-instance Monoidoid a (Maybe a) where
+instance Monoidoid i (Maybe i) where
   mempty' = Nothing
   mappend' Nothing Nothing = Nothing
   mappend' Nothing b       = b
