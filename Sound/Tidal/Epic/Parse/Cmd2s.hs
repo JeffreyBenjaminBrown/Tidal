@@ -39,8 +39,3 @@ fromNonEpicCmd Cmd2sStack = LangNonEpicBinOp eStack
 fromNonEpicCmd Cmd2sCat = LangNonEpicBinOp concatEpic
 fromNonEpicCmd Cmd2sLeftBracket = LangNonEpicLeftBracket
 fromNonEpicCmd Cmd2sRightBracket = LangNonEpicRightBracket
-
---cmdToLang :: forall i o. Monoidoid i o => S.Set (Cmd2s' o) -> Lang i o
---cmdToLang (Cmd2s'Epic x) = LangEpic $ cmdToAccumEpicLang x
---cmdToLang (Cmd2s'NonEpic x) = LangNonEpic $ f x
-

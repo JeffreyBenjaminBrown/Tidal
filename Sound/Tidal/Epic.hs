@@ -17,6 +17,7 @@ import Sound.Tidal.Epic.Parse.Cmd2s as E
 import Sound.Tidal.Epic.Parse.EpicOrOp as E
 import Sound.Tidal.Epic.Parse.File as E
 import Sound.Tidal.Epic.Scales as E
+import Sound.Tidal.Epic.Parse.Text as E
 import Sound.Tidal.Epic.Parse.SeqCommand as E
 import Sound.Tidal.Epic.Parse.SeqCommand2Stage as E
 import Sound.Tidal.Epic.Parse.Types as E
