@@ -69,13 +69,13 @@ testScanLang = TestCase $ do
 test_ScanLang = TestCase $ do
   let (cdm, j,n,t,f) = (AccumEpicLang, Just, Nothing, True, False)
       cdms1 = [cdm n n n f] :: [AccumEpicLang (Maybe Int)] 
-  assertBool "1" $ _scanLang cdms1 == map (uncurry Timed) [(1,n)]
+  assertBool "1" $ _scanAccumEpicLang cdms1 == map (uncurry Timed) [(1,n)]
   let cdms2 = [ cdm (j 2) n     (j 3) f
               , cdm n     n     n     f
               , cdm (j 1) (j 4) (j 5) f
               , cdm n     n     n     f
               , cdm n     n     n     t]
-  assertBool "2" $ _scanLang cdms2 == map (uncurry Timed)
+  assertBool "2" $ _scanAccumEpicLang cdms2 == map (uncurry Timed)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do

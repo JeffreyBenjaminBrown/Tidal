@@ -17,7 +17,7 @@ scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
         test _ = False
         epicLangToEpicOrOp :: [Lang i o] -> [EpicOrOp i]
         epicLangToEpicOrOp = map (EpicNotOp . EpicWrap . timedToEpic)
-                             . _scanLang . map unwrapAccumEpicLang
+                             . _scanAccumEpicLang . map unwrapAccumEpicLang
         timedToEpic :: Timed o -> Epic i
         timedToEpic timedo = let payload = timedPayload timedo
                                  dur = timedDur timedo
@@ -32,17 +32,25 @@ scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
         toEpicOrOp LangLeftBracket  = LeftBracket
         toEpicOrOp LangRightBracket = RightBracket
 
-_scanLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
-_scanLang bs = map (uncurry Timed) $
-  __scanLang (1, mempty') bs
+fromLangNonEpic :: LangNonEpic i -> EpicOrOp i
+fromLangNonEpic (LangNonEpicUnOp x)  = UnaryOp (UnaryWrap x)
+fromLangNonEpic (LangNonEpicBinOp x) = BinaryOp (BinaryWrap x)
+fromLangNonEpic LangNonEpicLeftBracket  = LeftBracket
+fromLangNonEpic LangNonEpicRightBracket = RightBracket
 
-__scanLang :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
-__scanLang priorPersistentCmds [] = []
-__scanLang (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
+-- [AccumEpicLang o] -> [EpicOrOp i]
+
+_scanAccumEpicLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
+_scanAccumEpicLang bs = map (uncurry Timed) $
+  __scanAccumEpicLang (1, mempty') bs
+
+__scanAccumEpicLang :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
+__scanAccumEpicLang priorPersistentCmds [] = []
+__scanAccumEpicLang (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
   let next = mappend' keep prevMap
       now = foldl1 mappend' [temp, keep, prevMap]
       nowDur = maybe prevDur id mdur
       ignoreIfSilent :: forall i o. Monoidoid i o => o -> o
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
-     : __scanLang (nowDur, next) bs
+     : __scanAccumEpicLang (nowDur, next) bs

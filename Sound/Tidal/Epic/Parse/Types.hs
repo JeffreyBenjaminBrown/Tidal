@@ -65,6 +65,13 @@ data Lang i o = LangTerm (AccumEpicLang o)
   | LangBinOp (Epic i -> Epic i -> Epic i)
   | LangLeftBracket | LangRightBracket
 
+data Lang' i o = Lang'Epic (AccumEpicLang o)
+               | Lang'NonEpic (LangNonEpic i)
+
+data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
+                   | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
+                   | LangNonEpicLeftBracket | LangNonEpicRightBracket
+
 
 -- | = EpicOrOp
 newtype EpicWrap a = EpicWrap (Epic a)
