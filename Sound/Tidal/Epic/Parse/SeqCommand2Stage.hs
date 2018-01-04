@@ -28,9 +28,9 @@ fromLangNonEpic LangNonEpicRightBracket = RightBracket
 
 scanLang :: forall i o. Monoidoid i o => [Lang i o] -> [EpicOrOp i]
 scanLang bs = toPartitions test
-                            (fromAccumEpicLang . map unwrapEpic)
-                            (map $ fromLangNonEpic . unwrapNonEpic)
-                            bs
+                           (fromAccumEpicLang . map unwrapEpic)
+                           (map $ fromLangNonEpic . unwrapNonEpic)
+                           bs
   where test (LangEpic _) = True
         test (LangNonEpic _) = False
         unwrapEpic (LangEpic x) = x
