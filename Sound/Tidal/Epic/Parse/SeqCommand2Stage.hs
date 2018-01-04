@@ -10,6 +10,32 @@ import           Sound.Tidal.Epic.Types
 import           Sound.Tidal.Epic.Util (toPartitions)
 
 
+timedToEpic :: Monoidoid i o => Timed o -> Epic i
+timedToEpic timedo = let payload = timedPayload timedo
+                         dur = timedDur timedo
+                     in if null' payload then durSilence dur
+                        else loopa dur $ unwrap payload
+
+fromAccumEpicLang :: Monoidoid i o => [AccumEpicLang o] -> [EpicOrOp i]
+fromAccumEpicLang = map (EpicNotOp . EpicWrap . timedToEpic)
+                    . _scanAccumEpicLang
+
+fromLangNonEpic :: LangNonEpic i -> EpicOrOp i
+fromLangNonEpic (LangNonEpicUnOp x)  = UnaryOp (UnaryWrap x)
+fromLangNonEpic (LangNonEpicBinOp x) = BinaryOp (BinaryWrap x)
+fromLangNonEpic LangNonEpicLeftBracket  = LeftBracket
+fromLangNonEpic LangNonEpicRightBracket = RightBracket
+
+scanLang' :: forall i o. Monoidoid i o => [Lang' i o] -> [EpicOrOp i]
+scanLang' bs = toPartitions test
+                            (fromAccumEpicLang . map unwrapEpic)
+                            (map $ fromLangNonEpic . unwrapNonEpic)
+                            bs
+  where test (Lang'Epic _) = True
+        test (Lang'NonEpic _) = False
+        unwrapEpic (Lang'Epic x) = x
+        unwrapNonEpic (Lang'NonEpic x) = x
+
 scanLang :: forall i o. Monoidoid i o => [Lang i o] -> [EpicOrOp i]
   -- ^ the real work is in _scanLang; the rest of this is (un)wrapping
 scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
@@ -18,11 +44,6 @@ scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
         epicLangToEpicOrOp :: [Lang i o] -> [EpicOrOp i]
         epicLangToEpicOrOp = map (EpicNotOp . EpicWrap . timedToEpic)
                              . _scanAccumEpicLang . map unwrapAccumEpicLang
-        timedToEpic :: Timed o -> Epic i
-        timedToEpic timedo = let payload = timedPayload timedo
-                                 dur = timedDur timedo
-          in if null' payload then durSilence dur
-             else loopa dur $ unwrap payload
   -- the next two partial funcs cover all Lang constructors
         unwrapAccumEpicLang :: Lang i o -> AccumEpicLang o
         unwrapAccumEpicLang (LangTerm x) = x
@@ -31,14 +52,6 @@ scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
         toEpicOrOp (LangBinOp x) = BinaryOp (BinaryWrap x)
         toEpicOrOp LangLeftBracket  = LeftBracket
         toEpicOrOp LangRightBracket = RightBracket
-
-fromLangNonEpic :: LangNonEpic i -> EpicOrOp i
-fromLangNonEpic (LangNonEpicUnOp x)  = UnaryOp (UnaryWrap x)
-fromLangNonEpic (LangNonEpicBinOp x) = BinaryOp (BinaryWrap x)
-fromLangNonEpic LangNonEpicLeftBracket  = LeftBracket
-fromLangNonEpic LangNonEpicRightBracket = RightBracket
-
--- [AccumEpicLang o] -> [EpicOrOp i]
 
 _scanAccumEpicLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
 _scanAccumEpicLang bs = map (uncurry Timed) $
