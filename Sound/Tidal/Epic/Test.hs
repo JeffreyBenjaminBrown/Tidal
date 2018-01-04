@@ -53,25 +53,14 @@ main = runTestTT $ TestList
   , TestLabel "testSilence" testSilence
   , TestLabel "test_ScanLang" test_ScanLang
   , TestLabel "testScanLang" testScanLang
-  , TestLabel "testScanLang'" testScanLang'
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
   ]
 
-testScanLang' = TestCase $ do
-  let (j,n,t,f) = (Just, Nothing,True,False)
-      cdm = [ Lang'Epic (AccumEpicLang (j 2) n (j 3) f)
-            , Lang'NonEpic (LangNonEpicUnOp (+1))
-            , Lang'NonEpic LangNonEpicLeftBracket
-            ] -- scanLang doesn't match brackets, just converts them
-      [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
-        = scanLang' cdm
-  assertBool "1" $ eArc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
-
 testScanLang = TestCase $ do
   let (j,n,t,f) = (Just, Nothing,True,False)
-      cdm = [ LangTerm (AccumEpicLang (j 2) n (j 3) f)
-            , LangUnOp (+1)
-            , LangLeftBracket
+      cdm = [ LangEpic (AccumEpicLang (j 2) n (j 3) f)
+            , LangNonEpic (LangNonEpicUnOp (+1))
+            , LangNonEpic LangNonEpicLeftBracket
             ] -- scanLang doesn't match brackets, just converts them
       [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
         = scanLang cdm

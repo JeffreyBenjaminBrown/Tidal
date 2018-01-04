@@ -59,14 +59,8 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
--- | Almost an EpicOrOp; just needs scan-accumulation
-data Lang i o = LangTerm (AccumEpicLang o)
-  | LangUnOp (Epic i -> Epic i)
-  | LangBinOp (Epic i -> Epic i -> Epic i)
-  | LangLeftBracket | LangRightBracket
-
-data Lang' i o = Lang'Epic (AccumEpicLang o)
-               | Lang'NonEpic (LangNonEpic i)
+data Lang i o = LangEpic (AccumEpicLang o)
+              | LangNonEpic (LangNonEpic i)
 
 data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
                    | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)

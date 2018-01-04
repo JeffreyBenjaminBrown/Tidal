@@ -26,32 +26,15 @@ fromLangNonEpic (LangNonEpicBinOp x) = BinaryOp (BinaryWrap x)
 fromLangNonEpic LangNonEpicLeftBracket  = LeftBracket
 fromLangNonEpic LangNonEpicRightBracket = RightBracket
 
-scanLang' :: forall i o. Monoidoid i o => [Lang' i o] -> [EpicOrOp i]
-scanLang' bs = toPartitions test
+scanLang :: forall i o. Monoidoid i o => [Lang i o] -> [EpicOrOp i]
+scanLang bs = toPartitions test
                             (fromAccumEpicLang . map unwrapEpic)
                             (map $ fromLangNonEpic . unwrapNonEpic)
                             bs
-  where test (Lang'Epic _) = True
-        test (Lang'NonEpic _) = False
-        unwrapEpic (Lang'Epic x) = x
-        unwrapNonEpic (Lang'NonEpic x) = x
-
-scanLang :: forall i o. Monoidoid i o => [Lang i o] -> [EpicOrOp i]
-  -- ^ the real work is in _scanLang; the rest of this is (un)wrapping
-scanLang bs = toPartitions test epicLangToEpicOrOp (map toEpicOrOp) bs
-  where test (LangTerm _) = True
-        test _ = False
-        epicLangToEpicOrOp :: [Lang i o] -> [EpicOrOp i]
-        epicLangToEpicOrOp = map (EpicNotOp . EpicWrap . timedToEpic)
-                             . _scanAccumEpicLang . map unwrapAccumEpicLang
-  -- the next two partial funcs cover all Lang constructors
-        unwrapAccumEpicLang :: Lang i o -> AccumEpicLang o
-        unwrapAccumEpicLang (LangTerm x) = x
-        toEpicOrOp          :: Lang i o -> EpicOrOp i
-        toEpicOrOp (LangUnOp x)  = UnaryOp (UnaryWrap x)
-        toEpicOrOp (LangBinOp x) = BinaryOp (BinaryWrap x)
-        toEpicOrOp LangLeftBracket  = LeftBracket
-        toEpicOrOp LangRightBracket = RightBracket
+  where test (LangEpic _) = True
+        test (LangNonEpic _) = False
+        unwrapEpic (LangEpic x) = x
+        unwrapNonEpic (LangNonEpic x) = x
 
 _scanAccumEpicLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
 _scanAccumEpicLang bs = map (uncurry Timed) $
