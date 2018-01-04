@@ -135,10 +135,10 @@ testCmdToAccumEpicLang = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ Cmd2sDur dur
-                               , Cmd2sPersist soundMap
-                               , Cmd2sPersist degMap
-                               , Cmd2sOnce speedMap ]
+      parseBitSet = S.fromList [ Cmd2sEpicDur dur
+                               , Cmd2sEpicPersist soundMap
+                               , Cmd2sEpicPersist degMap
+                               , Cmd2sEpicOnce speedMap ]
       seqBit = AccumEpicLang
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet

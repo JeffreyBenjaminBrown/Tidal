@@ -18,7 +18,7 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
--- | = Cmds: the thing a user types, in the old (1-stage) parse strategy
+-- | == The 1-stage parse procedure
 
 -- | A Cmd from which a (melodic) sequence is generated.
 -- Some commands only apply once, to the current block.
@@ -38,17 +38,28 @@ data CmdBlock = CmdBlock {
   , cmdBlockPersistMap :: ParamMap
   } deriving (Show, Eq, Ord)
 
-data Cmd2s o = Cmd2sDur     Dur
-             | Cmd2sOnce    o
-             | Cmd2sPersist o
-             | Cmd2sSilent
-             | Cmd2sFast | Cmd2sStack | Cmd2sCat -- operators
-             deriving (Show, Eq, Ord)
 
--- | = type variables `i` and `o` = "inner" and "outer"
+-- | == The 2-stage parse procedure
+-- | Type variables `i` and `o` = "inner" and "outer"
+
+data Cmd2s o = Cmd2sEpic (Cmd2sEpic o)
+             | Cmd2sNonEpic Cmd2sNonEpic
+
+data Cmd2sEpic o = Cmd2sEpicDur     Dur
+                 | Cmd2sEpicOnce    o
+                 | Cmd2sEpicPersist o
+                 | Cmd2sEpicSilent
+                 deriving (Show, Eq, Ord)
+
+data Cmd2sNonEpic = Cmd2sFast | Cmd2sStack | Cmd2sCat -- operators
+                  | Cmd2sLeftBracket | Cmd2sRightBracket
+                  deriving (Show, Eq, Ord)
 
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
+
+data Lang i o = LangEpic (AccumEpicLang o)
+              | LangNonEpic (LangNonEpic i)
 
 -- | An AccumEpicLang in a list relies on earlier ones for meaning.
 data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
@@ -59,13 +70,9 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
-data Lang i o = LangEpic (AccumEpicLang o)
-              | LangNonEpic (LangNonEpic i)
-
 data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
                    | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
                    | LangNonEpicLeftBracket | LangNonEpicRightBracket
-
 
 -- | = EpicOrOp
 newtype EpicWrap a = EpicWrap (Epic a)
