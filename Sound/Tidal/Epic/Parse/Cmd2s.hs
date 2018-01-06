@@ -71,5 +71,5 @@ pLangNonEpicCat = do lexeme $ symbol "cat"
                      return $ LangNonEpicBinOp concatEpic
 pLangNonEpicLeftBracket = do lexeme $ symbol "["
                              return LangNonEpicLeftBracket
-pLangNonEpicRightBracket = do lexeme $ symbol "["
+pLangNonEpicRightBracket = do lexeme $ symbol "]"
                               return LangNonEpicRightBracket
