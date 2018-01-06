@@ -42,18 +42,14 @@ data CmdBlock = CmdBlock {
 -- | == The 2-stage parse procedure
 -- | Type variables `i` and `o` = "inner" and "outer"
 
-data Cmd2s o = Cmd2sEpic (Cmd2sEpic o)
-             | Cmd2sNonEpic Cmd2sNonEpic
+data Cmd2s i o = Cmd2sEpic (Cmd2sEpic o)
+               | Cmd2sNonEpic (LangNonEpic i)
 
 data Cmd2sEpic o = Cmd2sEpicDur     Dur
                  | Cmd2sEpicOnce    o
                  | Cmd2sEpicPersist o
                  | Cmd2sEpicSilent
                  deriving (Show, Eq, Ord)
-
-data Cmd2sNonEpic = Cmd2sFast | Cmd2sStack | Cmd2sCat -- operators
-                  | Cmd2sLeftBracket | Cmd2sRightBracket
-                  deriving (Show, Eq, Ord)
 
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
@@ -70,6 +66,7 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
+-- >> TODO ? Remove bracket constructors
 data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
                    | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
                    | LangNonEpicLeftBracket | LangNonEpicRightBracket

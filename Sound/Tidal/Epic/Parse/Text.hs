@@ -18,7 +18,7 @@ import Sound.Tidal.Epic.Parse.Util (Parser(..)
 import Sound.Tidal.Epic.Parse.Types
 
 
--- | == parse Cmds 
+-- | == parse Cmd2sEpics
 -- (s)peed, scale (d)egree, dura(t)ion, (g)ain
 -- to play silence, use "_"; to play a sample or synth, use "_name"
 cmd', cmdParamPersist', cmdParamOnce', cmdDuration' :: Parser (Cmd2sEpic ParamMap)
