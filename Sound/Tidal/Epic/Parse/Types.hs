@@ -82,7 +82,7 @@ data EpicOrOp a = EpicNotOp (EpicWrap a)
                 | LeftBracket | RightBracket deriving (Eq, Ord)
 
 
--- | == Instances
+-- | == Classes, Instances
 class Monoidoid inner o | o -> inner where
   mempty' :: o
   mappend' :: o -> o -> o
