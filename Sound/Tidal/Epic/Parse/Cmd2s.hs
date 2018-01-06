@@ -52,6 +52,7 @@ cmd2sEpic = foldl1 (<|>) [cmd2sPersist, cmd2sOnce, cmd2sDur, cmd2sSilence]
 cmd2sPersist = lexeme $ Cmd2sEpicPersist <$> parseSingleton
 cmd2sOnce = lexeme $ Cmd2sEpicOnce <$> (ignore (char '1') >> parseSingleton)
 cmd2sDur = lexeme $ ignore (char 't') >> Cmd2sEpicDur <$> ratio
+  -- >> TODO: accept floats as well as ratios
 cmd2sSilence = lexeme $ const Cmd2sEpicSilent <$> char '_'
 
 

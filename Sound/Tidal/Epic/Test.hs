@@ -13,6 +13,7 @@ import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Abbreviations
 import Sound.Tidal.Epic.CombineEpics
 import Sound.Tidal.Epic.DirtNetwork
+import Sound.Tidal.Epic.Parse.Eq
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Cmd
@@ -24,6 +25,7 @@ import Sound.Tidal.Epic.Parse.Types
 import Sound.Tidal.Epic.Sounds
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Util
+
 
 main = runTestTT $ TestList
   [ TestLabel "testEDur" testEDur
@@ -54,7 +56,20 @@ main = runTestTT $ TestList
   , TestLabel "test_ScanLang" test_ScanLang
   , TestLabel "testScanLang" testScanLang
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
+  , TestLabel "testCmd2s" testCmd2s
   ]
+
+testCmd2s = TestCase $ do
+  let str = "s1.2 1d2 _ t2%3 fast stack cat"
+  assertBool "1" $ parse (many pCmd2s) "" str == Right
+    [ Cmd2sEpic (Cmd2sEpicPersist $ M.singleton speed_p $ VF 1.2)
+    , Cmd2sEpic (Cmd2sEpicOnce $ M.singleton deg_p $ VF 2)
+    , Cmd2sEpic Cmd2sEpicSilent
+    , Cmd2sEpic (Cmd2sEpicDur $ 2%3)
+    , Cmd2sNonEpic (LangNonEpicUnOp $ fast 2)
+    , Cmd2sNonEpic (LangNonEpicBinOp eStack)
+    , Cmd2sNonEpic (LangNonEpicBinOp concatEpic)
+    ]
 
 testScanLang = TestCase $ do
   let (j,n,t,f) = (Just, Nothing,True,False)

@@ -1,6 +1,14 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances
+           , FlexibleContexts
+           , StandaloneDeriving
+#-}
+
+-- These instances are unlawful. If an epic has a period less than or
+-- equal to 10, this will I believe always correctly judge equality.
+-- A similar but harder to state condition applies to operators.
 
 module Sound.Tidal.Epic.Parse.Eq where
+
 
 import Data.Map (Map(..),singleton)
 
@@ -14,6 +22,9 @@ import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Params
 
 
+deriving instance (Eq i, TestEpic i) => Eq (LangNonEpic i)
+deriving instance (Eq o, Eq (LangNonEpic i)) => Eq (Cmd2s i o)
+
 mkTestEpic :: a -> a -> Epic a
 mkTestEpic a b = concatEpic f g where
   f = eStack (loopa 1 a) (loopa 2 b)
@@ -21,6 +32,9 @@ mkTestEpic a b = concatEpic f g where
 
 class TestEpic a where
   testEpic :: Epic a
+
+instance TestEpic Int where testEpic = mkTestEpic 1 2
+instance TestEpic Float where testEpic = mkTestEpic 1 2
 
 instance TestEpic (Map Param Value) where
   testEpic = mkTestEpic (singleton sound_p $ VS "bd")

@@ -45,6 +45,7 @@ data CmdBlock = CmdBlock {
 data Cmd2s i o = Cmd2sEpic (Cmd2sEpic o)
                | Cmd2sNonEpic (LangNonEpic i)
 
+-- TODO : change name to Cmd2sLexeme
 data Cmd2sEpic o = Cmd2sEpicDur     Dur
                  | Cmd2sEpicOnce    o
                  | Cmd2sEpicPersist o
