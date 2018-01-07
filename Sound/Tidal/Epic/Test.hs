@@ -69,15 +69,15 @@ testPLang = TestCase $ do
                  (M.singleton speed_p $ VF 1.2)
                  False )
     , LangEpic ( AccumEpicLang (Just $ 2%3)
-                 M.empty -- erring
-                 (M.singleton speed_p $ VF 1.2)
+                 M.empty
+                 M.empty
                  True )
     ]
 
 testCmd2s = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
   assertBool "1" $ parse pCmd2ss "" str == Right
-    [ Cmd2sEpics [ Cmd2sEpicPersist $ M.singleton speed_p $ VF 1.2
+    [ Cmd2sEpics [ Cmd2sEpicNewPersist $ M.singleton speed_p $ VF 1.2
                  , Cmd2sEpicOnce $ M.singleton deg_p $ VF 2
                  ]
     , Cmd2sNonEpic (LangNonEpicUnOp $ fast 2)
@@ -168,8 +168,8 @@ testCmdToAccumEpicLang = TestCase $ do
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
       parseBitSet = S.fromList [ Cmd2sEpicDur dur
-                               , Cmd2sEpicPersist soundMap
-                               , Cmd2sEpicPersist degMap
+                               , Cmd2sEpicNewPersist soundMap
+                               , Cmd2sEpicNewPersist degMap
                                , Cmd2sEpicOnce speedMap ]
       seqBit = AccumEpicLang
                (Just dur) speedMap (M.union soundMap degMap) False

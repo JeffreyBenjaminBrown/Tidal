@@ -50,14 +50,14 @@ cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
   dur = case S.toList durCmds of (Cmd2sEpicDur t):_ -> Just t
                                  _               -> Nothing
   silent = if S.null silentCmds then False else True
-  once    = foldl1 mappend' $ cmdToPayload <$> S.toList onceCmds
-  persist = foldl1 mappend' $ cmdToPayload <$> S.toList persistCmds
+  once    = foldl mappend' mempty' $ cmdToPayload <$> S.toList onceCmds
+  persist = foldl mappend' mempty' $ cmdToPayload <$> S.toList persistCmds
 
   cmdToPayload :: Cmd2sEpic o -> o
   cmdToPayload  Cmd2sEpicSilent = error "cmdToPayload given silence"
   cmdToPayload (Cmd2sEpicDur _) = error "cmdToPayload given a duration"
   cmdToPayload (Cmd2sEpicOnce m) = m
-  cmdToPayload (Cmd2sEpicPersist m) = m
+  cmdToPayload (Cmd2sEpicNewPersist m) = m
 
 pCmd2ss :: Parser [Cmd2s ParamMap ParamMap]
 pCmd2ss = concat <$> some f where f = pCmd2sCmdEpics
@@ -71,7 +71,7 @@ pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 cmd2sEpic, cmd2sPersist, cmd2sOnce, cmd2sDur ::
   Parser (Cmd2sEpic ParamMap)
 cmd2sEpic = foldl1 (<|>) [cmd2sPersist, cmd2sOnce, cmd2sDur, cmd2sSilence]
-cmd2sPersist = lexeme $ Cmd2sEpicPersist <$> parseSingleton
+cmd2sPersist = lexeme $ Cmd2sEpicNewPersist <$> parseSingleton
 cmd2sOnce = lexeme $ Cmd2sEpicOnce <$> (ignore (char '1') >> parseSingleton)
 cmd2sDur = lexeme $ ignore (char 't') >> Cmd2sEpicDur <$> ratio
   -- >> TODO: accept floats as well as ratios

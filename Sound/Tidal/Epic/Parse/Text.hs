@@ -23,7 +23,7 @@ import Sound.Tidal.Epic.Parse.Types
 -- to play silence, use "_"; to play a sample or synth, use "_name"
 cmd', cmdParamPersist', cmdParamOnce', cmdDuration' :: Parser (Cmd2sEpic ParamMap)
 cmd' = foldl1 (<|>) [cmdParamPersist', cmdParamOnce', cmdDuration', cmdSilence']
-cmdParamPersist' = lexeme $ Cmd2sEpicPersist <$> parseSingleton'
+cmdParamPersist' = lexeme $ Cmd2sEpicNewPersist <$> parseSingleton'
 cmdParamOnce' = lexeme $ Cmd2sEpicOnce <$> (ignore (char '1') >> parseSingleton')
 cmdDuration' = lexeme $ ignore (char 't') >> Cmd2sEpicDur <$> ratio
 cmdSilence' = lexeme $ const Cmd2sEpicSilent <$> char '_'

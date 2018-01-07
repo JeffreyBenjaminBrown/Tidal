@@ -47,10 +47,10 @@ data Cmd2s i o = Cmd2sEpics [Cmd2sEpic o]
 
 -- TODO : change name to Cmd2sLexeme
 data Cmd2sEpic o = Cmd2sEpicDur     Dur
-                 | Cmd2sEpicOnce    o
-                 | Cmd2sEpicPersist o
-                 | Cmd2sEpicSilent
-                 deriving (Show, Eq, Ord)
+  | Cmd2sEpicOnce    o
+  | Cmd2sEpicNewPersist o -- ^ these get merged with persistentCmds from earlier Cmd2sEpics
+  | Cmd2sEpicSilent
+  deriving (Show, Eq, Ord)
 
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
