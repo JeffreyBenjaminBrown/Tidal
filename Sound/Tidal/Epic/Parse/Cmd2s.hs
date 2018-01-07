@@ -8,23 +8,33 @@ import           Text.Megaparsec
 import           Text.Megaparsec.Char
   (satisfy, string, char, space, space1, anyChar, tab, alphaNumChar)
 
+import           Sound.Tidal.Epic.Types.Reimports
+import           Sound.Tidal.Epic.Types
+import           Sound.Tidal.Epic.Parse.Types
+
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
-import           Sound.Tidal.Epic.Types.Reimports
+import           Sound.Tidal.Epic.Parse.EpicOrOp (parseEpicExpr)
 import           Sound.Tidal.Epic.Parse.Cmd (parseSingleton)
 import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
-import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Parse.Util
 
 
-pEpicOrOp :: Parser [EpicOrOp ParamMap]
-pEpicOrOp = scanLang <$> many pLang
+pEpic :: String -> Either String (Epic ParamMap)
+pEpic s = case parse pEpicOrOps "" s of
+  Left e -> Left $ show e
+  Right r -> case parse parseEpicExpr "" r of
+    Left e -> Left "unshowable Epic ParamMap parse error"
+    Right r -> Right r
 
-pLang :: Parser (Lang ParamMap ParamMap)
-pLang = pCmd2s >>= \c -> return $ case c of
-  Cmd2sEpic list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
-  Cmd2sNonEpic langNonEpic -> LangNonEpic langNonEpic
+pEpicOrOps :: Parser [EpicOrOp ParamMap]
+pEpicOrOps = scanLang <$> pLang
 
+pLang :: Parser [Lang ParamMap ParamMap]
+pLang = map f <$> pCmd2ss where
+  f c = case c of
+    Cmd2sEpics list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
+    Cmd2sNonEpic langNonEpic -> LangNonEpic langNonEpic
 
 cmdToAccumEpicLang :: forall i o. Monoidoid i o =>
   S.Set (Cmd2sEpic o) -> AccumEpicLang o
@@ -49,10 +59,12 @@ cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
   cmdToPayload (Cmd2sEpicOnce m) = m
   cmdToPayload (Cmd2sEpicPersist m) = m
 
-  
-pCmd2s, pCmd2sCmdEpics, pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
-pCmd2s = pCmd2sCmdEpics <|> pCmd2sCmdNonEpic
-pCmd2sCmdEpics = Cmd2sEpic <$> some cmd2sEpic
+pCmd2ss :: Parser [Cmd2s ParamMap ParamMap]
+pCmd2ss = concat <$> some f where f = pCmd2sCmdEpics
+                                      <|> (:[]) <$> pCmd2sCmdNonEpic
+pCmd2sCmdEpics :: Parser [Cmd2s ParamMap ParamMap]
+pCmd2sCmdEpics = sepBy1 (Cmd2sEpics <$> some cmd2sEpic) (string ",,")
+pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
 pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 
 
