@@ -20,17 +20,17 @@ import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
 import           Sound.Tidal.Epic.Parse.Util
 
 
-pEpic :: String -> Either String (Epic ParamMap)
+pEpic :: String -> Either String (Epic ParamMap) -- todo: test
 pEpic s = case parse pEpicOrOps "" s of
   Left e -> Left $ show e
   Right r -> case parse parseEpicExpr "" r of
     Left e -> Left "unshowable Epic ParamMap parse error"
     Right r -> Right r
 
-pEpicOrOps :: Parser [EpicOrOp ParamMap]
+pEpicOrOps :: Parser [EpicOrOp ParamMap] -- todo: test
 pEpicOrOps = scanLang <$> pLang
 
-pLang :: Parser [Lang ParamMap ParamMap]
+pLang :: Parser [Lang ParamMap ParamMap] -- todo: test
 pLang = map f <$> pCmd2ss where
   f c = case c of
     Cmd2sEpics list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
