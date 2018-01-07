@@ -12,9 +12,13 @@ import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Parse.Cmd (parseSingleton)
+import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
 import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Parse.Util
 
+
+pEpicOrOp :: Parser [EpicOrOp ParamMap]
+pEpicOrOp = scanLang <$> many pLang
 
 pLang :: Parser (Lang ParamMap ParamMap)
 pLang = pCmd2s >>= \c -> return $ case c of
