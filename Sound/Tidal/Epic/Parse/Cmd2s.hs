@@ -16,6 +16,11 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Parse.Util
 
 
+pLang :: Parser (Lang ParamMap ParamMap)
+pLang = pCmd2s >>= \c -> return $ case c of
+  Cmd2sEpic list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
+  Cmd2sNonEpic langNonEpic -> LangNonEpic langNonEpic
+
 cmdToAccumEpicLang :: forall i o. Monoidoid i o =>
   S.Set (Cmd2sEpic o) -> AccumEpicLang o
 cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
