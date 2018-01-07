@@ -24,6 +24,7 @@ import Sound.Tidal.Epic.Params
 
 deriving instance (Eq i, TestEpic i) => Eq (LangNonEpic i)
 deriving instance (Eq o, Eq (LangNonEpic i)) => Eq (Cmd2s i o)
+deriving instance (Eq i, Eq o, TestEpic i) => Eq (Lang i o)
 
 mkTestEpic :: a -> a -> Epic a
 mkTestEpic a b = concatEpic f g where
