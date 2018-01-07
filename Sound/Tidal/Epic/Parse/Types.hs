@@ -56,7 +56,7 @@ data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
 
 data Lang i o = LangEpic (AccumEpicLang o)
-              | LangNonEpic (LangNonEpic i)
+              | LangNonEpic (LangNonEpic i) deriving Show
 
 -- | An AccumEpicLang in a list relies on earlier ones for meaning.
 data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
@@ -80,10 +80,19 @@ newtype BinaryWrap a = BinaryWrap (Epic a -> Epic a -> Epic a)
 data EpicOrOp a = EpicNotOp (EpicWrap a)
                 | UnaryOp (UnaryWrap a)
                 | BinaryOp (BinaryWrap a)
-                | LeftBracket | RightBracket deriving (Eq, Ord)
+                | LeftBracket | RightBracket deriving (Show, Eq, Ord)
 
 
 -- | == Classes, Instances
+instance Show (EpicWrap a) where show _ = "<EpicWrap>"
+instance Show (UnaryWrap a) where show _ = "<UnaryWrap>"
+instance Show (BinaryWrap a) where show _ = "<BinaryWrap>"
+instance Show (LangNonEpic i) where
+  show (LangNonEpicUnOp _) =  "<LangNonEpicUnOp>"
+  show (LangNonEpicBinOp _) = "<LangNonEpicBinOp>"
+  show LangNonEpicLeftBracket = "["
+  show LangNonEpicRightBracket = "]"
+
 class Monoidoid inner o | o -> inner where
   mempty' :: o
   mappend' :: o -> o -> o
