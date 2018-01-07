@@ -63,7 +63,7 @@ pCmd2ss :: Parser [Cmd2s ParamMap ParamMap]
 pCmd2ss = concat <$> some f where f = pCmd2sCmdEpics
                                       <|> (:[]) <$> pCmd2sCmdNonEpic
 pCmd2sCmdEpics :: Parser [Cmd2s ParamMap ParamMap]
-pCmd2sCmdEpics = sepBy1 (Cmd2sEpics <$> some cmd2sEpic) (string ",,")
+pCmd2sCmdEpics = sepBy1 (Cmd2sEpics <$> some cmd2sEpic) (lexeme $ string ",,")
 pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
 pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 

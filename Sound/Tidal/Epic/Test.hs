@@ -57,7 +57,22 @@ main = runTestTT $ TestList
   , TestLabel "testScanLang" testScanLang
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
   , TestLabel "testCmd2s" testCmd2s
+  , TestLabel "testPLang" testPLang
   ]
+
+testPLang = TestCase $ do
+  return ()
+  let str = "s1.2 1d2 ,, _ t2%3" -- fast stack cat t2%3 "
+  assertBool "1" $ parse pLang "" str == Right
+    [ LangEpic ( AccumEpicLang Nothing
+                 (M.singleton deg_p $ VF 2)
+                 (M.singleton speed_p $ VF 1.2)
+                 False )
+    , LangEpic ( AccumEpicLang (Just $ 2%3)
+                 M.empty -- erring
+                 (M.singleton speed_p $ VF 1.2)
+                 True )
+    ]
 
 testCmd2s = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
