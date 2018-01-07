@@ -42,7 +42,7 @@ data CmdBlock = CmdBlock {
 -- | == The 2-stage parse procedure
 -- | Type variables `i` and `o` = "inner" and "outer"
 
-data Cmd2s i o = Cmd2sEpic (Cmd2sEpic o)
+data Cmd2s i o = Cmd2sEpic [Cmd2sEpic o]
                | Cmd2sNonEpic (LangNonEpic i)
 
 -- TODO : change name to Cmd2sLexeme

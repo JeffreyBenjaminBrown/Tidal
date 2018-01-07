@@ -60,15 +60,17 @@ main = runTestTT $ TestList
   ]
 
 testCmd2s = TestCase $ do
-  let str = "s1.2 1d2 _ t2%3 fast stack cat"
+  let str = "s1.2 1d2 fast stack cat _ t2%3 "
   assertBool "1" $ parse (many pCmd2s) "" str == Right
-    [ Cmd2sEpic (Cmd2sEpicPersist $ M.singleton speed_p $ VF 1.2)
-    , Cmd2sEpic (Cmd2sEpicOnce $ M.singleton deg_p $ VF 2)
-    , Cmd2sEpic Cmd2sEpicSilent
-    , Cmd2sEpic (Cmd2sEpicDur $ 2%3)
+    [ Cmd2sEpic [ Cmd2sEpicPersist $ M.singleton speed_p $ VF 1.2
+                , Cmd2sEpicOnce $ M.singleton deg_p $ VF 2
+                ]
     , Cmd2sNonEpic (LangNonEpicUnOp $ fast 2)
     , Cmd2sNonEpic (LangNonEpicBinOp eStack)
     , Cmd2sNonEpic (LangNonEpicBinOp concatEpic)
+    , Cmd2sEpic [ Cmd2sEpicSilent
+                , Cmd2sEpicDur $ 2%3
+                ]
     ]
 
 testScanLang = TestCase $ do

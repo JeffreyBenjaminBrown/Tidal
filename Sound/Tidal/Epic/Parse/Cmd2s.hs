@@ -39,10 +39,10 @@ cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
   cmdToPayload (Cmd2sEpicOnce m) = m
   cmdToPayload (Cmd2sEpicPersist m) = m
 
-
+  
 pCmd2s, pCmd2sCmdEpic, pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
 pCmd2s = pCmd2sCmdEpic <|> pCmd2sCmdNonEpic
-pCmd2sCmdEpic = Cmd2sEpic <$> cmd2sEpic
+pCmd2sCmdEpic = Cmd2sEpic <$> some cmd2sEpic
 pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 
 
