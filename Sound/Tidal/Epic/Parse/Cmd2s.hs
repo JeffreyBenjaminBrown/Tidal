@@ -25,6 +25,7 @@ pLang = pCmd2s >>= \c -> return $ case c of
   Cmd2sEpic list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
   Cmd2sNonEpic langNonEpic -> LangNonEpic langNonEpic
 
+
 cmdToAccumEpicLang :: forall i o. Monoidoid i o =>
   S.Set (Cmd2sEpic o) -> AccumEpicLang o
 cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
@@ -49,9 +50,9 @@ cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
   cmdToPayload (Cmd2sEpicPersist m) = m
 
   
-pCmd2s, pCmd2sCmdEpic, pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
-pCmd2s = pCmd2sCmdEpic <|> pCmd2sCmdNonEpic
-pCmd2sCmdEpic = Cmd2sEpic <$> some cmd2sEpic
+pCmd2s, pCmd2sCmdEpics, pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
+pCmd2s = pCmd2sCmdEpics <|> pCmd2sCmdNonEpic
+pCmd2sCmdEpics = Cmd2sEpic <$> some cmd2sEpic
 pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 
 
