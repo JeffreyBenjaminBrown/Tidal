@@ -62,16 +62,17 @@ main = runTestTT $ TestList
 
 testPLang = TestCase $ do
   return ()
-  let str = "s1.2 1d2 ,, _ t2%3" -- fast stack cat t2%3 "
+  let str = "s1.2 1d2 ,, _ t2%3 fast stack cat t2%3"
   assertBool "1" $ parse pLang "" str == Right
     [ LangEpic ( AccumEpicLang Nothing
                  (M.singleton deg_p $ VF 2)
                  (M.singleton speed_p $ VF 1.2)
                  False )
-    , LangEpic ( AccumEpicLang (Just $ 2%3)
-                 M.empty
-                 M.empty
-                 True )
+    , LangEpic ( AccumEpicLang (Just $ 2%3) M.empty M.empty True )
+    , LangNonEpic $ LangNonEpicUnOp $ fast 2
+    , LangNonEpic $ LangNonEpicBinOp eStack
+    , LangNonEpic $ LangNonEpicBinOp concatEpic
+    , LangEpic ( AccumEpicLang (Just $ 2%3) M.empty M.empty False )
     ]
 
 testCmd2s = TestCase $ do
