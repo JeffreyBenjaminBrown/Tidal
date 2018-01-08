@@ -18,7 +18,7 @@ import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Cmd2s
 import Sound.Tidal.Epic.Scales
-import Sound.Tidal.Epic.Parse.SeqCommand
+--import Sound.Tidal.Epic.Parse.SeqCommand
 import Sound.Tidal.Epic.Parse.SeqCommand2Stage
 import Sound.Tidal.Epic.Parse.Types
 import Sound.Tidal.Epic.Sounds
@@ -45,11 +45,9 @@ main = runTestTT $ TestList
   , TestLabel "testPartitionAndGroupEvents" testPartitionAndGroupEvents
   , TestLabel "testOverlap" testOverlap
   , TestLabel "tDoubleTheDurationZeroBoundaries" tDoubleTheDurationZeroBoundaries
-  , TestLabel "testToCmdBlock" testToCmdBlock
-  , TestLabel "testBlocksToEpic" testBlocksToEpic
   , TestLabel "testSyFreq" testSyFreq
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
-  , TestLabel "test_ScanLang" test_ScanLang
+  , TestLabel "testScanAccumEpicLang" testScanAccumEpicLang
   , TestLabel "testScanLang" testScanLang
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
   , TestLabel "testCmd2s" testCmd2s
@@ -137,7 +135,7 @@ testScanLang = TestCase $ do
         = scanLang loopa cdm
   assertBool "1" $ eArc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
 
-test_ScanLang = TestCase $ do
+testScanAccumEpicLang = TestCase $ do
   let (cdm, j,n,t,f) = (AccumEpicLang, Just, Nothing, True, False)
       cdms1 = [cdm n n n f] :: [AccumEpicLang (Maybe Int)] 
   assertBool "1" $ _scanAccumEpicLang cdms1 == map (uncurry Timed) [(1,n)]
@@ -174,18 +172,6 @@ testSyFreq = TestCase $ do
   let f = _syFreq $     M.fromList [(speed_p,VF 3),(sound_p,VS "s")]
   assertBool "1" $ f == M.fromList [(qf_p,VF 3),   (sound_p,VS "s")]
 
-testBlocksToEpic = TestCase $ do
-  let aCmdBlockList = [ CmdBlock (Just 1) False
-                        (M.fromList [(sound_p,VS "bow"), (speed_p,VF 2)])
-                        (M.fromList [(deg_p,VF 3.5)])
-                      , CmdBlock (Just 2) False (M.singleton speed_p $ VF 4)
-                        M.empty
-                      ] :: [CmdBlock]
-  assertBool "1" $ eArc (blocksToEpic0 aCmdBlockList) (0,3) ==
-    [ ((0 % 1,0 % 1),M.fromList [(sound_p,VS "bow"),(deg_p,VF 3.5)
-                                ,(speed_p,VF 2.0)])
-    , ((1 % 1,1 % 1),M.fromList [(sound_p,VS "bow"),(speed_p,VF 4.0)]) ]
-
 testCmdToAccumEpicLang = TestCase $ do
   let dur = 1
       soundMap = M.singleton sound_p $ VS "hatc"
@@ -198,18 +184,6 @@ testCmdToAccumEpicLang = TestCase $ do
       seqBit = AccumEpicLang
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet
-
-testToCmdBlock = TestCase $ do
-  let dur = 1
-      soundMap = M.singleton sound_p $ VS "hatc"
-      speedMap = M.singleton speed_p $ VF 2
-      degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ CmdDur dur
-                               , CmdParamPersist soundMap
-                               , CmdParamPersist degMap
-                               , CmdParamOnce speedMap ]
-      seqBit = CmdBlock (Just dur) False (M.union soundMap degMap) speedMap
-  assertBool "1" $ seqBit == toCmdBlock parseBitSet
 
 testMergeEvents = TestCase $ do
   let aEvs = [ ((0 % 1,0 % 1),M.fromList [(speed_p,VF 2)])

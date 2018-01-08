@@ -19,7 +19,6 @@ import Sound.Tidal.Epic.Scales as E
 import Sound.Tidal.Epic.Parse.Eq as E
 import Sound.Tidal.Epic.Parse.SingletonMap as E
 import Sound.Tidal.Epic.Parse.Text as E
-import Sound.Tidal.Epic.Parse.SeqCommand as E
 import Sound.Tidal.Epic.Parse.SeqCommand2Stage as E
 import Sound.Tidal.Epic.Parse.Types as E
 import Sound.Tidal.Epic.Sounds as E

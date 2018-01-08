@@ -18,27 +18,6 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
--- | == The 1-stage parse procedure
-
--- | A Cmd from which a (melodic) sequence is generated.
--- Some commands only apply once, to the current block.
--- Others apply to this one and the succeeding ones, until overridden.
-data Cmd = CmdDur          Dur
-         | CmdParamPersist ParamMap
-         | CmdParamOnce    ParamMap
-         | CmdSilent
-         deriving (Show, Eq, Ord)
-
--- | Cmds in the same CmdBlock are concurrent
-data CmdBlock = CmdBlock {
-  -- PITFALL: these fields are ordered very differently from AccumEpicLang's
-  cmdBlockDur          :: Maybe Dur -- ^ the maps might be empty, too
-  , cmdBlockSilent     :: Bool
-  , cmdBlockOnceMap    :: ParamMap
-  , cmdBlockPersistMap :: ParamMap
-  } deriving (Show, Eq, Ord)
-
-
 -- | == The 2-stage parse procedure
 -- | Type variables `i` and `o` = "inner" and "outer"
 
