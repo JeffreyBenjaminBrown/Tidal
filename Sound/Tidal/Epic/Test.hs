@@ -60,6 +60,7 @@ main = runTestTT $ TestList
   , TestLabel "testPLang" testPLang
   , TestLabel "testPEpicOrOps" testPEpicOrOps
   , TestLabel "testPEpic" testPEpic
+  , TestLabel "testSilence2s" testSilence2s
   ]
 
 testPEpic = TestCase $ do
@@ -81,14 +82,6 @@ testPEpic = TestCase $ do
                                    +- (    loopa 1 (M.union sm dm2)
                                         +| (fast 2 $ loopa 1 $ M.union sm dm3)
                                       ) )
---  let str3 = "[s1.2 ,, t2 d2] stack g1.3 ,, _ ,, g1.4"
---      dm = M.singleton deg_p $ VF 2
---      g13 = M.singleton gain_p $ VF 1.3
---      g14 = M.singleton gain_p $ VF 1.4
---  assertBool "3" $ pEpic str3 ==
---    (    (loopa 1 sm +- loopa 2 dm)
---      +| (loopa 2 g13 +- durSilence 2 +- loopa 2 g14)
---    )
 
 testPEpicOrOps = TestCase $ do
   let str = "s1.2 ,, 1d2 cat 1d3"
@@ -160,6 +153,10 @@ test_ScanLang = TestCase $ do
 
 testSilence = TestCase $ do
   assertBool "1" $ eArc (p0 "_,,s1") (0,2)
+    == [((1,1),M.singleton speed_p $ VF 1)]
+
+testSilence2s = TestCase $ do
+  assertBool "1" $ eArc (pEpic0 "_,,s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
 
 testApplyMetaEpic = TestCase $ do

@@ -67,7 +67,6 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
--- >> TODO ? Remove bracket constructors
 data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
                    | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
                    | LangNonEpicLeftBracket | LangNonEpicRightBracket

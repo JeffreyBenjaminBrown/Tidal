@@ -12,23 +12,31 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 import           Sound.Tidal.Epic.Parse.Types
 
+import           Sound.Tidal.Epic.Abbreviations (loopa, loop0)
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.EpicOrOp (parseEpicExpr)
 import           Sound.Tidal.Epic.Parse.Cmd (parseSingleton)
-import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
+import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (_scanLang)
 import           Sound.Tidal.Epic.Parse.Util
 
 
-pEpic :: String -> Epic ParamMap -- todo: test
-pEpic s = case parse pEpicOrOps "" s of
+_pEpic :: (Time -> ParamMap -> Epic ParamMap) -> String -> Epic ParamMap
+_pEpic loopx s = case parse (_pEpicOrOps loopx) "" s of
   Left e -> error $ show e
   Right r -> case parse parseEpicExpr "" r of
     Left e -> error "unshowable Epic ParamMap parse error"
     Right r -> r
+pEpic, pEpic0 :: String -> Epic ParamMap
+pEpic = _pEpic loopa
+pEpic0 = _pEpic loop0
 
-pEpicOrOps :: Parser [EpicOrOp ParamMap]
-pEpicOrOps = scanLang <$> pLang
+_pEpicOrOps :: (Time -> ParamMap -> Epic ParamMap)
+            -> Parser [EpicOrOp ParamMap]
+_pEpicOrOps loopx = _scanLang loopx <$> pLang
+pEpicOrOps, pEpicOrOps0 :: Parser [EpicOrOp ParamMap]
+pEpicOrOps = _pEpicOrOps loopa
+pEpicOrOps0 = _pEpicOrOps loop0
 
 pLang :: Parser [Lang ParamMap ParamMap]
 pLang = map f <$> pCmd2ss where
