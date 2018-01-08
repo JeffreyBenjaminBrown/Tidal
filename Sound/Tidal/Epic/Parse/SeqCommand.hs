@@ -2,6 +2,7 @@
 
 module Sound.Tidal.Epic.Parse.SeqCommand where
 
+import qualified Data.Set as S
 import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
@@ -54,3 +55,27 @@ __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
      : __scanAccumEpic (nowDur, next) bs
+
+
+cmdToAccumEpic :: forall i o. Monoidoid i o =>
+  S.Set (EpicLexeme o) -> AccumEpic o
+cmdToAccumEpic s = AccumEpic dur once persist silent where
+  isDur, isSilent, isOnce :: EpicLexeme o -> Bool
+  isDur (EpicLexemeDur _)   = True; isDur _    = False
+  isSilent EpicLexemeSilent = True; isSilent _ = False
+  isOnce (EpicLexemeOnce _) = True; isOnce _   = False
+  (durCmds, nonDurCmds)   = S.partition isDur s
+  (silentCmds, paramCmds) = S.partition isSilent nonDurCmds
+  (onceCmds, persistCmds) = S.partition isOnce paramCmds
+
+  dur = case S.toList durCmds of (EpicLexemeDur t):_ -> Just t
+                                 _               -> Nothing
+  silent = if S.null silentCmds then False else True
+  once    = foldl mappend' mempty' $ cmdToPayload <$> S.toList onceCmds
+  persist = foldl mappend' mempty' $ cmdToPayload <$> S.toList persistCmds
+
+  cmdToPayload :: EpicLexeme o -> o
+  cmdToPayload  EpicLexemeSilent = error "cmdToPayload given silence"
+  cmdToPayload (EpicLexemeDur _) = error "cmdToPayload given a duration"
+  cmdToPayload (EpicLexemeOnce m) = m
+  cmdToPayload (EpicLexemeNewPersist m) = m

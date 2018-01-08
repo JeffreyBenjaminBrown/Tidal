@@ -1,7 +1,7 @@
 -- For a demonstration, see EpicOrOp.test.hs, but first search this file
 -- for "EpicOrOp.test.hs" and uncomment the line below it.
 
-module Sound.Tidal.Epic.Parse.EpicOrOp
+module Sound.Tidal.Epic.Parse.Expr
   ( parseEpicExpr
   , EpicOrOp(LeftBracket, RightBracket) -- The other constructors
     -- (EpicNotOp, UnaryOp, BinaryOp) require the non-exported *Wrap types.

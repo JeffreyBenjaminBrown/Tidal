@@ -15,9 +15,9 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Abbreviations (loopa, loop0)
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
-import           Sound.Tidal.Epic.Parse.EpicOrOp (parseEpicExpr)
+import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
 import           Sound.Tidal.Epic.Parse.SingletonMap (pSingleton)
-import           Sound.Tidal.Epic.Parse.SeqCommand (scanLang)
+import           Sound.Tidal.Epic.Parse.SeqCommand (scanLang, cmdToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
 
@@ -40,29 +40,6 @@ pLang = map f <$> pCmds where
   f c = case c of
     CmdEpics list -> LangEpic $ cmdToAccumEpic $ S.fromList list
     CmdNonEpic nonEpic -> LangNonEpic nonEpic
-
-cmdToAccumEpic :: forall i o. Monoidoid i o =>
-  S.Set (EpicLexeme o) -> AccumEpic o
-cmdToAccumEpic s = AccumEpic dur once persist silent where
-  isDur, isSilent, isOnce :: EpicLexeme o -> Bool
-  isDur (EpicLexemeDur _)   = True; isDur _    = False
-  isSilent EpicLexemeSilent = True; isSilent _ = False
-  isOnce (EpicLexemeOnce _) = True; isOnce _   = False
-  (durCmds, nonDurCmds)   = S.partition isDur s
-  (silentCmds, paramCmds) = S.partition isSilent nonDurCmds
-  (onceCmds, persistCmds) = S.partition isOnce paramCmds
-
-  dur = case S.toList durCmds of (EpicLexemeDur t):_ -> Just t
-                                 _               -> Nothing
-  silent = if S.null silentCmds then False else True
-  once    = foldl mappend' mempty' $ cmdToPayload <$> S.toList onceCmds
-  persist = foldl mappend' mempty' $ cmdToPayload <$> S.toList persistCmds
-
-  cmdToPayload :: EpicLexeme o -> o
-  cmdToPayload  EpicLexemeSilent = error "cmdToPayload given silence"
-  cmdToPayload (EpicLexemeDur _) = error "cmdToPayload given a duration"
-  cmdToPayload (EpicLexemeOnce m) = m
-  cmdToPayload (EpicLexemeNewPersist m) = m
 
 pCmds :: Parser [Cmd ParamMap ParamMap]
 pCmds = concat <$> some f where f = pCmdEpics

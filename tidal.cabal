@@ -32,7 +32,7 @@ library
                        Sound.Tidal.Epic.Instances
                        Sound.Tidal.Epic.Params
                        Sound.Tidal.Epic.Parse.Cmd
-                       Sound.Tidal.Epic.Parse.EpicOrOp
+                       Sound.Tidal.Epic.Parse.Expr
                        Sound.Tidal.Epic.Parse.Eq
                        Sound.Tidal.Epic.Parse.File
                        Sound.Tidal.Epic.Parse.SeqCommand
