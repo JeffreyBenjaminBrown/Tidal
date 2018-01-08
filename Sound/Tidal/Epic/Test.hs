@@ -58,10 +58,28 @@ main = runTestTT $ TestList
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
   , TestLabel "testCmd2s" testCmd2s
   , TestLabel "testPLang" testPLang
+  , TestLabel "testPEpicOrOps" testPEpicOrOps
   ]
 
+testPEpicOrOps = TestCase $ do
+  let str = "s1.2 ,, 1d2 cat 1d3"
+      sm = M.singleton speed_p $ VF 1.2
+      dm2 = M.singleton deg_p $ VF 2
+      dm3 = M.singleton deg_p $ VF 3
+      epic = EpicNotOp . EpicWrap
+      -- The Eq instances for EpicWrap, UnaryWrap, BinaryWrap always fail.
+      -- Therefore I instead Eq-test those wrappers' contents.
+      Right [ EpicNotOp (EpicWrap e1)
+            , EpicNotOp (EpicWrap e2)
+            , BinaryOp (BinaryWrap o1)
+            , EpicNotOp (EpicWrap e3)
+            ] = parse pEpicOrOps "" str
+  assertBool "e1" $ e1 == loopa 1 sm
+  assertBool "e2" $ e2 == loopa 1 (M.union sm dm2)
+  assertBool "o1" $ o1 == concatEpic
+  assertBool "e3" $ e3 == loopa 1 (M.union sm dm3)
+
 testPLang = TestCase $ do
-  return ()
   let str = "s1.2 1d2 ,, _ t2%3 fast stack cat t2%3"
   assertBool "1" $ parse pLang "" str == Right
     [ LangEpic ( AccumEpicLang Nothing

@@ -30,7 +30,7 @@ pEpic s = case parse pEpicOrOps "" s of
 pEpicOrOps :: Parser [EpicOrOp ParamMap] -- todo: test
 pEpicOrOps = scanLang <$> pLang
 
-pLang :: Parser [Lang ParamMap ParamMap] -- todo: test
+pLang :: Parser [Lang ParamMap ParamMap]
 pLang = map f <$> pCmd2ss where
   f c = case c of
     Cmd2sEpics list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
