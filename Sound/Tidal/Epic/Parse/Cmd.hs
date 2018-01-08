@@ -38,51 +38,51 @@ pEpicOrOps loopx = scanLang loopx <$> pLang
 pLang :: Parser [Lang ParamMap ParamMap]
 pLang = map f <$> pCmds where
   f c = case c of
-    CmdEpics list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
+    EpicLexemes list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
     CmdNonEpic langNonEpic -> LangNonEpic langNonEpic
 
 cmdToAccumEpicLang :: forall i o. Monoidoid i o =>
-  S.Set (CmdEpic o) -> AccumEpicLang o
+  S.Set (EpicLexeme o) -> AccumEpicLang o
 cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
-  isDur, isSilent, isOnce :: CmdEpic o -> Bool
-  isDur (CmdEpicDur _)   = True; isDur _    = False
-  isSilent CmdEpicSilent = True; isSilent _ = False
-  isOnce (CmdEpicOnce _) = True; isOnce _   = False
+  isDur, isSilent, isOnce :: EpicLexeme o -> Bool
+  isDur (EpicLexemeDur _)   = True; isDur _    = False
+  isSilent EpicLexemeSilent = True; isSilent _ = False
+  isOnce (EpicLexemeOnce _) = True; isOnce _   = False
   (durCmds, nonDurCmds)   = S.partition isDur s
   (silentCmds, paramCmds) = S.partition isSilent nonDurCmds
   (onceCmds, persistCmds) = S.partition isOnce paramCmds
 
-  dur = case S.toList durCmds of (CmdEpicDur t):_ -> Just t
+  dur = case S.toList durCmds of (EpicLexemeDur t):_ -> Just t
                                  _               -> Nothing
   silent = if S.null silentCmds then False else True
   once    = foldl mappend' mempty' $ cmdToPayload <$> S.toList onceCmds
   persist = foldl mappend' mempty' $ cmdToPayload <$> S.toList persistCmds
 
-  cmdToPayload :: CmdEpic o -> o
-  cmdToPayload  CmdEpicSilent = error "cmdToPayload given silence"
-  cmdToPayload (CmdEpicDur _) = error "cmdToPayload given a duration"
-  cmdToPayload (CmdEpicOnce m) = m
-  cmdToPayload (CmdEpicNewPersist m) = m
+  cmdToPayload :: EpicLexeme o -> o
+  cmdToPayload  EpicLexemeSilent = error "cmdToPayload given silence"
+  cmdToPayload (EpicLexemeDur _) = error "cmdToPayload given a duration"
+  cmdToPayload (EpicLexemeOnce m) = m
+  cmdToPayload (EpicLexemeNewPersist m) = m
 
 pCmds :: Parser [Cmd ParamMap ParamMap]
-pCmds = concat <$> some f where f = pCmdCmdEpics
+pCmds = concat <$> some f where f = pEpicLexemes
                                       <|> (:[]) <$> pCmdCmdNonEpic
-pCmdCmdEpics :: Parser [Cmd ParamMap ParamMap]
-pCmdCmdEpics = sepBy1 (CmdEpics <$> some cmdEpic) (lexeme $ string ",,")
+pEpicLexemes :: Parser [Cmd ParamMap ParamMap]
+pEpicLexemes = sepBy1 (EpicLexemes <$> some epicLexeme) (lexeme $ string ",,")
   -- TODO ? ',,' cannot yet be used like other binary operators;
   -- if one of its arguments is bracketed, it fails
 pCmdCmdNonEpic :: Parser (Cmd ParamMap ParamMap)
 pCmdCmdNonEpic = CmdNonEpic <$> pLangNonEpic
 
 
-cmdEpic, cmdPersist, cmdOnce, cmdDur ::
-  Parser (CmdEpic ParamMap)
-cmdEpic = foldl1 (<|>) [cmdPersist, cmdOnce, cmdDur, cmdSilence]
-cmdPersist = lexeme $ CmdEpicNewPersist <$> pSingleton
-cmdOnce = lexeme $ CmdEpicOnce <$> (ignore (char '1') >> pSingleton)
-cmdDur = lexeme $ ignore (char 't') >> CmdEpicDur <$> ratio
+epicLexeme, epicLexemePersist, epicLexemeOnce, epicLexemeDur ::
+  Parser (EpicLexeme ParamMap)
+epicLexeme = foldl1 (<|>) [epicLexemePersist, epicLexemeOnce, epicLexemeDur, cmdSilence]
+epicLexemePersist = lexeme $ EpicLexemeNewPersist <$> pSingleton
+epicLexemeOnce = lexeme $ EpicLexemeOnce <$> (ignore (char '1') >> pSingleton)
+epicLexemeDur = lexeme $ ignore (char 't') >> EpicLexemeDur <$> ratio
   -- >> TODO: accept floats as well as ratios
-cmdSilence = lexeme $ const CmdEpicSilent <$> char '_'
+cmdSilence = lexeme $ const EpicLexemeSilent <$> char '_'
 
 
 pLangNonEpic, pLangNonEpicFast, pLangNonEpicStack, pLangNonEpicCat,

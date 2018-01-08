@@ -20,14 +20,14 @@ import           Sound.Tidal.Epic.Types
 
 -- | Type variables `i` and `o` = "inner" and "outer"
 
-data Cmd i o = CmdEpics [CmdEpic o]
+data Cmd i o = EpicLexemes [EpicLexeme o]
                | CmdNonEpic (LangNonEpic i)
 
--- TODO : change name to CmdLexeme
-data CmdEpic o = CmdEpicDur     Dur
-  | CmdEpicOnce    o
-  | CmdEpicNewPersist o -- ^ these get merged with persistentCmds from earlier CmdEpics
-  | CmdEpicSilent
+-- TODO : change name to EpicLexeme
+data EpicLexeme o = EpicLexemeDur     Dur
+  | EpicLexemeOnce    o
+  | EpicLexemeNewPersist o -- ^ these get merged with persistentCmds from earlier EpicLexemes
+  | EpicLexemeSilent
   deriving (Show, Eq, Ord)
 
 data Timed o = Timed { timedDur :: Dur

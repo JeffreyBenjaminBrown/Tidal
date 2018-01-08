@@ -113,14 +113,14 @@ testPLang = TestCase $ do
 testCmd = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
   assertBool "1" $ parse pCmds "" str == Right
-    [ CmdEpics [ CmdEpicNewPersist $ M.singleton speed_p $ VF 1.2
-                 , CmdEpicOnce $ M.singleton deg_p $ VF 2
+    [ EpicLexemes [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
+                 , EpicLexemeOnce $ M.singleton deg_p $ VF 2
                  ]
     , CmdNonEpic (LangNonEpicUnOp $ fast 2)
     , CmdNonEpic (LangNonEpicBinOp eStack)
     , CmdNonEpic (LangNonEpicBinOp concatEpic)
-    , CmdEpics [ CmdEpicSilent
-                 , CmdEpicDur $ 2%3
+    , EpicLexemes [ EpicLexemeSilent
+                 , EpicLexemeDur $ 2%3
                  ]
     ]
 
@@ -176,10 +176,10 @@ testCmdToAccumEpicLang = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ CmdEpicDur dur
-                               , CmdEpicNewPersist soundMap
-                               , CmdEpicNewPersist degMap
-                               , CmdEpicOnce speedMap ]
+      parseBitSet = S.fromList [ EpicLexemeDur dur
+                               , EpicLexemeNewPersist soundMap
+                               , EpicLexemeNewPersist degMap
+                               , EpicLexemeOnce speedMap ]
       seqBit = AccumEpicLang
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet
