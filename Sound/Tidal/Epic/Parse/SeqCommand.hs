@@ -11,8 +11,6 @@ import           Sound.Tidal.Epic.Transform (durSilence)
 import           Sound.Tidal.Epic.Util (toPartitions)
 
 
--- | todo ? ask ? ugly: timedToEpic and timedToEpic0 differ by one character
--- A tree of calling functions bifurcates from this distinction.
 timedToEpic :: forall i o. Monoidoid i o =>
   (Time -> i -> Epic i) -> Timed o -> Epic i
 timedToEpic loopx timedo = let payload = timedPayload timedo

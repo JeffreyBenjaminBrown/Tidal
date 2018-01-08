@@ -18,23 +18,29 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
--- | Type variables `i` and `o` = "inner" and "outer"
 
-data Cmd i o = EpicLexemes [EpicLexeme o]
-               | CmdNonEpic (LangNonEpic i)
-
--- TODO : change name to EpicLexeme
-data EpicLexeme o = EpicLexemeDur     Dur
-  | EpicLexemeOnce    o
-  | EpicLexemeNewPersist o -- ^ these get merged with persistentCmds from earlier EpicLexemes
-  | EpicLexemeSilent
-  deriving (Show, Eq, Ord)
+-- Type variables `i` and `o` = "inner" and "outer"
 
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
 
-data Lang i o = LangEpic (AccumEpicLang o)
-              | LangNonEpic (LangNonEpic i) deriving Show
+-- | = Parsing starts with these
+data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
+                   | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
+                   | LangNonEpicLeftBracket | LangNonEpicRightBracket
+
+data EpicLexeme o = EpicLexemeDur     Dur
+                  | EpicLexemeOnce    o
+                  | EpicLexemeNewPersist o -- ^ these get merged with
+                           -- persistentCmds from earlier EpicLexemes
+                  | EpicLexemeSilent
+                  deriving (Show, Eq, Ord)
+
+data Cmd i o = EpicLexemes [EpicLexeme o]
+             | CmdNonEpic (LangNonEpic i)
+
+
+-- | = parsing gets to these after the EpicLexemes are accumulated
 
 -- | An AccumEpicLang in a list relies on earlier ones for meaning.
 data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
@@ -45,9 +51,8 @@ data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
-data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
-                   | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
-                   | LangNonEpicLeftBracket | LangNonEpicRightBracket
+data Lang i o = LangEpic (AccumEpicLang o)
+              | LangNonEpic (LangNonEpic i) deriving Show
 
 -- | = EpicOrOp
 newtype EpicWrap a = EpicWrap (Epic a)
