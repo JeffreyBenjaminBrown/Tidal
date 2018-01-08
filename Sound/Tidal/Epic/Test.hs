@@ -95,7 +95,7 @@ testPEpicOrOps = TestCase $ do
             , EpicNotOp (EpicWrap e2)
             , BinaryOp (BinaryWrap o1)
             , EpicNotOp (EpicWrap e3)
-            ] = parse pEpicOrOps "" str
+            ] = parse (pEpicOrOps loopa) "" str
   assertBool "e1" $ e1 == loopa 1 sm
   assertBool "e2" $ e2 == loopa 1 (M.union sm dm2)
   assertBool "o1" $ o1 == concatEpic
@@ -136,7 +136,7 @@ testScanLang = TestCase $ do
             , LangNonEpic LangNonEpicLeftBracket
             ] -- scanLang doesn't match brackets, just converts them
       [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
-        = scanLang cdm
+        = scanLang loopa cdm
   assertBool "1" $ eArc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
 
 test_ScanLang = TestCase $ do
