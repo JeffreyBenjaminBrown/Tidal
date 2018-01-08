@@ -16,7 +16,7 @@ import           Sound.Tidal.Epic.Abbreviations (loopa, loop0)
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.EpicOrOp (parseEpicExpr)
-import           Sound.Tidal.Epic.Parse.Cmd (parseSingleton)
+import           Sound.Tidal.Epic.Parse.SingletonMap (pSingleton)
 import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
 import           Sound.Tidal.Epic.Parse.Util
 
@@ -78,8 +78,8 @@ pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 cmd2sEpic, cmd2sPersist, cmd2sOnce, cmd2sDur ::
   Parser (Cmd2sEpic ParamMap)
 cmd2sEpic = foldl1 (<|>) [cmd2sPersist, cmd2sOnce, cmd2sDur, cmd2sSilence]
-cmd2sPersist = lexeme $ Cmd2sEpicNewPersist <$> parseSingleton
-cmd2sOnce = lexeme $ Cmd2sEpicOnce <$> (ignore (char '1') >> parseSingleton)
+cmd2sPersist = lexeme $ Cmd2sEpicNewPersist <$> pSingleton
+cmd2sOnce = lexeme $ Cmd2sEpicOnce <$> (ignore (char '1') >> pSingleton)
 cmd2sDur = lexeme $ ignore (char 't') >> Cmd2sEpicDur <$> ratio
   -- >> TODO: accept floats as well as ratios
 cmd2sSilence = lexeme $ const Cmd2sEpicSilent <$> char '_'

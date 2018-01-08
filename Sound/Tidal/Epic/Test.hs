@@ -16,7 +16,6 @@ import Sound.Tidal.Epic.DirtNetwork
 import Sound.Tidal.Epic.Parse.Eq
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
-import Sound.Tidal.Epic.Parse.Cmd
 import Sound.Tidal.Epic.Parse.Cmd2s
 import Sound.Tidal.Epic.Scales
 import Sound.Tidal.Epic.Parse.SeqCommand
@@ -48,11 +47,8 @@ main = runTestTT $ TestList
   , TestLabel "tDoubleTheDurationZeroBoundaries" tDoubleTheDurationZeroBoundaries
   , TestLabel "testToCmdBlock" testToCmdBlock
   , TestLabel "testBlocksToEpic" testBlocksToEpic
-  , TestLabel "testParseCmd" testParseCmd
-  , TestLabel "testParamMapSeq" testParamMapSeq
   , TestLabel "testSyFreq" testSyFreq
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
-  , TestLabel "testSilence" testSilence
   , TestLabel "test_ScanLang" test_ScanLang
   , TestLabel "testScanLang" testScanLang
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
@@ -66,6 +62,7 @@ main = runTestTT $ TestList
 testPEpic = TestCase $ do
   let str = "s1.2"
       str2 = "[s1.2]"
+      str2p5 = "[s1.2 1d2]"
       str3 = "s1.2 ,, d2"
       str4 = "s1.2 ,, d2 stack d3"
       str5 = "s1.2 cat [d2 stack fast d3]"
@@ -74,6 +71,7 @@ testPEpic = TestCase $ do
       dm3 = M.singleton deg_p $ VF 3
   assertBool "1" $ pEpic str == loopa 1 sm
   assertBool "2" $ pEpic str2 == loopa 1 sm
+  assertBool "2p5" $ pEpic str2p5 == loopa 1 (M.union sm dm2)
   assertBool "3" $ pEpic str3 == (loopa 1 sm +- loopa 1 (M.union sm dm2))
   assertBool "4" $ pEpic str4 == (    (loopa 1 sm +- loopa 1 (M.union sm dm2))
                                    +| loopa 1  (M.union sm dm3)
@@ -151,10 +149,6 @@ test_ScanLang = TestCase $ do
   assertBool "2" $ _scanAccumEpicLang cdms2 == map (uncurry Timed)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
-testSilence = TestCase $ do
-  assertBool "1" $ eArc (p0 "_,,s1") (0,2)
-    == [((1,1),M.singleton speed_p $ VF 1)]
-
 testSilence2s = TestCase $ do
   assertBool "1" $ eArc (pEpic0 "_,,s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
@@ -179,21 +173,6 @@ testMergeEpics = TestCase $ do
 testSyFreq = TestCase $ do
   let f = _syFreq $     M.fromList [(speed_p,VF 3),(sound_p,VS "s")]
   assertBool "1" $ f == M.fromList [(qf_p,VF 3),   (sound_p,VS "s")]
-
-testParamMapSeq = TestCase $ do
-  let Right x = parse paramMapSeq0 "" "t1 g2 ,, t2 s3"
-  assertBool "1" $ eArc x (0,4) == [
-    ((0 % 1,0 % 1),M.fromList [(gain_p,VF 2.0)])
-    ,((1 % 1,1 % 1),M.fromList [(speed_p,VF 3.0),(gain_p,VF 2.0)])
-    ,((3 % 1,3 % 1),M.fromList [(gain_p,VF 2.0)])]
-
-testParseCmd = TestCase $ do
-  assertBool "1" $ parse cmd "" "t1" == Right (CmdDur 1)
-  assertBool "2" $ parse cmd "" "t1%2" == Right (CmdDur $ 1%2)
-  assertBool "3" $ parse cmd "" "g1.2"
-    == Right (CmdParamPersist $ M.singleton gain_p $ VF 1.2)
-  assertBool "4" $ parse cmd "" "1_hatc"
-    == Right (CmdParamOnce $ M.singleton sound_p $ VS "hatc")
 
 testBlocksToEpic = TestCase $ do
   let aCmdBlockList = [ CmdBlock (Just 1) False

@@ -31,12 +31,12 @@ library
                        Sound.Tidal.Epic.DirtNetwork
                        Sound.Tidal.Epic.Instances
                        Sound.Tidal.Epic.Params
-                       Sound.Tidal.Epic.Parse.Cmd
                        Sound.Tidal.Epic.Parse.EpicOrOp
                        Sound.Tidal.Epic.Parse.Eq
                        Sound.Tidal.Epic.Parse.File
                        Sound.Tidal.Epic.Parse.SeqCommand
                        Sound.Tidal.Epic.Parse.SeqCommand2Stage
+                       Sound.Tidal.Epic.Parse.SingletonMap
                        Sound.Tidal.Epic.Parse.Text
                        Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Utils
