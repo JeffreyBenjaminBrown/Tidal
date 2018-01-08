@@ -59,7 +59,36 @@ main = runTestTT $ TestList
   , TestLabel "testCmd2s" testCmd2s
   , TestLabel "testPLang" testPLang
   , TestLabel "testPEpicOrOps" testPEpicOrOps
+  , TestLabel "testPEpic" testPEpic
   ]
+
+testPEpic = TestCase $ do
+  let str = "s1.2"
+      str2 = "[s1.2]"
+      str3 = "s1.2 ,, d2"
+      str4 = "s1.2 ,, d2 stack d3"
+      str5 = "s1.2 cat [d2 stack fast d3]"
+      sm = M.singleton speed_p $ VF 1.2
+      dm2 = M.singleton deg_p $ VF 2
+      dm3 = M.singleton deg_p $ VF 3
+  assertBool "1" $ pEpic str == loopa 1 sm
+  assertBool "2" $ pEpic str2 == loopa 1 sm
+  assertBool "3" $ pEpic str3 == (loopa 1 sm +- loopa 1 (M.union sm dm2))
+  assertBool "4" $ pEpic str4 == (    (loopa 1 sm +- loopa 1 (M.union sm dm2))
+                                   +| loopa 1  (M.union sm dm3)
+                                 )
+  assertBool "5" $ pEpic str5 == (    loopa 1 sm
+                                   +- (    loopa 1 (M.union sm dm2)
+                                        +| (fast 2 $ loopa 1 $ M.union sm dm3)
+                                      ) )
+--  let str3 = "[s1.2 ,, t2 d2] stack g1.3 ,, _ ,, g1.4"
+--      dm = M.singleton deg_p $ VF 2
+--      g13 = M.singleton gain_p $ VF 1.3
+--      g14 = M.singleton gain_p $ VF 1.4
+--  assertBool "3" $ pEpic str3 ==
+--    (    (loopa 1 sm +- loopa 2 dm)
+--      +| (loopa 2 g13 +- durSilence 2 +- loopa 2 g14)
+--    )
 
 testPEpicOrOps = TestCase $ do
   let str = "s1.2 ,, 1d2 cat 1d3"

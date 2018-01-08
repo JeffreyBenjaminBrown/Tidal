@@ -20,14 +20,14 @@ import           Sound.Tidal.Epic.Parse.SeqCommand2Stage (scanLang)
 import           Sound.Tidal.Epic.Parse.Util
 
 
-pEpic :: String -> Either String (Epic ParamMap) -- todo: test
+pEpic :: String -> Epic ParamMap -- todo: test
 pEpic s = case parse pEpicOrOps "" s of
-  Left e -> Left $ show e
+  Left e -> error $ show e
   Right r -> case parse parseEpicExpr "" r of
-    Left e -> Left "unshowable Epic ParamMap parse error"
-    Right r -> Right r
+    Left e -> error "unshowable Epic ParamMap parse error"
+    Right r -> r
 
-pEpicOrOps :: Parser [EpicOrOp ParamMap] -- todo: test
+pEpicOrOps :: Parser [EpicOrOp ParamMap]
 pEpicOrOps = scanLang <$> pLang
 
 pLang :: Parser [Lang ParamMap ParamMap]
@@ -64,6 +64,8 @@ pCmd2ss = concat <$> some f where f = pCmd2sCmdEpics
                                       <|> (:[]) <$> pCmd2sCmdNonEpic
 pCmd2sCmdEpics :: Parser [Cmd2s ParamMap ParamMap]
 pCmd2sCmdEpics = sepBy1 (Cmd2sEpics <$> some cmd2sEpic) (lexeme $ string ",,")
+  -- TODO ? ',,' cannot yet be used like other binary operators;
+  -- if one of its arguments is bracketed, it fails
 pCmd2sCmdNonEpic :: Parser (Cmd2s ParamMap ParamMap)
 pCmd2sCmdNonEpic = Cmd2sNonEpic <$> pLangNonEpic
 
