@@ -16,10 +16,9 @@ import Sound.Tidal.Epic.DirtNetwork
 import Sound.Tidal.Epic.Parse.Eq
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
-import Sound.Tidal.Epic.Parse.Cmd2s
+import Sound.Tidal.Epic.Parse.Cmd
 import Sound.Tidal.Epic.Scales
---import Sound.Tidal.Epic.Parse.SeqCommand
-import Sound.Tidal.Epic.Parse.SeqCommand2Stage
+import Sound.Tidal.Epic.Parse.SeqCommand
 import Sound.Tidal.Epic.Parse.Types
 import Sound.Tidal.Epic.Sounds
 import Sound.Tidal.Epic.Transform
@@ -50,11 +49,11 @@ main = runTestTT $ TestList
   , TestLabel "testScanAccumEpicLang" testScanAccumEpicLang
   , TestLabel "testScanLang" testScanLang
   , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
-  , TestLabel "testCmd2s" testCmd2s
+  , TestLabel "testCmd" testCmd
   , TestLabel "testPLang" testPLang
   , TestLabel "testPEpicOrOps" testPEpicOrOps
   , TestLabel "testPEpic" testPEpic
-  , TestLabel "testSilence2s" testSilence2s
+  , TestLabel "testSilence" testSilence
   ]
 
 testPEpic = TestCase $ do
@@ -111,17 +110,17 @@ testPLang = TestCase $ do
     , LangEpic ( AccumEpicLang (Just $ 2%3) M.empty M.empty False )
     ]
 
-testCmd2s = TestCase $ do
+testCmd = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
-  assertBool "1" $ parse pCmd2ss "" str == Right
-    [ Cmd2sEpics [ Cmd2sEpicNewPersist $ M.singleton speed_p $ VF 1.2
-                 , Cmd2sEpicOnce $ M.singleton deg_p $ VF 2
+  assertBool "1" $ parse pCmds "" str == Right
+    [ CmdEpics [ CmdEpicNewPersist $ M.singleton speed_p $ VF 1.2
+                 , CmdEpicOnce $ M.singleton deg_p $ VF 2
                  ]
-    , Cmd2sNonEpic (LangNonEpicUnOp $ fast 2)
-    , Cmd2sNonEpic (LangNonEpicBinOp eStack)
-    , Cmd2sNonEpic (LangNonEpicBinOp concatEpic)
-    , Cmd2sEpics [ Cmd2sEpicSilent
-                 , Cmd2sEpicDur $ 2%3
+    , CmdNonEpic (LangNonEpicUnOp $ fast 2)
+    , CmdNonEpic (LangNonEpicBinOp eStack)
+    , CmdNonEpic (LangNonEpicBinOp concatEpic)
+    , CmdEpics [ CmdEpicSilent
+                 , CmdEpicDur $ 2%3
                  ]
     ]
 
@@ -147,7 +146,7 @@ testScanAccumEpicLang = TestCase $ do
   assertBool "2" $ _scanAccumEpicLang cdms2 == map (uncurry Timed)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
-testSilence2s = TestCase $ do
+testSilence = TestCase $ do
   assertBool "1" $ eArc (pEpic0 "_,,s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
 
@@ -177,10 +176,10 @@ testCmdToAccumEpicLang = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ Cmd2sEpicDur dur
-                               , Cmd2sEpicNewPersist soundMap
-                               , Cmd2sEpicNewPersist degMap
-                               , Cmd2sEpicOnce speedMap ]
+      parseBitSet = S.fromList [ CmdEpicDur dur
+                               , CmdEpicNewPersist soundMap
+                               , CmdEpicNewPersist degMap
+                               , CmdEpicOnce speedMap ]
       seqBit = AccumEpicLang
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet

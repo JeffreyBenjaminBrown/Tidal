@@ -18,17 +18,16 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
--- | == The 2-stage parse procedure
 -- | Type variables `i` and `o` = "inner" and "outer"
 
-data Cmd2s i o = Cmd2sEpics [Cmd2sEpic o]
-               | Cmd2sNonEpic (LangNonEpic i)
+data Cmd i o = CmdEpics [CmdEpic o]
+               | CmdNonEpic (LangNonEpic i)
 
--- TODO : change name to Cmd2sLexeme
-data Cmd2sEpic o = Cmd2sEpicDur     Dur
-  | Cmd2sEpicOnce    o
-  | Cmd2sEpicNewPersist o -- ^ these get merged with persistentCmds from earlier Cmd2sEpics
-  | Cmd2sEpicSilent
+-- TODO : change name to CmdLexeme
+data CmdEpic o = CmdEpicDur     Dur
+  | CmdEpicOnce    o
+  | CmdEpicNewPersist o -- ^ these get merged with persistentCmds from earlier CmdEpics
+  | CmdEpicSilent
   deriving (Show, Eq, Ord)
 
 data Timed o = Timed { timedDur :: Dur

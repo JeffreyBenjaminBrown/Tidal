@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Sound.Tidal.Epic.Parse.SeqCommand2Stage where
+module Sound.Tidal.Epic.Parse.SeqCommand where
 
 import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Types.Reimports
