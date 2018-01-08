@@ -3,8 +3,9 @@
            , StandaloneDeriving
 #-}
 
--- These instances are unlawful. If an epic has a period less than or
--- equal to 10, this will I believe always correctly judge equality.
+-- Is, and probably should be, only used in the test suite.
+-- WARNING: These instances are unlawful. If an epic has a period less than
+-- or equal to 10, this will I believe always correctly judge equality.
 -- A similar but harder to state condition applies to operators.
 
 module Sound.Tidal.Epic.Parse.Eq where

@@ -24,7 +24,7 @@ import           Sound.Tidal.Epic.Types
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
 
--- | = Parsing starts with these
+-- | = Cmd: Parsing starts here
 data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
                    | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
                    | LangNonEpicLeftBracket | LangNonEpicRightBracket
@@ -32,29 +32,29 @@ data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
 data EpicLexeme o = EpicLexemeDur     Dur
                   | EpicLexemeOnce    o
                   | EpicLexemeNewPersist o -- ^ these get merged with
-                           -- persistentCmds from earlier EpicLexemes
+                           -- persistentCmds from earlier CmdEpics
                   | EpicLexemeSilent
                   deriving (Show, Eq, Ord)
 
-data Cmd i o = EpicLexemes [EpicLexeme o]
+data Cmd i o = CmdEpics [EpicLexeme o]
              | CmdNonEpic (LangNonEpic i)
 
 
--- | = parsing gets to these after the EpicLexemes are accumulated
+-- | = Lang: parsing reaches this once CmdEpics are accumulated
 
--- | An AccumEpicLang in a list relies on earlier ones for meaning.
-data AccumEpicLang o = AccumEpicLang -- ^ o is usually Map, esp. ParamMap
-  { accumLangDur     :: Maybe Dur
-  , accumLangTemp    :: o -- ^ applies only to the current AccumEpicLang
-  , accumLangPersist :: o -- ^ applies now and carries to the next
-  , accumLangSilent  :: Bool -- ^ except: if True, neither `o` applies now
+-- | An AccumEpic in a list relies on earlier ones for meaning.
+data AccumEpic o = AccumEpic -- ^ o is usually Map, esp. ParamMap
+  { accumEpicDur     :: Maybe Dur
+  , accumEpicTemp    :: o -- ^ applies only to the current AccumEpic
+  , accumEpicPersist :: o -- ^ applies now and carries to the next
+  , accumEpicSilent  :: Bool -- ^ except: if True, neither `o` applies now
                                -- (The persistent `o` still persists.)
   } deriving (Show, Eq, Ord)
 
-data Lang i o = LangEpic (AccumEpicLang o)
+data Lang i o = LangEpic (AccumEpic o)
               | LangNonEpic (LangNonEpic i) deriving Show
 
--- | = EpicOrOp
+-- | = EpicOrOp: the last parsing stage before the resulting Epic
 newtype EpicWrap a = EpicWrap (Epic a)
 newtype UnaryWrap a = UnaryWrap (Epic a -> Epic a)
 newtype BinaryWrap a = BinaryWrap (Epic a -> Epic a -> Epic a)

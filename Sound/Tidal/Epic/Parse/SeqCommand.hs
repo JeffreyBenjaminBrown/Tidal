@@ -18,10 +18,10 @@ timedToEpic loopx timedo = let payload = timedPayload timedo
                            in if null' payload then durSilence dur
                               else loopx dur $ unwrap payload
 
-fromAccumEpicLang :: forall i o. Monoidoid i o =>
-  (Time -> i -> Epic i) -> [AccumEpicLang o] -> [EpicOrOp i]
-fromAccumEpicLang loopx = map (EpicNotOp . EpicWrap . timedToEpic loopx)
-                           . _scanAccumEpicLang
+fromAccumEpic :: forall i o. Monoidoid i o =>
+  (Time -> i -> Epic i) -> [AccumEpic o] -> [EpicOrOp i]
+fromAccumEpic loopx = map (EpicNotOp . EpicWrap . timedToEpic loopx)
+                           . _scanAccumEpic
 
 fromLangNonEpic :: LangNonEpic i -> EpicOrOp i
 fromLangNonEpic (LangNonEpicUnOp x)  = UnaryOp (UnaryWrap x)
@@ -32,7 +32,7 @@ fromLangNonEpic LangNonEpicRightBracket = RightBracket
 scanLang :: forall i o. Monoidoid i o =>
   (Time -> i -> Epic i) -> [Lang i o] -> [EpicOrOp i]
 scanLang loopx bs = toPartitions test
-                            (fromAccumEpicLang loopx . map unwrapEpic)
+                            (fromAccumEpic loopx . map unwrapEpic)
                             (map $ fromLangNonEpic . unwrapNonEpic)
                             bs
   where test (LangEpic _) = True
@@ -40,17 +40,17 @@ scanLang loopx bs = toPartitions test
         unwrapEpic (LangEpic x) = x
         unwrapNonEpic (LangNonEpic x) = x
 
-_scanAccumEpicLang :: Monoidoid i o => [AccumEpicLang o] -> [Timed o]
-_scanAccumEpicLang bs = map (uncurry Timed) $
-  __scanAccumEpicLang (1, mempty') bs
+_scanAccumEpic :: Monoidoid i o => [AccumEpic o] -> [Timed o]
+_scanAccumEpic bs = map (uncurry Timed) $
+  __scanAccumEpic (1, mempty') bs
 
-__scanAccumEpicLang :: Monoidoid i o => (Dur,o) -> [AccumEpicLang o] -> [(Dur,o)]
-__scanAccumEpicLang priorPersistentCmds [] = []
-__scanAccumEpicLang (prevDur, prevMap) (AccumEpicLang mdur temp keep sil : bs) =
+__scanAccumEpic :: Monoidoid i o => (Dur,o) -> [AccumEpic o] -> [(Dur,o)]
+__scanAccumEpic priorPersistentCmds [] = []
+__scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
   let next = mappend' keep prevMap
       now = foldl1 mappend' [temp, keep, prevMap]
       nowDur = maybe prevDur id mdur
       ignoreIfSilent :: forall i o. Monoidoid i o => o -> o
       ignoreIfSilent m = if sil then mempty' else m
   in (nowDur, ignoreIfSilent now)
-     : __scanAccumEpicLang (nowDur, next) bs
+     : __scanAccumEpic (nowDur, next) bs

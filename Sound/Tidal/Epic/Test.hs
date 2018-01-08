@@ -46,9 +46,9 @@ main = runTestTT $ TestList
   , TestLabel "tDoubleTheDurationZeroBoundaries" tDoubleTheDurationZeroBoundaries
   , TestLabel "testSyFreq" testSyFreq
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
-  , TestLabel "testScanAccumEpicLang" testScanAccumEpicLang
+  , TestLabel "testScanAccumEpic" testScanAccumEpic
   , TestLabel "testScanLang" testScanLang
-  , TestLabel "testCmdToAccumEpicLang" testCmdToAccumEpicLang
+  , TestLabel "testCmdToAccumEpic" testCmdToAccumEpic
   , TestLabel "testCmd" testCmd
   , TestLabel "testPLang" testPLang
   , TestLabel "testPEpicOrOps" testPEpicOrOps
@@ -99,34 +99,34 @@ testPEpicOrOps = TestCase $ do
 testPLang = TestCase $ do
   let str = "s1.2 1d2 ,, _ t2%3 fast stack cat t2%3"
   assertBool "1" $ parse pLang "" str == Right
-    [ LangEpic ( AccumEpicLang Nothing
+    [ LangEpic ( AccumEpic Nothing
                  (M.singleton deg_p $ VF 2)
                  (M.singleton speed_p $ VF 1.2)
                  False )
-    , LangEpic ( AccumEpicLang (Just $ 2%3) M.empty M.empty True )
+    , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty True )
     , LangNonEpic $ LangNonEpicUnOp $ fast 2
     , LangNonEpic $ LangNonEpicBinOp eStack
     , LangNonEpic $ LangNonEpicBinOp concatEpic
-    , LangEpic ( AccumEpicLang (Just $ 2%3) M.empty M.empty False )
+    , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty False )
     ]
 
 testCmd = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
   assertBool "1" $ parse pCmds "" str == Right
-    [ EpicLexemes [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
+    [ CmdEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicLexemeOnce $ M.singleton deg_p $ VF 2
                  ]
     , CmdNonEpic (LangNonEpicUnOp $ fast 2)
     , CmdNonEpic (LangNonEpicBinOp eStack)
     , CmdNonEpic (LangNonEpicBinOp concatEpic)
-    , EpicLexemes [ EpicLexemeSilent
+    , CmdEpics [ EpicLexemeSilent
                  , EpicLexemeDur $ 2%3
                  ]
     ]
 
 testScanLang = TestCase $ do
   let (j,n,t,f) = (Just, Nothing,True,False)
-      cdm = [ LangEpic (AccumEpicLang (j 2) n (j 3) f)
+      cdm = [ LangEpic (AccumEpic (j 2) n (j 3) f)
             , LangNonEpic (LangNonEpicUnOp (+1))
             , LangNonEpic LangNonEpicLeftBracket
             ] -- scanLang doesn't match brackets, just converts them
@@ -134,16 +134,16 @@ testScanLang = TestCase $ do
         = scanLang loopa cdm
   assertBool "1" $ eArc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
 
-testScanAccumEpicLang = TestCase $ do
-  let (cdm, j,n,t,f) = (AccumEpicLang, Just, Nothing, True, False)
-      cdms1 = [cdm n n n f] :: [AccumEpicLang (Maybe Int)] 
-  assertBool "1" $ _scanAccumEpicLang cdms1 == map (uncurry Timed) [(1,n)]
+testScanAccumEpic = TestCase $ do
+  let (cdm, j,n,t,f) = (AccumEpic, Just, Nothing, True, False)
+      cdms1 = [cdm n n n f] :: [AccumEpic (Maybe Int)] 
+  assertBool "1" $ _scanAccumEpic cdms1 == map (uncurry Timed) [(1,n)]
   let cdms2 = [ cdm (j 2) n     (j 3) f
               , cdm n     n     n     f
               , cdm (j 1) (j 4) (j 5) f
               , cdm n     n     n     f
               , cdm n     n     n     t]
-  assertBool "2" $ _scanAccumEpicLang cdms2 == map (uncurry Timed)
+  assertBool "2" $ _scanAccumEpic cdms2 == map (uncurry Timed)
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do
@@ -171,7 +171,7 @@ testSyFreq = TestCase $ do
   let f = _syFreq $     M.fromList [(speed_p,VF 3),(sound_p,VS "s")]
   assertBool "1" $ f == M.fromList [(qf_p,VF 3),   (sound_p,VS "s")]
 
-testCmdToAccumEpicLang = TestCase $ do
+testCmdToAccumEpic = TestCase $ do
   let dur = 1
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
@@ -180,9 +180,9 @@ testCmdToAccumEpicLang = TestCase $ do
                                , EpicLexemeNewPersist soundMap
                                , EpicLexemeNewPersist degMap
                                , EpicLexemeOnce speedMap ]
-      seqBit = AccumEpicLang
+      seqBit = AccumEpic
                (Just dur) speedMap (M.union soundMap degMap) False
-  assertBool "1" $ seqBit == cmdToAccumEpicLang parseBitSet
+  assertBool "1" $ seqBit == cmdToAccumEpic parseBitSet
 
 testMergeEvents = TestCase $ do
   let aEvs = [ ((0 % 1,0 % 1),M.fromList [(speed_p,VF 2)])

@@ -38,12 +38,12 @@ pEpicOrOps loopx = scanLang loopx <$> pLang
 pLang :: Parser [Lang ParamMap ParamMap]
 pLang = map f <$> pCmds where
   f c = case c of
-    EpicLexemes list -> LangEpic $ cmdToAccumEpicLang $ S.fromList list
-    CmdNonEpic langNonEpic -> LangNonEpic langNonEpic
+    CmdEpics list -> LangEpic $ cmdToAccumEpic $ S.fromList list
+    CmdNonEpic nonEpic -> LangNonEpic nonEpic
 
-cmdToAccumEpicLang :: forall i o. Monoidoid i o =>
-  S.Set (EpicLexeme o) -> AccumEpicLang o
-cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
+cmdToAccumEpic :: forall i o. Monoidoid i o =>
+  S.Set (EpicLexeme o) -> AccumEpic o
+cmdToAccumEpic s = AccumEpic dur once persist silent where
   isDur, isSilent, isOnce :: EpicLexeme o -> Bool
   isDur (EpicLexemeDur _)   = True; isDur _    = False
   isSilent EpicLexemeSilent = True; isSilent _ = False
@@ -65,10 +65,10 @@ cmdToAccumEpicLang s = AccumEpicLang dur once persist silent where
   cmdToPayload (EpicLexemeNewPersist m) = m
 
 pCmds :: Parser [Cmd ParamMap ParamMap]
-pCmds = concat <$> some f where f = pEpicLexemes
+pCmds = concat <$> some f where f = pCmdEpics
                                       <|> (:[]) <$> pCmdCmdNonEpic
-pEpicLexemes :: Parser [Cmd ParamMap ParamMap]
-pEpicLexemes = sepBy1 (EpicLexemes <$> some epicLexeme) (lexeme $ string ",,")
+pCmdEpics :: Parser [Cmd ParamMap ParamMap]
+pCmdEpics = sepBy1 (CmdEpics <$> some epicLexeme) (lexeme $ string ",,")
   -- TODO ? ',,' cannot yet be used like other binary operators;
   -- if one of its arguments is bracketed, it fails
 pCmdCmdNonEpic :: Parser (Cmd ParamMap ParamMap)
