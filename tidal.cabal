@@ -36,7 +36,7 @@ library
                        Sound.Tidal.Epic.Parse.Eq
                        Sound.Tidal.Epic.Parse.Transform
                        Sound.Tidal.Epic.Parse.Scale
-                       Sound.Tidal.Epic.Parse.SingletonMap
+                       Sound.Tidal.Epic.Parse.ParamMap
                        Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Utils
                        Sound.Tidal.Epic.ReadHsAsGhci

@@ -1,7 +1,7 @@
 -- Pitfall: With OverloadedStrings, `parse` needs a type signature
 -- to specify that the last argument is a String.
 
-module Sound.Tidal.Epic.Parse.SingletonMap (pSingleton) where
+module Sound.Tidal.Epic.Parse.ParamMap (epicLexeme) where
 
 import           Control.Applicative
 import qualified Data.Map                   as M
@@ -12,9 +12,24 @@ import           Text.Megaparsec.Char (string, char)
 
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
-import Sound.Tidal.Epic.Params
-import Sound.Tidal.Epic.Parse.Util (Parser(..), anyWord, double, ignore)
+import Sound.Tidal.Epic.Parse.Types
 
+import Sound.Tidal.Epic.Params
+import Sound.Tidal.Epic.Parse.Util (
+  Parser(..), anyWord, double, ignore, lexeme, ratio)
+
+
+epicLexeme, epicLexemePersist, epicLexemeOnce ::
+  Parser (EpicLexeme ParamMap)
+epicLexeme = foldl1 (<|>) [epicLexemePersist, epicLexemeOnce, epicLexemeDur, epicLexemeSilence]
+epicLexemePersist = lexeme $ EpicLexemeNewPersist <$> pSingleton
+epicLexemeOnce = lexeme $ EpicLexemeOnce <$> (ignore (char '1') >> pSingleton)
+
+-- >> TODO: make these universal, not just for ParamMaps but scales, etc.
+epicLexemeDur, epicLexemeSilence :: Parser (EpicLexeme a)
+epicLexemeDur = lexeme $ ignore (char 't') >> EpicLexemeDur <$> ratio
+  -- >> todo ? accept floats as well as ratios
+epicLexemeSilence = lexeme $ const EpicLexemeSilent <$> char '_'
 
 pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try

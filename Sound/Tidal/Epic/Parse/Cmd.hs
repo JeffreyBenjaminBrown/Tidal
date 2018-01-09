@@ -15,7 +15,7 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
-import           Sound.Tidal.Epic.Parse.SingletonMap (pSingleton)
+import           Sound.Tidal.Epic.Parse.ParamMap (epicLexeme)
 import           Sound.Tidal.Epic.Parse.Transform (scanLang, cmdToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
@@ -49,17 +49,6 @@ pCmdEpics = sepBy1 (CmdEpics <$> some epicLexeme) (lexeme $ string ",,")
   -- if one of its arguments is bracketed, it fails
 pCmdCmdNonEpic :: Parser (Cmd ParamMap ParamMap)
 pCmdCmdNonEpic = CmdNonEpic <$> pLangNonEpic
-
-
-epicLexeme, epicLexemePersist, epicLexemeOnce, epicLexemeDur ::
-  Parser (EpicLexeme ParamMap)
-epicLexeme = foldl1 (<|>) [epicLexemePersist, epicLexemeOnce, epicLexemeDur, cmdSilence]
-epicLexemePersist = lexeme $ EpicLexemeNewPersist <$> pSingleton
-epicLexemeOnce = lexeme $ EpicLexemeOnce <$> (ignore (char '1') >> pSingleton)
-epicLexemeDur = lexeme $ ignore (char 't') >> EpicLexemeDur <$> ratio
-  -- >> TODO: accept floats as well as ratios
-cmdSilence = lexeme $ const EpicLexemeSilent <$> char '_'
-
 
 pLangNonEpic, pLangNonEpicFast, pLangNonEpicStack, pLangNonEpicCat,
   pLangNonEpicLeftBracket, pLangNonEpicRightBracket :: Parser (LangNonEpic i)
