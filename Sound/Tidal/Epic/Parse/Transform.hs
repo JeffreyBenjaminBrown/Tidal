@@ -1,12 +1,12 @@
--- Among the types in Parse.Types, the two tricky transformations in
+-- | = Among the types in Parse.Types, the two tricky transformations in
 -- Parse.Transform involve two different ways of accumulating
 -- the information in Cmds.
-
+--
 -- The first to run, `cmdToAccumEpic`, accumulates a set of instructions
 -- like "t1%2 d1" into an AccumEpic (in this case, one with a duration of 1/2
 -- carrying a persistent singleton map from deg_p to VF 1) and
 -- no temporary map.
-
+--
 -- After that, `scanLang` scans across a series of AccumEpics to
 -- creates EpicOrOp values, where each contains the maps not just of the
 -- Cmd corresponding to it, but also the persistent maps in all the prior
@@ -21,8 +21,7 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
-import           Sound.Tidal.Epic.Abbreviations (loopa, loop0)
-import           Sound.Tidal.Epic.Transform (durSilence)
+import           Sound.Tidal.Epic.Transform (durSilence, loopa, loop0)
 import           Sound.Tidal.Epic.Util (toPartitions)
 
 

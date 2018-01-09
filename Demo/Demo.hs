@@ -41,7 +41,7 @@ scaledMelody = et $ (+12) <$> (cata (b*8) [maj6',dor4'] <*> melody)
 v3 $ sound (ever "arp") &+ scaledMelody &* speed 2
 
 -- using the ParamMap -> ParamMap scales (e.g. maj6, dor4)
-melody = p0 " t1%8 d0 ,, d2 ,, d3 ,, d2 ,, t1%4 d5,,d6"
+melody = pe0 "t1%8 d0 ,, d2 ,, d3 ,, d2 ,, t1%4 d5,,d6"
 scaleCycle = cata (b*8) [dim,lyd,aug]
 scaledMelody = scaleCycle <*> melody
 v3 $ sound (ever "arp") &* scaleCycle <*> melody &* speed 2

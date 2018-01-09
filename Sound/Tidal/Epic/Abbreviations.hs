@@ -17,7 +17,6 @@ module Sound.Tidal.Epic.Abbreviations (
 
   -- | == concatenation
   , cat, cata, cat0
-  , loope, loopa, loop0
   , (<**>)
   , (&+), (&*)
   , (+-), (+|)
@@ -63,11 +62,5 @@ cat = foldl1 (+-)
 cata, cat0 :: Time -> [a] -> Epic a
 cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
-
-loope        :: Time -> Epic a -> Epic a
-loope = eRepeat
-loopa, loop0 :: Time -> a      -> Epic a
-loopa dur = eRepeat dur . eDur dur
-loop0 dur = eRepeat dur . eDur 0
 
 syf = syFreq

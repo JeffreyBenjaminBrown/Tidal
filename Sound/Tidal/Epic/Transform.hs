@@ -65,20 +65,24 @@ ever a = Epic Nothing $ \arc -> [(arc,a)]
 eInstant :: a -> Epic a
 eInstant = eDur 0
 
--- | Repeats the portion of an Epic from 0 to `dur`. PITFALL:
+-- | = loop* repeats the portion of an Epic from 0 to `dur`. PITFALL:
 -- Information (if any) originally in the `period` field is not preserved.
-eRepeat :: Time -> Epic a -> Epic a
-eRepeat dur e = Epic dur' fd' where
-  Epic dur' fd = _eRepeat dur e
+loopa, loop0 :: Time -> a      -> Epic a
+loopa dur = loope dur . eDur dur
+loop0 dur = loope dur . eDur 0
+
+loope :: Time -> Epic a -> Epic a
+loope dur e = Epic dur' fd' where
+  Epic dur' fd = _loope dur e
   fd' (s,e) = let cycle = floor $ fromRational $ s/dur
                   cyclesToAdd = (-1) * min 0 (fromIntegral cycle)
                   toPositive t = t + dur * cyclesToAdd
                   fromPositive t = t - dur * cyclesToAdd
     in map (first $ mapArc fromPositive) $ fd $ mapArc toPositive (s,e)
 
--- | wrong when s < 0; use eRepeat instead.
-_eRepeat :: Time -> Epic a -> Epic a
-_eRepeat dur (Epic _ fe) = Epic (Just dur) fd where
+-- | wrong when s < 0; use loope instead.
+_loope :: Time -> Epic a -> Epic a
+_loope dur (Epic _ fe) = Epic (Just dur) fd where
   fd (s,e) =
     let cycle = floor $ fromRational $ s/dur
         cycleStart = dur * fromIntegral cycle

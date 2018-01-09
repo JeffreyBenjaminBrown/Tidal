@@ -66,14 +66,14 @@ testPEpic = TestCase $ do
       sm = M.singleton speed_p $ VF 1.2
       dm2 = M.singleton deg_p $ VF 2
       dm3 = M.singleton deg_p $ VF 3
-  assertBool "1" $ pEpic str == loopa 1 sm
-  assertBool "2" $ pEpic str2 == loopa 1 sm
-  assertBool "2p5" $ pEpic str2p5 == loopa 1 (M.union sm dm2)
-  assertBool "3" $ pEpic str3 == (loopa 1 sm +- loopa 1 (M.union sm dm2))
-  assertBool "4" $ pEpic str4 == (    (loopa 1 sm +- loopa 1 (M.union sm dm2))
+  assertBool "1" $ pe str == loopa 1 sm
+  assertBool "2" $ pe str2 == loopa 1 sm
+  assertBool "2p5" $ pe str2p5 == loopa 1 (M.union sm dm2)
+  assertBool "3" $ pe str3 == (loopa 1 sm +- loopa 1 (M.union sm dm2))
+  assertBool "4" $ pe str4 == (    (loopa 1 sm +- loopa 1 (M.union sm dm2))
                                    +| loopa 1  (M.union sm dm3)
                                  )
-  assertBool "5" $ pEpic str5 == (    loopa 1 sm
+  assertBool "5" $ pe str5 == (    loopa 1 sm
                                    +- (    loopa 1 (M.union sm dm2)
                                         +| (fast 2 $ loopa 1 $ M.union sm dm3)
                                       ) )
@@ -147,7 +147,7 @@ testScanAccumEpic = TestCase $ do
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do
-  assertBool "1" $ eArc (pEpic0 "_,,s1") (0,2)
+  assertBool "1" $ eArc (pe0 "_,,s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
 
 testApplyMetaEpic = TestCase $ do
@@ -247,8 +247,8 @@ testStack = TestCase $ do
   assertBool "1" $ eArc (eStack p1 p2) (0,1) == [((0,1),'a')]
 
 testConcatEpic = TestCase $ do
-  let p1 = eRepeat 2 $ eDur 1 'a'
-      p2 = eRepeat 3 $ eDur 1 'b'
+  let p1 = loope 2 $ eDur 1 'a'
+      p2 = loope 3 $ eDur 1 'b'
       p = concatEpic p1 p2
   assertBool "1" $ period p == (Just 5)
   assertBool "2" $ eArc p (0,7) ==  [((0,1),'a')
@@ -272,13 +272,13 @@ testApplyEpic = TestCase $ do
       f2 = late 2 $ eDur 2 (+2)
       f3 = late 4 $ eDur 2 (+3)
       g1 = Epic Nothing $ \arc -> eArc f1 arc ++ eArc f2 arc ++ eArc f3 arc
-      x = eRepeat 2 $ eDur 1 (1 :: Int)
+      x = loope 2 $ eDur 1 (1 :: Int)
   assertBool "1" $ eArc (f1 <*> x) (0,4) == [((0,1),2)]
   assertBool "tricky!" $ eArc (g1 <*> x) (0,8) ==
     [ ((0,1),2),  ((2,3),3),  ((4,5),4) ]
   -- An earlier version of takeOverlappingEvs caused the event at time 4
   -- to undergo both (+2) (with duration 0) and (+3) (with duration 1).
-  let g2 = eRepeat 4 g1
+  let g2 = loope 4 g1
   assertBool "3" $ eArc (g2 <*> x) (0,8) ==
     [ ((0,1),2),  ((2,3),3),  ((4,5),2),  ((6,7),3)]
   assertBool "4" $ period g2 == Just 4
@@ -298,7 +298,7 @@ testApplyEpic = TestCase $ do
     == [((0,1), 2),  ((1/2,1),3),  ((1/2,1), 3),  ((1/2,1), 4)]
 
 testWindow = TestCase $ do
-  let ep = window (2,5) $ eRepeat 2 $ eDur 1 ()
+  let ep = window (2,5) $ loope 2 $ eDur 1 ()
   assertBool "1" $ eArc ep (2,5) == [((2,3),())
                                     ,((4,5),())]
 
@@ -339,7 +339,7 @@ testOverlap = TestCase $ do
   assertBool "1" $ overlap (0,2) (1,3) == Just (1,2)
 
 testERepeat = TestCase $ do
-  let p = eRepeat 2 $ eInstant ()
+  let p = loope 2 $ eInstant ()
   assertBool "1" $ eArc p (0,4) == [((0,0),()), ((2,2),())]
 
 testLcmRatios = TestCase $ do

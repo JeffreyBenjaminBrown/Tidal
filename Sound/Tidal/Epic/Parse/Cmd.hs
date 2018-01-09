@@ -12,7 +12,6 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 import           Sound.Tidal.Epic.Parse.Types
 
-import           Sound.Tidal.Epic.Abbreviations (loopa, loop0)
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
@@ -22,14 +21,14 @@ import           Sound.Tidal.Epic.Parse.Util
 
 
 _pEpic :: (Time -> ParamMap -> Epic ParamMap) -> String -> Epic ParamMap
-_pEpic loopx s = case parse (pEpicOrOps loopx) "" s of
+_pEpic loopx s = case parse (sc >> pEpicOrOps loopx) "" s of
   Left e -> error $ show e
   Right r -> case parse parseEpicExpr "" r of
     Left e -> error "unshowable Epic ParamMap parse error"
     Right r -> r
-pEpic, pEpic0 :: String -> Epic ParamMap
-pEpic = _pEpic loopa
-pEpic0 = _pEpic loop0
+pe,pe0 :: String -> Epic ParamMap
+pe = _pEpic loopa
+pe0 = _pEpic loop0
 
 pEpicOrOps :: (Time -> ParamMap -> Epic ParamMap)
             -> Parser [EpicOrOp ParamMap]
