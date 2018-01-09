@@ -35,7 +35,7 @@ eSilence = Epic { period = Nothing, eArc = const [] }
 durSilence :: Time -> Epic a
 durSilence t = Epic { period = Just t, eArc = const [] }
 
-early, late, eSlow, eFast :: Time -> Epic a -> Epic a
+early, late, eSlow, eFast, dense, sparse :: Time -> Epic a -> Epic a
 early t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s+t, e+t) where
   g = map $ first $ mapArc $ \x -> x-t
 late  t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s-t, e-t) where
@@ -44,6 +44,10 @@ eSlow t (Epic d f) = Epic (fmap (*t) d) $ \(s,e) -> g $ f (s/t, e/t) where
   g = map $ first $ mapArc $ \x -> x*t
 eFast t (Epic d f) = Epic (fmap (/t) d) $ \(s,e) -> g $ f (s*t, e*t) where
   g = map $ first $ mapArc $ \x -> x/t
+dense t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s*t, e*t) where
+  g = map $ first $ mapArc $ \x -> x/t
+sparse t (Epic d f) = Epic d            $ \(s,e) -> g $ f (s/t, e/t) where
+  g = map $ first $ mapArc $ \x -> x*t
 
 eRev :: Epic a -> Epic a
 eRev    (Epic d f) = Epic d $ \(s,e) -> reverse $ g $ f (-e, -s)
