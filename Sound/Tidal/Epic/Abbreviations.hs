@@ -30,7 +30,7 @@ import Sound.Tidal.Epic.CombineEpics
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Instances
-import Sound.Tidal.Epic.Scales
+import Sound.Tidal.Epic.Scale
 import Sound.Tidal.Stream (mergeNumWith)
 
 

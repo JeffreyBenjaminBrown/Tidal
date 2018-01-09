@@ -5,7 +5,7 @@ import           Text.Megaparsec.Char (string)
 
 import           Sound.Tidal.Epic.Types.Reimports
 
-import           Sound.Tidal.Epic.Scales
+import           Sound.Tidal.Epic.Scale
 import           Sound.Tidal.Epic.Parse.Util (Parser(..), lexeme)
 
 

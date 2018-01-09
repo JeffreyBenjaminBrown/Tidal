@@ -1,6 +1,6 @@
 {-# LANGUAGE ViewPatterns #-}
 
-module Sound.Tidal.Epic.Scales where
+module Sound.Tidal.Epic.Scale where
 
 -- for these same scales organized as a map,
 -- see /git_play/tidal/tidal-extensions.hs

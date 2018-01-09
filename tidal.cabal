@@ -40,7 +40,7 @@ library
                        Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Utils
                        Sound.Tidal.Epic.ReadHsAsGhci
-                       Sound.Tidal.Epic.Scales
+                       Sound.Tidal.Epic.Scale
                        Sound.Tidal.Epic.Sounds
                        Sound.Tidal.Epic.Test
                        Sound.Tidal.Epic.Transform
