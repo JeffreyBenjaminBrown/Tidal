@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Sound.Tidal.Epic.Parse.SeqCommand where
+module Sound.Tidal.Epic.Parse.Transform where
 
 import qualified Data.Set as S
 import           Sound.Tidal.Epic.Parse.Types

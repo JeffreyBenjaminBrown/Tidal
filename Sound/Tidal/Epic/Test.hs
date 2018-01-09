@@ -18,7 +18,7 @@ import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Cmd
 import Sound.Tidal.Epic.Scales
-import Sound.Tidal.Epic.Parse.SeqCommand
+import Sound.Tidal.Epic.Parse.Transform
 import Sound.Tidal.Epic.Parse.Types
 import Sound.Tidal.Epic.Sounds
 import Sound.Tidal.Epic.Transform

@@ -17,7 +17,7 @@ import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
 import           Sound.Tidal.Epic.Parse.SingletonMap (pSingleton)
-import           Sound.Tidal.Epic.Parse.SeqCommand (scanLang, cmdToAccumEpic)
+import           Sound.Tidal.Epic.Parse.Transform (scanLang, cmdToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
 
