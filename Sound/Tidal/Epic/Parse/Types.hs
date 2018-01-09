@@ -18,6 +18,7 @@ import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
 
 
+type Scale = ParamMap -> ParamMap
 
 -- Type variables `i` and `o` = "inner" and "outer"
 

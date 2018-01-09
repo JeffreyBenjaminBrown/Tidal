@@ -15,7 +15,8 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
-import           Sound.Tidal.Epic.Parse.ParamMap (epicLexeme)
+import qualified Sound.Tidal.Epic.Parse.ParamMap as PM
+import qualified Sound.Tidal.Epic.Parse.Scale    as Sc
 import           Sound.Tidal.Epic.Parse.Transform (scanLang, cmdToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
@@ -35,19 +36,28 @@ pEpicOrOps :: (Time -> ParamMap -> Epic ParamMap)
 pEpicOrOps loopx = scanLang loopx <$> pLang
 
 pLang :: Parser [Lang ParamMap ParamMap]
-pLang = map f <$> pCmds where
+pLang = map f <$> pmCmds where
   f c = case c of
     CmdEpics list -> LangEpic $ cmdToAccumEpic $ S.fromList list
     CmdNonEpic nonEpic -> LangNonEpic nonEpic
 
-pCmds :: Parser [Cmd ParamMap ParamMap]
-pCmds = concat <$> some f where f = pCmdEpics
-                                      <|> (:[]) <$> pCmdCmdNonEpic
-pCmdEpics :: Parser [Cmd ParamMap ParamMap]
-pCmdEpics = sepBy1 (CmdEpics <$> some epicLexeme) (lexeme $ string ",,")
+pmCmds :: Parser [Cmd ParamMap ParamMap]
+pmCmds = concat <$> some f where f = pmCmdEpics <|> (:[]) <$> pCmdCmdNonEpic
+--psCmds :: Parser [Cmd Scale Scale]
+--psCmds = concat <$> some f where f = psCmdEpics <|> (:[]) <$> pCmdCmdNonEpic
+
+pmCmdEpics :: Parser [Cmd ParamMap ParamMap]
+pmCmdEpics = sepBy1 (CmdEpics <$> some PM.epicLexeme) (lexeme $ string ",,")
   -- TODO ? ',,' cannot yet be used like other binary operators;
   -- if one of its arguments is bracketed, it fails
-pCmdCmdNonEpic :: Parser (Cmd ParamMap ParamMap)
+psCmdEpics' :: Parser [Cmd Scale Scale]
+psCmdEpics' = sepBy1 (CmdEpics <$> some Sc.epicLexeme) (lexeme $ string ",,")
+  -- TODO ? ',,' cannot yet be used like other binary operators;
+  -- if one of its arguments is bracketed, it fails
+
+
+-- | = The code below does not depend on the payload (ParamMap, scale, etc.)
+pCmdCmdNonEpic :: Parser (Cmd i o)
 pCmdCmdNonEpic = CmdNonEpic <$> pLangNonEpic
 
 pLangNonEpic, pLangNonEpicFast, pLangNonEpicStack, pLangNonEpicCat,

@@ -112,7 +112,7 @@ testPLang = TestCase $ do
 
 testCmd = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
-  assertBool "1" $ parse pCmds "" str == Right
+  assertBool "1" $ parse pmCmds "" str == Right
     [ CmdEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicLexemeOnce $ M.singleton deg_p $ VF 2
                  ]
