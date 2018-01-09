@@ -14,12 +14,13 @@ import Sound.Tidal.Epic.Params as E
 import Sound.Tidal.Epic.Parse.Util as E
 import Sound.Tidal.Epic.Parse.Cmd as E
 import Sound.Tidal.Epic.Parse.Expr as E
-import Sound.Tidal.Epic.ReadHsAsGhci as E
 import Sound.Tidal.Epic.Scales as E
 import Sound.Tidal.Epic.Parse.Eq as E
+import Sound.Tidal.Epic.Parse.Scale as E
 import Sound.Tidal.Epic.Parse.SingletonMap as E
 import Sound.Tidal.Epic.Parse.Transform as E
 import Sound.Tidal.Epic.Parse.Types as E
+import Sound.Tidal.Epic.ReadHsAsGhci as E
 import Sound.Tidal.Epic.Sounds as E
 import Sound.Tidal.Epic.Test as E
 import Sound.Tidal.Epic.Transform as E
