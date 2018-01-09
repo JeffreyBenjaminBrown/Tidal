@@ -34,11 +34,11 @@ library
                        Sound.Tidal.Epic.Parse.Cmd
                        Sound.Tidal.Epic.Parse.Expr
                        Sound.Tidal.Epic.Parse.Eq
-                       Sound.Tidal.Epic.Parse.File
                        Sound.Tidal.Epic.Parse.Transform
                        Sound.Tidal.Epic.Parse.SingletonMap
                        Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Utils
+                       Sound.Tidal.Epic.ReadHsAsGhci
                        Sound.Tidal.Epic.Scales
                        Sound.Tidal.Epic.Sounds
                        Sound.Tidal.Epic.Test

@@ -1,13 +1,16 @@
-module Sound.Tidal.Epic.Parse.File (
-  Line
-  , line
-  , ignorable
-  , emptyLine
-  , comment
-  , start
-  , more
-  , hsToGhci
-  , readHsAsGhci
+-- This is a duplicate of the code in my ReadHsAsGhci repo.
+-- todo: the clever Git thing that avoids such repo duplication
+
+module Sound.Tidal.Epic.ReadHsAsGhci (
+  readHsAsGhci
+--  , Line
+--  , line
+--  , ignorable
+--  , emptyLine
+--  , comment
+--  , start
+--  , more
+--  , hsToGhci
   ) where
 
 import           Control.Applicative
