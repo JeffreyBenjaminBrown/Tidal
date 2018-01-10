@@ -9,7 +9,7 @@ module Sound.Tidal.Epic.Abbreviations (
 
   -- | ==== Tidal
   , arc
-  , shh
+  , shh, dsh
   , fast, slow
   , rev
   , tog

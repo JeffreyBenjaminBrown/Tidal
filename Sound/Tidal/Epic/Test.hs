@@ -57,7 +57,14 @@ main = runTestTT $ TestList
   , TestLabel "testSilence" testSilence
   , TestLabel "testParseScale" testParseScale
   , TestLabel "testBreathe" testBreathe
+  , TestLabel "testConcatEpic'" testConcatEpic'
   ]
+
+testConcatEpic' = TestCase $ do
+  let ab = sparse 2 $ loopa 1 'a' +- loopa 1 'b'
+      c = loopa 3 'c'
+  assertBool "1" $ eArc (concatEpic' ab c) (0,5)  == [((0,2),'a'), ((2, 3),'c')]
+  assertBool "2" $ eArc (concatEpic' ab c) (5,10) == [((5,7),'b'), ((7,10),'c')]
 
 testBreathe = TestCase $ do
   assertBool "1" $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
@@ -66,6 +73,13 @@ testBreathe = TestCase $ do
   let small = loopa 1 'a' +- loopa 1 'b'
       big = breathe 5 small
   assertBool "4" $ eArc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
+  let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
+  assertBool "5" $
+    eArc          (breathe 5 $ early 1 x) (0,5) ==
+    [((0 % 1,1 % 1),'b'),((2 % 1,3 % 1),'a')]
+  assertBool "this is just like that, except plus a late" $
+    eArc (late 1 $ breathe 5 $ early 1 x) (0,10) /= []
+
 
 -- The scale is only in effect for the first period.
 testParseScale = TestCase $ do
