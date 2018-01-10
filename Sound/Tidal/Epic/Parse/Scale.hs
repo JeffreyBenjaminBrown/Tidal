@@ -1,4 +1,6 @@
-module Sound.Tidal.Epic.Parse.Scale (epicLexeme) where
+module Sound.Tidal.Epic.Parse.Scale
+  -- (epicLexeme)
+where
 
 import           Control.Applicative
 import qualified Data.Map                   as M
@@ -20,8 +22,9 @@ import Sound.Tidal.Epic.Scale
 -- | = Boilerplate, common to Scales, (Epic ParamMap) and eventually
 -- (Epic (Map String Value))
 epicLexeme, epicLexemePersist, epicLexemeOnce ::
-  Parser (EpicLexeme Scale)
-epicLexeme = foldl1 (<|>) [epicLexemePersist, epicLexemeOnce, epicLexemeDur, epicLexemeSilence]
+  Parser (EpicLexeme (Maybe Scale))
+epicLexeme = foldl1 (<|>)
+  [epicLexemePersist, epicLexemeOnce, epicLexemeDur, epicLexemeSilence]
 epicLexemePersist = lexeme $ EpicLexemeNewPersist <$> pScale
 epicLexemeOnce = lexeme $ EpicLexemeOnce <$> (ignore (char '1') >> pScale)
 
@@ -51,8 +54,8 @@ scaleNames = [
     , "aol3", "aol5", "loc2", "loc4"
   ] :: [String]
 
-pScale :: Parser Scale
+pScale :: Parser (Maybe Scale)
 pScale = foldl1 (<|>) _individualScaleParsers where
-  _individualScaleParsers :: [Parser Scale]
+  _individualScaleParsers :: [Parser (Maybe Scale)]
   _individualScaleParsers = map f $ zip scales scaleNames
-    where f (scale,name) = lexeme $ string name >> return scale
+    where f (scale,name) = lexeme $ string name >> return (Just scale)

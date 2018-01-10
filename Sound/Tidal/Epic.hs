@@ -16,7 +16,7 @@ import Sound.Tidal.Epic.Parse.Cmd as E
 import Sound.Tidal.Epic.Parse.Expr as E
 import Sound.Tidal.Epic.Scale as E
 import Sound.Tidal.Epic.Parse.Eq as E
---import Sound.Tidal.Epic.Parse.Scale as E
+import Sound.Tidal.Epic.Parse.Scale as E -- often commented out
 --import Sound.Tidal.Epic.Parse.ParamMap as E
 import Sound.Tidal.Epic.Parse.Transform as E
 import Sound.Tidal.Epic.Parse.Types as E

@@ -33,6 +33,7 @@ main = runTestTT $ TestList
   , TestLabel "testEInstant" testEInstant
   , TestLabel "testTakeOverlappingEvents" testTakeOverlappingEvents
   , TestLabel "testApplyEpic" testApplyEpic
+  , TestLabel "testApplyEpic2" testApplyEpic2
   , TestLabel "testEpicPatternIsh" testEpicPatternIsh
   , TestLabel "testERepeat" testERepeat
   , TestLabel "testLcmRatios" testLcmRatios
@@ -54,7 +55,15 @@ main = runTestTT $ TestList
   , TestLabel "testPEpicOrOps" testPEpicOrOps
   , TestLabel "testPEpic" testPEpic
   , TestLabel "testSilence" testSilence
+  , TestLabel "testParseScale" testParseScale
   ]
+
+-- The scale is only in effect for the first period.
+testParseScale = TestCase $ do
+  let scale = maj
+      eScale = ps "maj"
+      eDegs = pe "d0 ,, d2 ,, d4"
+  assertBool "because <*> fails" $ (scale <$> eDegs) == (eScale <*> eDegs)
 
 testPEpic = TestCase $ do
   let str = "s1.2"
@@ -90,7 +99,7 @@ testPEpicOrOps = TestCase $ do
             , EpicNotOp (EpicWrap e2)
             , BinaryOp (BinaryWrap o1)
             , EpicNotOp (EpicWrap e3)
-            ] = parse (pEpicOrOps loopa) "" str
+            ] = parse (peEpicOrOps loopa) "" str
   assertBool "e1" $ e1 == loopa 1 sm
   assertBool "e2" $ e2 == loopa 1 (M.union sm dm2)
   assertBool "o1" $ o1 == concatEpic
@@ -98,7 +107,7 @@ testPEpicOrOps = TestCase $ do
 
 testPLang = TestCase $ do
   let str = "s1.2 1d2 ,, _ t2%3 fast stack cat t2%3"
-  assertBool "1" $ parse pLang "" str == Right
+  assertBool "1" $ parse peLang "" str == Right
     [ LangEpic ( AccumEpic Nothing
                  (M.singleton deg_p $ VF 2)
                  (M.singleton speed_p $ VF 1.2)
@@ -112,7 +121,7 @@ testPLang = TestCase $ do
 
 testCmd = TestCase $ do
   let str = "s1.2 1d2 fast stack cat _ t2%3 "
-  assertBool "1" $ parse pmCmds "" str == Right
+  assertBool "1" $ parse peCmds "" str == Right
     [ CmdEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicLexemeOnce $ M.singleton deg_p $ VF 2
                  ]
@@ -228,7 +237,6 @@ testPartitionArcAtBoundaries = TestCase $ do
 testLaws = TestCase $ do
   let f1 = pure id :: Epic (a -> a)
       f2 = pure (+2) :: Epic (Float -> Float)
-      f3 = pure (*3) :: Epic (Float -> Float)
       x1 = pure 10
       a = (4,6)
       ev = [(a,10)]
@@ -296,6 +304,12 @@ testApplyEpic = TestCase $ do
   assertBool "concurrent objects and functions multiply like the list monad"
     $ eArc (f <*> x) (0,1)
     == [((0,1), 2),  ((1/2,1),3),  ((1/2,1), 3),  ((1/2,1), 4)]
+
+testApplyEpic2 = TestCase $ do
+  let e1 = loopa 1 (+1) <*> (loopa 1 1 +- loopa 1 2)
+      e2 =                   loopa 1 2 +- loopa 1 3
+  assertBool "works on unit interval" $ eArc e1 (0,1) == eArc e2 (0,1)
+  assertBool "<*> fails beyond (0,1)" $ eArc e1 (0,2) == eArc e2 (0,2)
 
 testWindow = TestCase $ do
   let ep = window (2,5) $ loope 2 $ eDur 1 ()

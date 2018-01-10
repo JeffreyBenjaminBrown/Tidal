@@ -3,10 +3,12 @@
            , StandaloneDeriving
 #-}
 
--- Is, and probably should be, only used in the test suite.
--- WARNING: These instances are unlawful. If an epic has a period less than
+-- WARNING: The Eq instances are unlawful. If an epic has a period less than
 -- or equal to 10, this will I believe always correctly judge equality.
 -- A similar but harder to state condition applies to operators.
+
+-- The Eq instances are only used in the test suite.
+-- The Ord instance is only used in Parse.Cmd
 
 module Sound.Tidal.Epic.Parse.Eq where
 
@@ -22,6 +24,18 @@ import Sound.Tidal.Epic.CombineEpics
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Params
 
+
+instance Eq Scale where
+  (==) a b = let testList = map (singleton deg_p . VF) [1..10]
+                 at = a <$> testList
+                 bt = b <$> testList
+             in at == bt
+
+instance Ord Scale where
+  (<=) a b = let testList = map (singleton deg_p . VF) [1..10]
+                 at = a <$> testList
+                 bt = b <$> testList
+             in at <= bt
 
 deriving instance (Eq i, TestEpic i) => Eq (LangNonEpic i)
 deriving instance (Eq o, Eq (LangNonEpic i)) => Eq (Cmd i o)
