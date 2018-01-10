@@ -28,7 +28,7 @@ epicLexeme = foldl1 (<|>)
 epicLexemePersist = lexeme $ EpicLexemeNewPersist <$> pScale
 epicLexemeOnce = lexeme $ EpicLexemeOnce <$> (ignore (char '1') >> pScale)
 
--- >> TODO: make these universal, not just for ParamMaps but scales, etc.
+-- >> todo ? make these universal, not just for ParamMaps but scales, etc.
 epicLexemeDur, epicLexemeSilence :: Parser (EpicLexeme a)
 epicLexemeDur = lexeme $ ignore (char 't') >> EpicLexemeDur <$> ratio
   -- >> todo ? accept floats as well as ratios

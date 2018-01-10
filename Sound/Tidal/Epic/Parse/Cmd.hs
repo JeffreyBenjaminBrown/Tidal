@@ -78,16 +78,31 @@ pCmdCmdNonEpic = CmdNonEpic <$> pLangNonEpic
 pLangNonEpic, pLangNonEpicFast, pLangNonEpicStack, pLangNonEpicCat,
   pLangNonEpicLeftBracket, pLangNonEpicRightBracket :: Parser (LangNonEpic i)
 pLangNonEpic = foldr1 (<|>) $ map try $ [ pLangNonEpicFast
+                                        , pLangNonEpicSlow
+                                        , pLangNonEpicDense
+                                        , pLangNonEpicSparse
+                                        , pLangNonEpicEarly
+                                        , pLangNonEpicLate
                                         , pLangNonEpicStack
                                         , pLangNonEpicCat
                                         , pLangNonEpicLeftBracket
                                         , pLangNonEpicRightBracket
                                         ]
-pLangNonEpicFast = do lexeme $ symbol "fast"
-                      return $ LangNonEpicUnOp $ eFast 2
-pLangNonEpicStack = do lexeme $ symbol "stack"
+pLangNonEpicFast = lexeme $ do n <- symbol "*" >> ratio
+                               return $ LangNonEpicUnOp $ eFast n
+pLangNonEpicSlow = lexeme $ do n <- symbol "/" >> ratio
+                               return $ LangNonEpicUnOp $ eSlow n
+pLangNonEpicDense = lexeme $ do n <- symbol "**" >> ratio
+                                return $ LangNonEpicUnOp $ dense n
+pLangNonEpicSparse = lexeme $ do n <- symbol "//" >> ratio
+                                 return $ LangNonEpicUnOp $ sparse n
+pLangNonEpicEarly = lexeme $ do n <- symbol "<" >> ratio
+                                return $ LangNonEpicUnOp $ early n
+pLangNonEpicLate = lexeme $ do n <- symbol ">" >> ratio
+                               return $ LangNonEpicUnOp $ late n
+pLangNonEpicStack = do lexeme $ symbol "+|"
                        return $ LangNonEpicBinOp eStack
-pLangNonEpicCat = do lexeme $ symbol "cat"
+pLangNonEpicCat = do lexeme $ symbol "+-"
                      return $ LangNonEpicBinOp concatEpic
 pLangNonEpicLeftBracket = do lexeme $ symbol "["
                              return LangNonEpicLeftBracket

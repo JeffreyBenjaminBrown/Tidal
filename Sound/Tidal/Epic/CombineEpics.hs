@@ -26,6 +26,22 @@ concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
   -- earlier I used eStack, but that takes the LCM of their durations
   where (Epic _ f1) = window (0,t1) e1
         (Epic _ f2) = late t1 $ window (0,t2) e2
+-- TODO: "breathe" a length S(mall) loop to cover a loop of length B(ig)
+--Purpose: if an epic has a glue-duration distinct from its true duration,
+--e.g. thanks to "sparse", concat will still work as expected.
+--Example: If a length-1 loop is to breathe across a length of 5,
+--then the interval (7,12) shrinks to (10,11), which maps to (2,3).
+--Generally: If a length S loop is to breathe across a length of B,
+--then for the interval (s,e):
+--  let z = B * div s B -- phase zero
+--      z' = z + B -- the next phase zero
+--      zl = z + S
+--      (s',e') = overlap (z,zl) (s,e)
+--  the "shrunken" (occupied by the loop) intervals are going to be
+--      (s',e'):(do that again, this time to overlap (z',e)(s,e))
+--      (conveniently, since s<e, if z' > e the overlap is Nothing)
+--  then map each shrunken interval (st,et) to
+--      div st B, div st B + (et-st)
 
 mergeEpics :: (Int->Int->Int) -> (Double->Double-> Double) ->
               ParamEpic -> ParamEpic -> ParamEpic

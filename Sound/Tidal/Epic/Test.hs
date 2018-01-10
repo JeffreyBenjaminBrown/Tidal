@@ -70,8 +70,8 @@ testPEpic = TestCase $ do
       str2 = "[s1.2]"
       str2p5 = "[s1.2 1d2]"
       str3 = "s1.2 ,, d2"
-      str4 = "s1.2 ,, d2 stack d3"
-      str5 = "s1.2 cat [d2 stack fast d3]"
+      str4 = "s1.2 ,, d2 +| d3"
+      str5 = "s1.2 +- [d2 +| *2 d3]"
       sm = M.singleton speed_p $ VF 1.2
       dm2 = M.singleton deg_p $ VF 2
       dm3 = M.singleton deg_p $ VF 3
@@ -88,7 +88,7 @@ testPEpic = TestCase $ do
                                       ) )
 
 testPEpicOrOps = TestCase $ do
-  let str = "s1.2 ,, 1d2 cat 1d3"
+  let str = "s1.2 ,, 1d2 +- 1d3"
       sm = M.singleton speed_p $ VF 1.2
       dm2 = M.singleton deg_p $ VF 2
       dm3 = M.singleton deg_p $ VF 3
@@ -106,7 +106,7 @@ testPEpicOrOps = TestCase $ do
   assertBool "e3" $ e3 == loopa 1 (M.union sm dm3)
 
 testPLang = TestCase $ do
-  let str = "s1.2 1d2 ,, _ t2%3 fast stack cat t2%3"
+  let str = "s1.2 1d2 ,, _ t2%3 *2 +| +- t2%3"
   assertBool "1" $ parse peLang "" str == Right
     [ LangEpic ( AccumEpic Nothing
                  (M.singleton deg_p $ VF 2)
@@ -120,7 +120,7 @@ testPLang = TestCase $ do
     ]
 
 testCmd = TestCase $ do
-  let str = "s1.2 1d2 fast stack cat _ t2%3 "
+  let str = "s1.2 1d2 *2 +| +- _ t2%3 "
   assertBool "1" $ parse peCmds "" str == Right
     [ CmdEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicLexemeOnce $ M.singleton deg_p $ VF 2
