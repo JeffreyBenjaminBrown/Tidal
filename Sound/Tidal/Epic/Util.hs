@@ -13,6 +13,15 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 
 
+div' :: Time -> Time -> Int
+div' num den = floor $ num / den
+
+rem' :: Time -> Time -> Time
+rem' num den = num - den * fromIntegral (div' num den)
+
+roundDownTo :: Time -> Time -> Time
+roundDownTo den num = den * fromIntegral (div' num den)
+
 toPartitions :: forall a b.
   (a->Bool) -> ([a]->[b]) -> ([a]->[b]) -> [a] -> [b]
 toPartitions test f g as = -- ^ do f to what passes, g to what fails the test

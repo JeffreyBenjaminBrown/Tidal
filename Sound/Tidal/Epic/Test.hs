@@ -56,7 +56,16 @@ main = runTestTT $ TestList
   , TestLabel "testPEpic" testPEpic
   , TestLabel "testSilence" testSilence
   , TestLabel "testParseScale" testParseScale
+  , TestLabel "testBreathe" testBreathe
   ]
+
+testBreathe = TestCase $ do
+  assertBool "1" $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
+  assertBool "2" $ breathContract 5 2 (10,11) == (4,5)
+  assertBool "3" $ breathExpand 5 2 (4,5) == (10,11)
+  let small = loopa 1 'a' +- loopa 1 'b'
+      big = breathe 5 small
+  assertBool "4" $ eArc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
 
 -- The scale is only in effect for the first period.
 testParseScale = TestCase $ do

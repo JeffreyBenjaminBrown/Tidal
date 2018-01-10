@@ -2,6 +2,7 @@
 
 module Sound.Tidal.Epic.CombineEpics where
 
+import Control.Arrow (first)
 import Data.List (sortOn)
 
 import Sound.Tidal.Epic.Types.Reimports
@@ -26,22 +27,50 @@ concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
   -- earlier I used eStack, but that takes the LCM of their durations
   where (Epic _ f1) = window (0,t1) e1
         (Epic _ f2) = late t1 $ window (0,t2) e2
--- TODO: "breathe" a length S(mall) loop to cover a loop of length B(ig)
---Purpose: if an epic has a glue-duration distinct from its true duration,
---e.g. thanks to "sparse", concat will still work as expected.
---Example: If a length-1 loop is to breathe across a length of 5,
---then the interval (7,12) shrinks to (10,11), which maps to (2,3).
---Generally: If a length S loop is to breathe across a length of B,
---then for the interval (s,e):
---  let z = B * div s B -- phase zero
---      z' = z + B -- the next phase zero
---      zl = z + S
---      (s',e') = overlap (z,zl) (s,e)
---  the "shrunken" (occupied by the loop) intervals are going to be
---      (s',e'):(do that again, this time to overlap (z',e)(s,e))
---      (conveniently, since s<e, if z' > e the overlap is Nothing)
---  then map each shrunken interval (st,et) to
---      div st B, div st B + (et-st)
+
+-- | "Breathe" a loop of length smallDur to cover a loop of length bigDur.
+-- First play the loop, then silence; repeat at next multiple of bigDur.
+-- Purpose: if an epic has a glue-duration distinct from its true duration,
+-- e.g. thanks to "sparse", concat will still work as expected.
+-- Example: Imagine breathing an epic E of length S=2 across a length B=5.
+-- The interval (0,2) is unchanged from E.
+-- The interval (2,5) is silent.
+-- The interval (5,7) carries what (2,4) carries under E.
+-- The interval (7,10) is silent ...
+--
+-- ASSUMES b > ed. You can breathe a small loop into a bigger interval;
+-- the reverse doesn't make obvious sense.
+
+breathe :: Time -> Epic a -> Epic a
+breathe bigDur (Epic Nothing _) = error "Breathe is only defined for loops."
+breathe bigDur (Epic (Just smallDur) ef) = Epic (Just bigDur) $ \(s,e) ->
+  let covered = breathAddGaps bigDur smallDur (s,e)
+        -- the non-gaps, the intervals that will carry payloads
+      contracted = map (breathContract bigDur smallDur) covered
+        -- the inner intervals, on which ef is computed
+  in map (first $ breathExpand bigDur smallDur)
+     $ concatMap ef contracted
+
+breathAddGaps :: Time -> Time -> Arc -> [Arc]
+breathAddGaps big small (s,e) =
+  if s >= e -- todo ? does this violate the idiom established by `overlap`?
+  then []
+  else let z = roundDownTo big s -- the first phase 0 before (or equal to) s
+           z' = z + big -- the next phase 0
+           endOne = z + small -- the end of the first covered interval
+           ov = overlap (z,endOne) (s,e)
+       in case ov of Nothing -> [] -- seems impossible
+                     Just x -> x : breathAddGaps big small (z',e)
+
+breathContract :: Time -> Time -> Arc -> Arc
+breathContract big small (s,e) = let s' = small * fromIntegral (div' s big)
+                                 in (s', s' + e-s)
+
+breathExpand :: Time -> Time -> Arc -> Arc
+breathExpand big small (s,e) = let n = fromIntegral $ div' s small
+                                   r = rem' s small
+                                   z = n * big -- phase zero
+                               in (z + r, z + r + e-s)
 
 mergeEpics :: (Int->Int->Int) -> (Double->Double-> Double) ->
               ParamEpic -> ParamEpic -> ParamEpic
