@@ -39,7 +39,7 @@ epicLexemeSilence = lexeme $ const EpicLexemeSilent <$> char '_'
 scales = [
   dim,   dimd,   aug,   augd,   hol
   ,   maj,   dor,   phr,   lyd,   mix,   aol,   loc
-  ,   maj5,   dor4,   phr3,   lyd2,   loc47,   aol7,   loc6 
+  ,   maj5,   dor4,   phr3,   lyd2,   loc47,   aol7,   loc6
   ,   maj6,   dor5,   phr4,   lyd3,   mix2,   lyd25,   loc7
   ,   maj3,   dor7,   dor2,   phr6,   lyd5,   lyd7,   mix4,   mix6
     ,   aol3,   aol5,   loc2,   loc4
@@ -48,7 +48,7 @@ scales = [
 scaleNames = [
   "dim", "dimd", "aug", "augd", "hol"
   , "maj", "dor", "phr", "lyd", "mix", "aol", "loc"
-  , "maj5", "dor4", "phr3", "lyd2", "loc47", "aol7", "loc6" 
+  , "maj5", "dor4", "phr3", "lyd2", "loc47", "aol7", "loc6"
   , "maj6", "dor5", "phr4", "lyd3", "mix2", "lyd25", "loc7"
   , "maj3", "dor7", "dor2", "phr6", "lyd5", "lyd7", "mix4", "mix6"
     , "aol3", "aol5", "loc2", "loc4"

@@ -28,16 +28,16 @@ d = every 2 rev $ density 10 $ (blend'
 e = density 32 $ (flip over
                   <$> ("[grey olive, black ~ brown, darkgrey]")
                   <*> (withOpacity
-                       <$> "[beige, lightblue white darkgreen, beige]" 
+                       <$> "[beige, lightblue white darkgreen, beige]"
                        <*> ((*) <$> (slow 8 $ slow 4 sinewave1) <*> (slow 3 $ sinewave1)))
                  )
 
-f = density 2 $ (flip darken 
+f = density 2 $ (flip darken
                  <$> (density 8 $ "[black blue, grey ~ navy, cornflowerblue blue]*2")
                  <*> sinewave1
                 )
 
-g = density 2 $ 
+g = density 2 $
     do let x = "[skyblue olive, grey ~ navy, cornflowerblue green]"
        coloura <- density 8 x
        colourb <- density 4 x

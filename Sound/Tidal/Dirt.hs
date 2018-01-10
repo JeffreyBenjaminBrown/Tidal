@@ -356,7 +356,7 @@ durPattern' p = Pattern $ \a@(s,e) -> map (eventDurToNext (arc p (s,e+1))) (arc 
             mt = (map fst) . (map fst')
             nextNum a = head . sort . filter (\x -> x >a)
 
-{- | @stutx@ is like @stut'@ but will limit the number of repeats using the 
+{- | @stutx@ is like @stut'@ but will limit the number of repeats using the
 duration of the original sound.  This usually prevents overlapping "stutters"
 from subsequent sounds.
 -}

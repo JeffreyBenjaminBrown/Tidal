@@ -90,7 +90,7 @@ tempoMVar = do now <- getCurrentTime
 beatNow :: Tempo -> IO (Double)
 beatNow t = do now <- getCurrentTime
                let delta = realToFrac $ diffUTCTime now (at t)
-               let beatDelta = cps t * delta               
+               let beatDelta = cps t * delta
                return $ beat t + beatDelta
 
 clientApp :: MVar Tempo -> MVar Double -> MVar Double -> WS.ClientApp ()
@@ -122,12 +122,12 @@ sendNudge conn mNudge = forever $ do nudge <- takeMVar mNudge
                                      WS.sendTextData conn (T.pack m)
 
 connectClient :: Bool -> String -> MVar Tempo -> MVar Double -> MVar Double -> IO ()
-connectClient secondTry ip mTempo mCps mNudge = do 
+connectClient secondTry ip mTempo mCps mNudge = do
   let errMsg = "Failed to connect to tidal server. Try specifying a " ++
                "different port (default is 9160) setting the " ++
                "environment variable TIDAL_TEMPO_PORT"
   serverPort <- getServerPort
-  WS.runClient ip serverPort "/tempo" (clientApp mTempo mCps mNudge) `E.catch` 
+  WS.runClient ip serverPort "/tempo" (clientApp mTempo mCps mNudge) `E.catch`
     \(_ :: E.SomeException) -> do
       case secondTry of
         True -> error errMsg
@@ -140,11 +140,11 @@ connectClient secondTry ip mTempo mCps mNudge = do
               connectClient True ip mTempo mCps mNudge
 
 runClient :: IO ((MVar Tempo, MVar Double, MVar Double))
-runClient = 
+runClient =
   do clockip <- getClockIp
-     mTempo <- newEmptyMVar 
-     mCps <- newEmptyMVar 
-     mNudge <- newEmptyMVar 
+     mTempo <- newEmptyMVar
+     mCps <- newEmptyMVar
+     mNudge <- newEmptyMVar
      forkIO $ connectClient False clockip mTempo mCps mNudge
      return (mTempo, mCps, mNudge)
 
@@ -181,9 +181,9 @@ cpsSetter = do (f, _) <- cpsUtils
                return f
 clocked :: (Tempo -> Int -> IO ()) -> IO ()
 clocked = clockedTick 1
-                         
+
 clockedTick :: Int -> (Tempo -> Int -> IO ()) -> IO ()
-clockedTick tpb callback = 
+clockedTick tpb callback =
   do (mTempo, _, mCps) <- runClient
      t <- readMVar mTempo
      now <- getCurrentTime
@@ -193,7 +193,7 @@ clockedTick tpb callback =
          nextTick = ceiling (nowBeat * (fromIntegral tpb))
          -- next4 = nextBeat + (4 - (nextBeat `mod` 4))
      loop mTempo nextTick
-  where loop mTempo tick = 
+  where loop mTempo tick =
           do tempo <- readMVar mTempo
              tick' <- doTick tempo tick
              loop mTempo tick'
@@ -227,7 +227,7 @@ updateTempo t cps'
     -- unpause
     do now <- getCurrentTime
        return $ t {at = addUTCTime (realToFrac $ clockLatency t) now, cps = cps', paused = False}
-  | otherwise = 
+  | otherwise =
     do now <- getCurrentTime
        let delta = realToFrac $ diffUTCTime now (at t)
            beat' = (beat t) + ((cps t) * delta)
@@ -307,7 +307,7 @@ setSlave serverState = do s <- takeMVar serverState
                                    return (Slave sock)
            -- already slaving..
            updateState s = return s
-                          
+
 serverLoop :: TConnection -> MVar Tempo -> MVar ServerMode -> MVar ClientState -> IO ()
 serverLoop conn tempoState serverState clientState = E.handle catchDisconnect $
   forever $ do
@@ -315,9 +315,9 @@ serverLoop conn tempoState serverState clientState = E.handle catchDisconnect $
     --liftIO $ updateTempo tempoState $ maybeRead $ T.unpack msg
     mode <- readMVar serverState
     serverAct (T.unpack msg) mode tempoState clientState
-    -- 
+    --
     --tempo <- liftIO $ readMVar tempoState
-    -- liftIO $ readMVar clientState >>= broadcast (T.pack $ show tempo) 
+    -- liftIO $ readMVar clientState >>= broadcast (T.pack $ show tempo)
   where
     catchDisconnect e = case E.fromException e of
         Just WS.ConnectionClosed -> liftIO $ modifyMVar_ clientState $ \s -> do
@@ -339,7 +339,7 @@ setCps n Master tempoState clientState = do tempo <- takeMVar tempoState
                                             sendTempo (map wsConn clients) (tempo')
                                             putMVar tempoState tempo'
                                             return ()
-                                            
+
 setCps n (Slave sock) tempoState clientState = sendOSC sock $ Message "/cps" [Float (realToFrac n)]
 
 
@@ -350,7 +350,7 @@ setNudge n Master tempoState clientState = do tempo <- takeMVar tempoState
                                               sendTempo (map wsConn clients) (tempo')
                                               putMVar tempoState tempo'
                                               return ()
-                                              
+
 setNudge n (Slave sock) tempoState clientState = sendOSC sock $ Message "/nudge" [Float (realToFrac n)]
 
-  
+

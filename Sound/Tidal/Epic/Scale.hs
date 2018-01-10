@@ -35,7 +35,7 @@ _syFreq :: ParamMap -> ParamMap
 _syFreq m = mergeNumParamsWith (*) (*) mOtherParams mQf
   where (mSpeed,mOtherParams) = M.partitionWithKey g m
         mQf = if null mSpeed then M.empty
-              else M.singleton qf_p $ (M.!) mSpeed speed_p 
+              else M.singleton qf_p $ (M.!) mSpeed speed_p
         g k _ = if k == speed_p then True else False
         -- PITFALL: It seems like "g deg_p _ = True; g _ _ = False"
         -- ought to work, but somehow no.

@@ -22,8 +22,8 @@ wave n = drop i s ++ take i s
         i = n `mod` (length s)
 
 onTick :: UDP -> Tempo -> Int -> IO ()
-onTick dave current ticks 
-  | ticks `mod` 8 == 0 = 
+onTick dave current ticks
+  | ticks `mod` 8 == 0 =
     do putStr $ "tickdave " ++ (show ticks) ++ " " ++ (wave ticks) ++ "\r"
        hFlush stdout
        let m = Message "/sync" [int32 tpb, float ((bps current) * 60)]
@@ -31,6 +31,6 @@ onTick dave current ticks
   | otherwise = return ()
 
 -- onTickAde :: UDP -> BpsChange -> Int -> IO ()
--- onTickAde ade current ticks = 
+-- onTickAde ade current ticks =
 --     do let n = Message "/PureEvents/Beat" [Int ticks]
 --        sendOSC ade n

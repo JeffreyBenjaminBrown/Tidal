@@ -19,7 +19,7 @@ wave n = drop i s ++ take i s
         i = n `mod` (length s)
 
 onTick :: UDP -> Tempo -> Int -> IO ()
-onTick myk current ticks = 
+onTick myk current ticks =
   do putStr $ "tickmyk " ++ (show ticks) ++ " " ++ (wave ticks) ++ "\r"
      hFlush stdout
      let m = Message "/sync" [int32 ticks, float ((bps current) * 60)]

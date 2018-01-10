@@ -1,6 +1,6 @@
 module Sound.Tidal.Vis2 where
 
-import qualified Graphics.Rendering.Cairo as C 
+import qualified Graphics.Rendering.Cairo as C
 import Data.Colour
 import Data.Colour.Names
 import Data.Colour.SRGB
@@ -41,7 +41,7 @@ v sf fn (x,y) levels =
 renderLevel total (n, level) = do C.save
                                   mapM_ drawEvent $ level
                                   C.restore
-      where drawEvent ((sWhole, eWhole), (s,e), c) = 
+      where drawEvent ((sWhole, eWhole), (s,e), c) =
               do let (RGB r g b) = toSRGB c
                  -- C.setSourceRGBA 0.6 0.6 0.6 1
                  -- C.rectangle x y lineW levelHeight

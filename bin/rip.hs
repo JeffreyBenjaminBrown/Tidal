@@ -44,19 +44,19 @@ play h conn n =
                  rawSystem "rm" [tmpfn]
                  return ()
      return ()
-     
-     
+
+
 noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
-noteOn conn val vel = 
-  Event.forConnection conn 
+noteOn conn val vel =
+  Event.forConnection conn
   $ Event.NoteEv Event.NoteOn
   $ Event.simpleNote channel
                      (Event.Pitch (val))
                      (Event.Velocity vel)
 
 noteOff :: Connect.T -> Word8 -> Event.T
-noteOff conn val = 
-  Event.forConnection conn 
+noteOff conn val =
+  Event.forConnection conn
   $ Event.NoteEv Event.NoteOff
   $ Event.simpleNote channel
                      (Event.Pitch (val))

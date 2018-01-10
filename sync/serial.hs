@@ -17,7 +17,7 @@ wave n = drop i s ++ take i s
         eye | n `mod` 4 == 0 = "O"
             | otherwise = "º"
 
-onTick ard current ticks = 
+onTick ard current ticks =
     do let message = B.pack [chr $ if (ticks `mod` 4 == 0) then 100 else 50]
        forkIO $ do threadDelay $ floor $ 0.09 * 1000000
                    send ard message

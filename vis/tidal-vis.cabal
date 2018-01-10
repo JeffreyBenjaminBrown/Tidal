@@ -1,7 +1,7 @@
 name:                tidal-vis
 version:             0.9.5
 synopsis:            Visual rendering for Tidal patterns
--- description:         
+-- description:
 homepage:            http://yaxu.org/tidal/
 license:             GPL-3
 license-file:        LICENSE

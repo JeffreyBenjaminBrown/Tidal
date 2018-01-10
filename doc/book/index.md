@@ -307,13 +307,13 @@ then be played at the same time:
 
 ```
 d1 $ sound "[bd bd cp, arpy arpy:1 arpy:3]"
-``` 
+```
 
 In the simple example above the sounds line up nicely, but they don't have to, here we put four sounds against three, creating a kind of triplet or polyrhythm:
 
 ```
 d1 $ sound "[bd bd cp hc, arpy arpy:1 arpy:3]"
-``` 
+```
 
 Tidal takes care of spreading them out to fit the enclosing step perfectly. As the subpatterns are the only step in the above pattern, they fill the whole cycle.
 
@@ -321,7 +321,7 @@ We can keep layering up subpatterns simply by using more commas:
 
 ```
 d1 $ sound "[bd bd cp hc, arpy arpy:1 arpy:3, ~ off]"
-``` 
+```
 
 ### Polymeter
 
@@ -339,7 +339,7 @@ d1 $ sound "[bd cp, arpy arpy:1 arpy:2 arpy:3]"
 with this:
 ```
 d1 $ sound "{bd cp, arpy arpy:1 arpy:2 arpy:3}"
-``` 
+```
 
 The two subpatterns in the first example line up like this:
 
@@ -352,15 +352,15 @@ Whereas in the second they line up like this:
 
 |      |        |
 |------|--------|
-| bd   | cp     | 
-| arpy | arpy:1 | 
+| bd   | cp     |
+| arpy | arpy:1 |
 
 This means some events are left over from the second subpattern, but don't worry, they make an appearance on the following (and then every other) cycle, like this:
 
 |        |        |
 |--------|--------|
-| bd     | cp     | 
-| arpy:2 | arpy:3 | 
+| bd     | cp     |
+| arpy:2 | arpy:3 |
 
 In brief, `[]` matches the length of the subpatterns, whereas `{}` does this with the first subpattern, but then the others are matched up event-by-event. This lack of alignment between patterns with different lengths can be broadly thought of in musical terms as 'polymeter.
 
@@ -382,7 +382,7 @@ That's it - you just stick `?` after an event, and with a 50% chance, sometimes 
 
 We have so far seen two parameters that can be sent to SuperDirt, the `sound` (aka `s`) one, and briefly, the `n` one. There's a whole lot more of them, listed out later in this section. Feel free to have a sneak peak ahead play with some of them.
 
-Lets spend some time now though looking at how different parameters combine. The first thing to bear in mind is that Tidal is all about combining patterns. Each parameter is itself a pattern, and contains a pattern. 
+Lets spend some time now though looking at how different parameters combine. The first thing to bear in mind is that Tidal is all about combining patterns. Each parameter is itself a pattern, and contains a pattern.
 
 ```
 d1 $ sound "rash rash" # n "50 38"

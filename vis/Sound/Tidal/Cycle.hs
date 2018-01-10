@@ -21,7 +21,7 @@ import Data.Colour
 import Data.Colour.Names
 import Data.Colour.SRGB
 import Data.Colour.RGBSpace.HSV (hsv)
-import qualified GHC.Word 
+import qualified GHC.Word
 import Data.Bits
 import Data.Ratio
 import Debug.Trace (trace)
@@ -50,7 +50,7 @@ sortByFst = sortBy (\a b -> compare (fst a) (fst b))
 
 parenthesise :: String -> String
 parenthesise x = "(" ++ x ++ ")"
-                                          
+
 spaces :: Int -> String
 spaces n = take n $ repeat ' '
 
@@ -102,12 +102,12 @@ isInside :: Integral a => Rect -> a -> a -> Bool
 isInside (Rect rx ry rw rh) x y = (x' > rx) && (x' < rx + rw) && (y' > ry) && (y' < ry + rh)
  where (x', y') = (fromIntegral x, fromIntegral y)
 
-ctrlDown mods = or $ map (\x -> elem x [KeyModLeftCtrl, 
+ctrlDown mods = or $ map (\x -> elem x [KeyModLeftCtrl,
                                         KeyModRightCtrl
                                        ]
                          ) mods
 
-shiftDown mods = or $ map (\x -> elem x [KeyModLeftShift, 
+shiftDown mods = or $ map (\x -> elem x [KeyModLeftShift,
                                          KeyModRightShift,
                                          KeyModShift
                                         ]
@@ -129,7 +129,7 @@ applySurface x y src dst clip = blitSurface src clip dst offset
  where offset = Just Rect { rectX = x, rectY = y, rectW = 0, rectH = 0 }
 
 initEnv :: MVar (Pattern ColourD) -> IO AppConfig
-initEnv mp = do    
+initEnv mp = do
     screen <- setVideoMode screenWidth screenHeight screenBpp [SWSurface]
     font <- openFont "futura.ttf" 22
     setCaption "Cycle" []
@@ -143,7 +143,7 @@ blankWidth = 0.015
 
 drawArc' :: Surface -> ColourD -> (Double, Double) -> (Double, Double) -> Double -> Double -> Double -> IO ()
 drawArc' screen c (x,y) (r,r') t o step | o <= 0 = return ()
-                                       | otherwise = 
+                                       | otherwise =
                do let pix = (colourToPixel c)
                       steps = [t, (t + step) .. (t + o)]
                       coords = map (\s -> (floor $ x + (r*cos(s)),floor $ y + (r*sin(s)))) steps
@@ -157,7 +157,7 @@ drawArc' screen c (x,y) (r,r') t o step | o <= 0 = return ()
 
 drawArc :: Surface -> ColourD -> (Double, Double) -> (Double, Double) -> Double -> Double -> Double -> IO ()
 drawArc screen c (x,y) (r,r') t o step | o <= 0 = return ()
-                                       | otherwise = 
+                                       | otherwise =
                do let pix = (colourToPixel c)
                   SDLP.filledPolygon screen coords pix
                   drawArc screen c (x,y) (r,r') t (o-step) step
@@ -184,7 +184,7 @@ loop = do
         pat <- readMVar mp
         tempo <- readMVar tempoM
         beat <- beatNow tempo
-        bgColor  <- (mapRGB . surfaceGetPixelFormat) screen 0x00 0x00 0x00  
+        bgColor  <- (mapRGB . surfaceGetPixelFormat) screen 0x00 0x00 0x00
         clipRect <- Just `liftM` getClipRect screen
         fillRect screen clipRect bgColor
         --drawArc screen middle (100,110) ((beat) * pi) (pi/2) (pi/32)
@@ -192,7 +192,7 @@ loop = do
         Graphics.UI.SDL.flip screen
         FR.delay fps
     unless quit loop
-      where act e = do scene <- get 
+      where act e = do scene <- get
                        scene' <- handleEvent scene e
                        put $ scene'
 
@@ -200,7 +200,7 @@ drawPat :: (Double, Double) -> (Double, Double) -> Pattern ColourD -> Surface ->
 drawPat (x, y) (r,r') p screen beat = mapM_ drawEvents es
   where es = map (\(_, (s,e), evs) -> ((max s pos, min e (pos + 1)), evs)) $ arc (segment p) (pos, pos + 1)
         pos = toRational $ beat / 8
-        drawEvents ((s,e), cs) = 
+        drawEvents ((s,e), cs) =
           mapM_ (\(n', c) -> drawEvent (s,e) c n' (length cs)) (enumerate $ reverse cs)
         drawEvent (s,e) c n' len =
           do let thickness = (1 / fromIntegral len) * (r' - r)
@@ -209,9 +209,9 @@ drawPat (x, y) (r,r') p screen beat = mapM_ drawEvents es
 {-          (thickLine h (n*scale+n') (linesz/ (fromIntegral scale))
            (x1 + (xd * fromRational (e-pos)))
            (y1 + (yd * fromRational (e-pos)))
-           (x1 + (xd * fromRational (s-pos))) 
+           (x1 + (xd * fromRational (s-pos)))
            (y1 + (yd * fromRational (s-pos)))
-          ) 
+          )
           screen (colourToPixel c)-}
 
 segment2 :: Pattern a -> Pattern [(Bool, a)]
@@ -241,16 +241,16 @@ runLoop :: AppConfig -> Scene -> IO ()
 runLoop = evalStateT . runReaderT loop
 
 textSize :: String -> Font -> IO ((Float,Float))
-textSize text font = 
+textSize text font =
   do message <- renderTextSolid font text (Color 0 0 0)
      return (fromScreen (surfaceGetWidth message, surfaceGetHeight message))
 
 run = do mp <- newMVar silence
          forkIO $ run' mp
          return mp
-         
 
-run' mp = withInit [InitEverything] $ 
+
+run' mp = withInit [InitEverything] $
         do result <- TTFG.init
            if not result
              then putStrLn "Failed to init ttf"

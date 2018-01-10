@@ -31,9 +31,9 @@ _p p loopx s = case parse (sc >> p loopx) "" s of
     Right r -> r
 pe,pe0 :: String -> Epic ParamMap
 pe  = _p peEpicOrOps loopa
-pe0 = _p peEpicOrOps loop0 
+pe0 = _p peEpicOrOps loop0
 ps  = _p psEpicOrOps loopa
-ps0 = _p psEpicOrOps loop0 
+ps0 = _p psEpicOrOps loop0
 
 pEpicOrOps :: (Monoidoid i o, Ord o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]

@@ -55,14 +55,14 @@ ho = for 0 $ fromList [(sound_p, VS "ho")
 --                          , (sustain_p, VF 5), (sample_p, VI 4)]
 -- kickt = for 0 $ fromList [(sound_p, VS "kick")
 --                          , (sustain_p, VF 5), (sample_p, VI 5)]
--- 
+--
 -- snare = for 0 $ fromList [(sound_p, VS "snare")
 --                          , (sustain_p, VF 5), (sample_p, VI 1)]
 -- snarea = for 0 $ fromList [(sound_p, VS "snare")
 --                           , (sustain_p, VF 5), (sample_p, VI 0)]
 -- snaren = for 0 $ fromList [(sound_p, VS "snare")
 --                           , (sustain_p, VF 5), (sample_p, VI 2)]
--- 
+--
 -- toml = for 0 $ fromList [(sound_p, VS "tom")
 --                         , (sustain_p, VF 5), (sample_p, VI 0)]
 -- tom = for 0 $ fromList [(sound_p, VS "tom")

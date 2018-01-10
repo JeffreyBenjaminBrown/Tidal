@@ -25,8 +25,8 @@ instance Applicative Sieve where
 
 -- | The basic notation for and constructor of a boolean 'Sieve' is @m\@\@n@,
 -- which represents all integers whose modulo with @m@ is equal to @n@
-infixl 9 @@ 
-(@@) :: Int -> Int -> Sieve Bool 
+infixl 9 @@
+(@@) :: Int -> Int -> Sieve Bool
 m @@ i = Sieve $ \j -> (j `mod` m) == i
 
 -- If Haskell's logic operators had been defined on a type class, we could
@@ -52,8 +52,8 @@ infixl 2 #^^#
 (#^^#) x y = (x #&&# not' y) #||# (y #&&# not' x)
 
 -- | @sieveToList n@ returns a list of the values of the sieve for each
--- nonnegative integer less than @n@ 
--- For example: @sieveToList 10 $ 3\@\@1@ returns 
+-- nonnegative integer less than @n@
+-- For example: @sieveToList 10 $ 3\@\@1@ returns
 -- `[False, True, False, False, True, False, False, True, False, False]`
 sieveToList :: Int -> Sieve a -> [a]
 sieveToList n s = map (sieveAt s) [0..n-1]
@@ -96,5 +96,5 @@ slowstepSieve t n str sieve = slow t $ stepSieve n str sieve
 scaleSieve :: Int -> Sieve Bool -> Pattern Int -> Pattern Int
 scaleSieve n sieve = toScale (sieveToInts n sieve)
 
-instance Show (Sieve Bool) where 
+instance Show (Sieve Bool) where
     show = sieveToString 32

@@ -145,7 +145,7 @@ testScanLang = TestCase $ do
 
 testScanAccumEpic = TestCase $ do
   let (cdm, j,n,t,f) = (AccumEpic, Just, Nothing, True, False)
-      cdms1 = [cdm n n n f] :: [AccumEpic (Maybe Int)] 
+      cdms1 = [cdm n n n f] :: [AccumEpic (Maybe Int)]
   assertBool "1" $ _scanAccumEpic cdms1 == map (uncurry Timed) [(1,n)]
   let cdms2 = [ cdm (j 2) n     (j 3) f
               , cdm n     n     n     f

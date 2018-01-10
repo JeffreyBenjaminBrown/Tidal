@@ -41,7 +41,7 @@ tests' = [ "3", "(3)", "((3))"
 -- = simpler parsers
 float :: Parser Float
 float = it <|> bracket expr -- was previously "<|> bracket float"
-  where it = S.toRealFloat <$> lexeme L.scientific        
+  where it = S.toRealFloat <$> lexeme L.scientific
 
 plus :: Num a => Parser (a -> a -> a)
 plus = const (+) <$> it <|> bracket plus

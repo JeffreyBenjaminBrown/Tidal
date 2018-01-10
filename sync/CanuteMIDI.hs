@@ -42,20 +42,20 @@ wave n = drop i s ++ take i s
             | otherwise = "º"
 
 --onTick :: UDP -> Tempo -> Int -> IO ()
-onTick h conn current ticks = 
+onTick h conn current ticks =
   do putStr $ "tickmyk " ++ (show ticks) ++ " " ++ (wave ticks) ++ "\r"
      hFlush stdout
      --let m = Message "/sync" [int32 ticks, float ((bps current) * 60)]
      forkIO $ do threadDelay $ floor $ 0.179 * 1000000
                  Event.outputDirect h $ noteOn conn (fromIntegral $ ticks `mod` 128) 127
                  return ()
-                 
+
                  --sendOSC myk m
      return ()
 
 noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
-noteOn conn n v = 
-  Event.forConnection conn 
+noteOn conn n v =
+  Event.forConnection conn
   $ Event.NoteEv Event.NoteOn
   $ Event.simpleNote channel
                      (Event.Pitch (n))

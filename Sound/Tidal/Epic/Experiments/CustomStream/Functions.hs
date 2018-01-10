@@ -79,7 +79,7 @@ unaryOp = it <|> bracket unaryOp where
           return op
 
 binaryOp :: Parser (Func -> Func -> Func)
-binaryOp = it <|> bracket binaryOp 
+binaryOp = it <|> bracket binaryOp
   where it = do BinaryOp (BinaryWrap op) <- satisfy isBinaryOp
                 return op
 

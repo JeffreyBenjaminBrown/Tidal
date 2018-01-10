@@ -151,7 +151,7 @@ mdeg    f                  =  fmap $ fpar deg_p f
 -- | ==== Params new in Tidal.Epic
 
 -- | == params for the sy and sya synths
--- >> TODO: some of these defauls are probably wrong 
+-- >> TODO: some of these defauls are probably wrong
 (_, qf_p ) = P.pF "qf"  (Just 440)
 qf = fParam qf_p
 (_, qfa_p) = P.pF "qfa" (Just 1)
@@ -190,7 +190,7 @@ eLoop            = fParam P.loop_p -- "loop" is used in Epic.Abbreviations
 unit                      = sParam P.unit_p
 vowel                     = sParam P.vowel_p
 
--- | == Double Params 
+-- | == Double Params
 accelerate                = fParam P.accelerate_p
 attack                    = fParam P.attack_p
 bandf                     = fParam P.bandf_p

@@ -1,6 +1,6 @@
 ...
 
-Bienvenido al tutorial de Tidal, Tidal es un mini lenguaje de progaramación para explorar 
+Bienvenido al tutorial de Tidal, Tidal es un mini lenguaje de progaramación para explorar
 patrones, diseñado para ser usado durante interpretaciones de código en vivo.
 En este tutorial, pasaremos por diferentes niveles de abstracción, empezando con sonidos
 y filtros, luego secuencias de sonidos y filtros, llegando así a las funciones para manipular
@@ -13,7 +13,7 @@ Con un poco de tacto, Tidal puede ser usado para controlar cualquier dispositivo
 o mesajes OSC (open sound control), aunque por defecto es Dirt el software usado. Si siguió
 el proceso de instalación debería tener Dirt instalado y funcionando.
 
-Para probarlo, ejecute el siguiente código escribiéndolo en su editor de texto, luego 
+Para probarlo, ejecute el siguiente código escribiéndolo en su editor de texto, luego
 presionando `ctrl-c,crtl-s` para iniciar Tidal (emacs) y luego `ctrl-enter`.
 
 ```haskell
@@ -44,14 +44,14 @@ Dirt viene con una gran variedad de samples para trabajar, algunos de ellos son:
     odx diphone2 house off ht tink perc bd industrial pluck trump
     printshort jazz voodoo birds3 procshort blip drum jvbass psr
     wobble drumtraks koy rave bottle kurt latibro rm sax lighter lt
-    arpy feel less stab ul    
+    arpy feel less stab ul
 ```
 
 Reemplaze `can` con una de estas palabras para explorar.
 
 ## Silence
 
-En este punto se preguntará como hacer que el sonido se detenga, esto se puede hacer de la 
+En este punto se preguntará como hacer que el sonido se detenga, esto se puede hacer de la
 siguiente forma:
 
 ```haskell
@@ -64,7 +64,7 @@ Más rápido aún, se puede silenciar todo evaluando la palabra `hush` (oprimied
 hush
 ```
 
-Esto será muy útil cuando sea posible ejecutar mas de un sonido a la vez, y se quiera 
+Esto será muy útil cuando sea posible ejecutar mas de un sonido a la vez, y se quiera
 silenciarlos, `hush` los silenciará todos al instante.
 
 ## Efectos
@@ -113,7 +113,7 @@ Nombre		| Descripción
 `bandq`		| patron de números de 0 a 1, establece Q en  un BPF.
 `begin`		| patrón de números de 0 a 1, Salta el principio de cada sample, por ejemplo, 0.25 corta el primer cuarto de cada sample.
 `coarse`	| seudo-remuestreo, un patrón de números para bajar el muestreo, por ejemplo, 1 es original, 2 la mitad, 3 la tercera parte.
-`crush`		| bit crushing, patrón de números de 1 a 16, con 1 reduciendo el bit depth al máximo y 16 dejándolo igual.   
+`crush`		| bit crushing, patrón de números de 1 a 16, con 1 reduciendo el bit depth al máximo y 16 dejándolo igual.
 `cutoff`	| patrón de números de 0 a 1, establece la frecuencia de corte de un LPF.
 `delay`		| patrón de números de 0 a 1, establece en nivel del delay.
 `delayfeedback`	| patrón de números de 0 a 1, establece la cantidad de feedback del delay.
@@ -132,7 +132,7 @@ Nombre		| Descripción
 
 ---------------------
 
-# Patrones continuos 
+# Patrones continuos
 
 Hay patrones continuos incorporados, lo que permite aplicar cosas como ondas sinusoidales a los patrones que reciben números como parámetros.
 
@@ -209,7 +209,7 @@ De hecho se puede seguir subdividiendo dentro de una subdivisión:
 
 ```haskell
 d1 $ sound "drum drum [can [can:4 can:6 can:3] can:5] drum"
-``` 
+```
 
 Y su equivalente visual:
 
@@ -236,8 +236,8 @@ Se puede visualizar superponiendo las diferentes partes del patrón, así se ve 
 "[orange purple, red green pink]"
 </example>
 
-Si usa llaves en vez de corchetes los subpatrones se acomodan de manera diferente en las 
-capas, de tal forma que el sonido se alinea y la extensión diferente de los patrones da una 
+Si usa llaves en vez de corchetes los subpatrones se acomodan de manera diferente en las
+capas, de tal forma que el sonido se alinea y la extensión diferente de los patrones da una
 sensación diferente:
 
 ```haskell
@@ -287,7 +287,7 @@ Puede ser escrito así:
 ```haskell
 d1 $ sound "bd can*3"
 ```
-Cuando se hace live coding es importante usar bien el tiempo. Puede experimentar con números 
+Cuando se hace live coding es importante usar bien el tiempo. Puede experimentar con números
 altos para lograr sonidos extraños:
 
 ```haskell
@@ -341,15 +341,15 @@ subpatrón. En el siguiente, puede no escuchar nada, puede ser el primero o el s
 
 ```haskell
 d1 $ sound "bd [can can:4]? bd sn"
-``` 
+```
 ### Bjorklund (y Euclides)
 
 Si pone dos números en paréntesis luego de un elemento en un patrón, entonces Tidal distribuirá el primer número de sonidos equitativamente a lo largo del segundo número de pasos:
 
 ```haskell
 d1 $ sound "can(5,8)"
-``` 
-Pero, como no es posible distribuir tres elementos a lo largo de 8 pasos discretos, el 
+```
+Pero, como no es posible distribuir tres elementos a lo largo de 8 pasos discretos, el
 algoritmo hace lo mejor que puede. El resultado es un campaneo, pruebe este:
 
 ```haskell
@@ -403,7 +403,7 @@ d2 $ sound "arpy arpy:2 arpy"
 d1 $ silence
 
 d2 $ silence
-``` 
+```
 La primera línea inicia un patrón bombo-redoblante, el segundo inicia un patrón un poco melodioso, luego el tercero silencia el primero (lo detiene), y el cuarto silencia el segundo (todo esta en silencio).
 
 Es importante notar que el código escrito y el que se ejecuta al oprimir `ctrl-enter` cambia los patrones que se ejecutan en el fondo. Los patrones no cambian al momento que se edita el código, hasta que se oprime `ctrl-enter` de nuevo. Hay una pequeña desconexión  entre el código y el proceso al que hay que acostumbrarse.
@@ -432,7 +432,7 @@ De cualquier manera, dejemos ir esta diversión sintáctica.
 
 ## Acomodar patrones en capas con `stack`
 
-Se pueden ejecutar muchos patrones al mismo tiempo usando la función `stack` enviándole 
+Se pueden ejecutar muchos patrones al mismo tiempo usando la función `stack` enviándole
 una lista de patrones envueltos en corchetes y separándolos con comas. Esto es muy similar a la sintaxis que vimos antes, pero que estaba fuera del mundo de las funciones.
 
 
@@ -453,7 +453,7 @@ d1 $ cat [sound "bd sn:2" |+| vowel "[a o]/2",
          ]
 ```
 
-La función `cat` acomoda todos los patrones en el espacio de uno, pero `slowcat` mantendrá 
+La función `cat` acomoda todos los patrones en el espacio de uno, pero `slowcat` mantendrá
 la velocidad de reproducción:
 
 ```haskell
@@ -483,7 +483,7 @@ La función `rev` reversa cada ciclo en un patrón:
 ```haskell
 d1 $ rev $ sound "bd ~ sn bd ~ [~ bd]/2 [sn [~ bd]/2] ~"
 ```
-## `chop` 
+## `chop`
 
 La función `chop` pica cada sample en un número dado de bits:
 
@@ -515,14 +515,14 @@ Esto se pondrá muy divertido con las meta-funciones.
 
 Hay muchas mas funciones que las que se muestran hasta acá, pero antes de verlas, saltemos un nivel para ojear algunas meta-funciones.
 
-## `every` 
+## `every`
 
 Por meta-funciones nos referimos a funciones que toman otras funciones como entrada. Por ejemplo,¿qué tal si no quiero reversar un patrón cada vez, si no cada cierta vez?
 
 ```haskell
 d1 $ every 2 rev $ sound "bd can sn can:4"
 ```
-En vez de aplicar `rev` directamente a `sound "bd can sn can:4"`, el código anterior envía 
+En vez de aplicar `rev` directamente a `sound "bd can sn can:4"`, el código anterior envía
 `rev`a `every`, diciéndole que lo haga cada `2` repeticiones. Intente cambiar `2` por `4`para descubrir una sensación muy distinta.
 
 Miremos un ejemplo visual:
@@ -549,7 +549,7 @@ Intentemos con ejemplos mas largos:
 
 ```haskell
 d1 $ every 2 (density 1.5) $ every 3 (rev) $ slow 4 $ chop 16 $ sound "breaks125"
-``` 
+```
 ## `sometimes`
 
 La función `sometimes` se parece un poco a `every` excepto que a veces aplica la función y a veces no, y lo hace de manera impredecible.
