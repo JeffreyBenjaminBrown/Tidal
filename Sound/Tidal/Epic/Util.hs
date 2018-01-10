@@ -26,6 +26,8 @@ toPartitions test f g as = -- ^ do f to what passes, g to what fails the test
   in reconstruct as did_f did_g
 
 -- | ASSUMES a <= b and c <= d.
+ -- A point can overlap with the start (and not the end)
+ -- of an interval, but two intervals sharing a single point have no overlap.
 overlap :: Arc -> Arc -> Maybe Arc
 overlap (a,b) (c,d) | b <  c || d < a = Nothing
                     | b == c && a < b = Nothing
@@ -38,8 +40,11 @@ takeOverlappingEvs :: Arc -> [Ev a] -> [Ev a]
 takeOverlappingEvs (s,e) evs = reverse $ f (s,e) [] evs where
   f :: Arc ->   [Ev a]   ->    [Ev a]  -> [Ev a]
   f     _        ovs           []      =  ovs
-  f (s,e) ovs (e1@((s',e'),a):evsRest)
-    | s >  e'   = f (s,e) ovs evsRest -- the only way discard happens
+  f (s,e) ovs (((s',e'),a):evsRest)
+    | s > e'              = f (s,e) ovs evsRest -- discard
+    | s == e' && s' < e'  = f (s,e) ovs evsRest -- discard
+ -- A point can overlap with the start (and not the end)
+ -- of an interval, but two intervals sharing a single point have no overlap.
     | otherwise = case overlap (s,e) (s',e') of
         Nothing    -> ovs
         Just ovArc -> f (s,e) ((ovArc,a):ovs) evsRest

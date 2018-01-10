@@ -31,7 +31,7 @@ applyEpic (Epic df ef) (Epic dx ex) = Epic dr er -- func f, obj x, result r
           let overlapping = takeOverlappingEvs arc xs
               remaining = dropWhile ((< fst arc) . snd . fst) xs
                 -- drop xs that end before arc starts
-          in map (second f) overlapping ++ k fs remaining
+          in fmap (second f) overlapping ++ k fs remaining
 
 instance (Fractional a) => Fractional (Epic a) where
   recip        = fmap recip
