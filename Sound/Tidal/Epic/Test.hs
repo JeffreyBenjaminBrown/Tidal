@@ -67,6 +67,21 @@ testConcatEpic' = TestCase $ do
   assertBool "2" $ eArc (concatEpic' ab c) (5,10) == [((5,7),'b'), ((7,10),'c')]
 
 testBreathe = TestCase $ do
+  let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
+      xb = breathe 5 x
+  assertBool "no bug,  1" $ eArc xb (1,9) /= []
+  assertBool "no bug,  2" $ eArc xb (2,9) /= []
+  assertBool "bug,  3" $ eArc xb (3,9) /= []
+  assertBool "bug,  4" $ eArc xb (4,9) /= []
+  assertBool "no bug,  5" $ eArc xb (5,9) /= []
+  assertBool "no bug,  6" $ eArc xb (6,9) /= []
+  assertBool "bug, neg 1" $ eArc xb (-1,9) /= []
+  assertBool "bug, neg 2" $ eArc xb (-2,9) /= []
+  assertBool "not bug, neg 3" $ eArc xb (-3,9) /= []
+  assertBool "not bug, neg 4" $ eArc xb (-4,9) /= []
+  assertBool "not bug, neg 5" $ eArc xb (-5,9) /= []
+  assertBool "bug, neg 6" $ eArc xb (-6,9) /= []
+
   assertBool "1" $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
   assertBool "2" $ breathContract 5 2 (10,11) == (4,5)
   assertBool "3" $ breathExpand 5 2 (4,5) == (10,11)
