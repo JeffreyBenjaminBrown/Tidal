@@ -21,17 +21,9 @@ eStack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
 -- TODO: handle finite-duration non-repeating Epics too.
 concatEpic :: Epic a -> Epic a -> Epic a
 concatEpic (Epic Nothing _) _ = error "concatEpic requires repeating patterns"
-concatEpic _ (Epic Nothing _) = error "concatEpic requires repeating patterns"
 concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
-  loope (t1 + t2) $ Epic (Just $ t1 + t2) $ \arc -> f1 arc ++ f2 arc
-  -- earlier I used eStack, but that takes the LCM of their durations
-  where (Epic _ f1) = window (0,t1) e1
-        (Epic _ f2) = late t1 $ window (0,t2) e2
-
-concatEpic' :: Epic a -> Epic a -> Epic a
-concatEpic' e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
-  let e1' = breathe (t1+t2) e1
-      e2' = late t1 $ breathe (t1+t2) (early t1 e2)
+  let e1' =           breathe (t1+t2) e1
+      e2' = late t1 $ breathe (t1+t2) e2
   in eStack e1' e2'
 
 -- | "Breathe" a loop of length smallDur to cover a loop of length bigDur.

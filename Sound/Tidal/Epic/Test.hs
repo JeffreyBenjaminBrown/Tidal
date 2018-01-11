@@ -57,14 +57,25 @@ main = runTestTT $ TestList
   , TestLabel "testSilence" testSilence
   , TestLabel "testParseScale" testParseScale
   , TestLabel "testBreathe" testBreathe
-  , TestLabel "testConcatEpic'" testConcatEpic'
+  , TestLabel "testBreathyConcatEpic" testBreathyConcatEpic
+  , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
   ]
 
-testConcatEpic' = TestCase $ do
+testBreathyConcatEpicIdea = TestCase $ do
+  let x = dsh 1 +- loopa 1 'a'
+  assertBool "1" $ eArc (late 1 $ breathe 5 $ early 1 x) (0,7)
+    == [((1,2),'a'),((6,7),'a')]
+  let y = loopa 2 'a' +- dsh 1 -- imagine e +- y, where period e = 2
+  assertBool "2" $ eArc (late 2 $ breathe 5 y) (0,8)
+    == [((2,4),'a'),((7,8),'a')]
+
+testBreathyConcatEpic = TestCase $ do
   let ab = sparse 2 $ loopa 1 'a' +- loopa 1 'b'
-      c = loopa 3 'c'
-  assertBool "1" $ eArc (concatEpic' ab c) (0,5)  == [((0,2),'a'), ((2, 3),'c')]
-  assertBool "2" $ eArc (concatEpic' ab c) (5,10) == [((5,7),'b'), ((7,10),'c')]
+      c =             loopa 2 'c' +- dsh 1
+  assertBool "1" $ eArc (concatEpic ab c) (0,5)
+    == [((0,2),'a'), ((2, 4),'c')]
+  assertBool "2" $ eArc (concatEpic ab c) (5,10)
+    == [((5,7),'b'), ((7,9),'c')]
 
 testBreathe = TestCase $ do
   let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
