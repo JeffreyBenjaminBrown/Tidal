@@ -2,6 +2,7 @@ module Sound.Tidal.Epic.DirtNetwork where
 
 import Control.Applicative
 import Control.Concurrent
+--import Control.DeepSeq (deepseq) -- TODO: try using
 import Data.Fixed
 import Data.List
 import Data.Maybe
@@ -32,7 +33,7 @@ import Sound.Tidal.Epic.Transform
 -- | like superDirtSetters, but for Epics, and returning no transitioner
 eSuperDirtSetters :: IO Time -> IO (ParamEpic -> IO ())
 eSuperDirtSetters getNow = do ds <- eSuperDirtState 57120
-                              return (setter ds)
+                              return $ setter ds
 
 eSuperDirtState :: Int -> IO (MVar (ParamEpic, [ParamEpic]))
 eSuperDirtState port = do backend <- superDirtBackend port

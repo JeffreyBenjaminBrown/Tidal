@@ -78,6 +78,7 @@ library
     , mtl >= 2.1
 
               -- jbb
+              , deepseq
               , stm
               , HUnit
               , lens

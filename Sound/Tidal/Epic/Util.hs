@@ -13,6 +13,9 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 
 
+plist :: Show a => [a] -> IO ()
+plist = mapM_ (putStrLn . show)
+
 div' :: Time -> Time -> Int
 div' num den = floor $ num / den
 
