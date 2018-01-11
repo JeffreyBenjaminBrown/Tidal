@@ -65,8 +65,7 @@ breathAddGaps big small (s,e) =
            z' = z + big -- the next phase 0
            endOne = z + small -- the end of the first covered interval
            ov = overlap (z,endOne) (s,e)
-       in case ov of Nothing -> [] -- seems impossible
-                     Just x -> x : breathAddGaps big small (z',e)
+       in maybe [] (:[]) ov ++ breathAddGaps big small (z',e)
 
 breathContract :: Time -> Time -> Arc -> Arc
 breathContract big small (s,e) = let s' = small * fromIntegral (div' s big)
