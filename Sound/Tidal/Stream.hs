@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, FlexibleInstances, RankNTypes, NoMonomorphismRestriction, DeriveDataTypeable #-}
+{-# LANGUAGE BangPatterns, OverloadedStrings, FlexibleInstances, RankNTypes, NoMonomorphismRestriction, DeriveDataTypeable #-}
 
 module Sound.Tidal.Stream where
 
@@ -22,8 +22,8 @@ import qualified Data.Map.Strict as Map
 type ToMessageFunc = Shape -> Tempo -> Int -> (Double, Double, ParamMap) -> Maybe (IO ())
 
 data Backend a = Backend {
-  toMessage :: ToMessageFunc,
-  flush :: Shape -> Tempo -> Int -> IO ()
+  toMessage :: !ToMessageFunc,
+  flush :: !(Shape -> Tempo -> Int -> IO ())
   }
 
 data Param = S {name :: String, sDefault :: Maybe String}
@@ -122,8 +122,8 @@ logicalOnset' change tick o offset = logicalNow + (logicalPeriod * o) + offset
 
 
 applyShape' :: Shape -> ParamMap -> Maybe ParamMap
-applyShape' s m | hasRequired s m = Just $ Map.union m (defaultMap s)
-                | otherwise = Nothing
+applyShape' !s !m | hasRequired s m = Just $ Map.union m $ defaultMap s
+                  | otherwise = Nothing
 
 start :: Backend a -> Shape -> IO (MVar (ParamPattern))
 start backend shape

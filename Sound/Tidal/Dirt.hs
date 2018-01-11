@@ -1,4 +1,5 @@
-{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE BangPatterns
+           , NoMonomorphismRestriction #-}
 module Sound.Tidal.Dirt where
 
 import Sound.OSC.Datum (Datum)

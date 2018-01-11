@@ -1,8 +1,9 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Sound.Tidal.Epic.DirtNetwork where
 
 import Control.Applicative
 import Control.Concurrent
---import Control.DeepSeq (deepseq) -- TODO: try using
 import Data.Fixed
 import Data.List
 import Data.Maybe
@@ -55,15 +56,16 @@ eStartVoice backend shape = do
 -- But lately (2017 11 25) I don't see that happening.
 eOnTick :: Backend a -> Shape -> MVar (ParamEpic,[ParamEpic])
   -> TimeFrame -> Tick -> IO ()
-eOnTick     backend     shape          epicsM         change tick = do
-  ps <- readMVar epicsM
-  let tick' = fromIntegral tick :: Integer
-      a = tick' % ticksPerCycle
-      b = (tick' + 1) % ticksPerCycle
-      messages = mapMaybe (toMessage backend shape change tick)
+eOnTick    !backend    !shape         !epicsM        !change !tick = do
+  !ps <- readMVar epicsM
+  let !tick' = fromIntegral tick :: Integer
+      !a = tick' % ticksPerCycle
+      !b = (tick' + 1) % ticksPerCycle
+      !relOnsetDeltas = eSeqToRelOnsetDeltas (a, b) $ fst ps
+      !messages = mapMaybe (toMessage backend shape change tick)
                           -- [(0,0.1, fromList [ (s_p,VS "sy")
                           --                   , (sustain_p, VF 1)] )]
-                          (eSeqToRelOnsetDeltas (a, b) $ fst ps)
+                          relOnsetDeltas
   sequence_ messages `E.catch`
     (\msg -> putStrLn $ "oops " ++ show (msg :: E.SomeException))
   flush backend shape change tick
@@ -73,11 +75,12 @@ eOnTick     backend     shape          epicsM         change tick = do
 -- (relative to the given arc), durations (PITFALL: relative to
 -- the arc), and values.
 eSeqToRelOnsetDeltas :: Arc -> Epic a -> [(Double, Double, a)]
-eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ eArc ep (s,e)
-  where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
-                          , fromRational $ (e'-s) / (e-s)
-                          , x)
-        onsetInRange ((s',_),_) = s <= s' && s' <= e
+eSeqToRelOnsetDeltas (!s, !e) !ep =
+  map f $ filter onsetInRange $ eArc ep (s,e)
+  where f ((!s', !e'), !x) = ( fromRational $ (s'-s) / (e-s)
+                             , fromRational $ (e'-s) / (e-s)
+                             , x)
+        onsetInRange ((!s',_),_) = s <= s' && s' <= e
 -- AMBITION ? Rather than filter by onsetInRange, could report only portions
   -- of events that overlap (s,e), whether or not they started recently.
   -- Could matter when the synths are playing notes that vary over time.

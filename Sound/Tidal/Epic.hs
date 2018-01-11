@@ -6,8 +6,9 @@ module Sound.Tidal.Epic (
 import Sound.Tidal.Epic.Types.Reimports as E hiding (arc)
 import Sound.Tidal.Tempo (cpsUtils'')
 
-import Sound.Tidal.Stream
-import Sound.Tidal.Dirt
+import Sound.Tidal.Stream as E
+import Sound.Tidal.OscStream as E
+import Sound.Tidal.Dirt as E
 
 import Sound.Tidal.Epic.Abbreviations as E
 import Sound.Tidal.Epic.Instances as E

@@ -1,8 +1,11 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE BangPatterns
+, TupleSections
+#-}
 
 module Sound.Tidal.Epic.CombineEpics where
 
 import Control.Arrow (first)
+import Control.DeepSeq (deepseq) -- TODO: try using this, or -XBangPatterns
 import Data.List (sortOn)
 
 import Sound.Tidal.Epic.Types.Reimports
@@ -21,9 +24,9 @@ eStack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
 -- TODO: handle finite-duration non-repeating Epics too.
 concatEpic :: Epic a -> Epic a -> Epic a
 concatEpic (Epic Nothing _) _ = error "concatEpic requires repeating patterns"
-concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
-  let e1' =           breathe (t1+t2) e1
-      e2' = late t1 $ breathe (t1+t2) e2
+concatEpic !e1@(Epic (Just !t1) !f1) !e2@(Epic (Just !t2) !f2) =
+  let !e1' =           breathe (t1+t2) e1
+      !e2' = late t1 $ breathe (t1+t2) e2
   in eStack e1' e2'
 
 -- | "Breathe" a loop of length smallDur to cover a loop of length bigDur.
@@ -40,33 +43,35 @@ concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
 -- the reverse doesn't make obvious sense.
 
 breathe :: Time -> Epic a -> Epic a
-breathe bigDur (Epic Nothing _) = error "Breathe is only defined for loops."
-breathe bigDur (Epic (Just smallDur) ef) = Epic (Just bigDur) $ \(s,e) ->
-  let covered = breathAddGaps bigDur smallDur (s,e)
-        -- the non-gaps, the intervals that will carry payloads
-      contracted = map (breathContract bigDur smallDur) covered
-        -- the inner intervals, on which ef is computed
-  in map (first $ breathExpand bigDur smallDur)
-     $ concatMap ef contracted
+breathe !bigDur (Epic Nothing _) = error "Breathe is only defined for loops."
+breathe !bigDur !(Epic !(Just smallDur) !ef) = Epic (Just bigDur)
+  $ \(!s,!e) ->
+      let !covered = breathAddGaps bigDur smallDur (s,e)
+            -- the non-gaps, the intervals that will carry payloads
+          !contracted = map (breathContract bigDur smallDur) covered
+            -- the inner intervals, on which ef is computed
+      in map (first $ breathExpand bigDur smallDur)
+         $ concatMap ef contracted
 
 breathAddGaps :: Time -> Time -> Arc -> [Arc]
-breathAddGaps big small (s,e) =
+breathAddGaps !big !small (!s,!e) =
   if s >= e -- todo ? does this violate the idiom established by `overlap`?
   then []
-  else let z = roundDownTo big s -- the first phase 0 before (or equal to) s
-           z' = z + big -- the next phase 0
-           endOne = z + small -- the end of the first covered interval
-           ov = overlap (z,endOne) (s,e)
-       in maybe [] (:[]) ov ++ breathAddGaps big small (z',e)
+  else let !z = roundDownTo big s -- the first phase 0 before (or equal to) s
+           !z' = z + big -- the next phase 0
+           !endOne = z + small -- the end of the first covered interval
+           !ov = overlap (z,endOne) (s,e)
+       in (maybe [] (:[]) ov) ++ breathAddGaps big small (z',e)
 
 breathContract :: Time -> Time -> Arc -> Arc
-breathContract big small (s,e) = let s' = small * fromIntegral (div' s big)
-                                 in (s', s' + e-s)
+breathContract !big !small (!s,!e) =
+  let !s' = small * fromIntegral (div' s big)
+  in (s', s' + e-s)
 
 breathExpand :: Time -> Time -> Arc -> Arc
-breathExpand big small (s,e) = let n = fromIntegral $ div' s small
-                                   r = rem' s small
-                                   z = n * big -- phase zero
+breathExpand !big !small (!s,!e) = let !n = fromIntegral $ div' s small
+                                       !r = rem' s small
+                                       !z = n * big -- phase zero
                                in (z + r, z + r + e-s)
 
 mergeEpics :: (Int->Int->Int) -> (Double->Double-> Double) ->
