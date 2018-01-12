@@ -8,7 +8,7 @@
 -- A similar but harder to state condition applies to operators.
 
 -- The Eq instances are only used in the test suite.
--- The Ord instance is only used in Parse.Cmd
+-- The Ord instance is only used in Parse.Lexeme
 
 module Sound.Tidal.Epic.Parse.Eq where
 
@@ -37,8 +37,8 @@ instance Ord Scale where
                  bt = b <$> testList
              in at <= bt
 
-deriving instance (Eq i, TestEpic i) => Eq (LangNonEpic i)
-deriving instance (Eq o, Eq (LangNonEpic i)) => Eq (Cmd i o)
+deriving instance (Eq i, TestEpic i) => Eq (NonEpicLexeme i)
+deriving instance (Eq o, Eq (NonEpicLexeme i)) => Eq (Lexeme i o)
 deriving instance (Eq i, Eq o, TestEpic i) => Eq (Lang i o)
 
 mkTestEpic :: a -> a -> Epic a

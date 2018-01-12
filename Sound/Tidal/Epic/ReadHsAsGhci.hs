@@ -23,7 +23,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Sound.Tidal.Epic.Parse.Util
 
 
--- | Parse multiple indented lines of a .hs file, for the :cmd directive
+-- | Parse multiple indented lines of a .hs file, for the :lexeme directive
 data Line = Ignore | Start String | More String deriving Show
 
 line = foldl1 (<|>) $ map try [emptyLine,comment,start,more]
@@ -57,7 +57,7 @@ hsToGhci s = do s1 <- mapM (parse line "") $ lines s
                     s3 = concatMap f s2
                 return $ unlines $ tail s3 ++ [":}"]
 
--- | use this like `:cmd readHsAsGhci "folder/filename.hs"`
+-- | use this like `:lexeme readHsAsGhci "folder/filename.hs"`
 -- or better yet, make a macro: `:def! . readHsAsGhci`
 -- and then call it like this: `:. folder/file.hs`
 -- (Note that no quotation marks surround the filepath in the macro.)

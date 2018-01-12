@@ -9,7 +9,7 @@ import qualified Sound.ALSA.Sequencer.Connect as Connect
 import GHC.Word
 import GHC.Int
 
-import System.Cmd
+import System.Lexeme
 import Control.Concurrent
 import Text.Printf
 

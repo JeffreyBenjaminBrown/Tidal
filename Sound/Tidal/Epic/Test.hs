@@ -16,7 +16,7 @@ import Sound.Tidal.Epic.DirtNetwork
 import Sound.Tidal.Epic.Parse.Eq
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
-import Sound.Tidal.Epic.Parse.Cmd
+import Sound.Tidal.Epic.Parse.Lexeme
 import Sound.Tidal.Epic.Scale
 import Sound.Tidal.Epic.Parse.Transform
 import Sound.Tidal.Epic.Parse.Types
@@ -49,8 +49,8 @@ main = runTestTT $ TestList
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
   , TestLabel "testScanAccumEpic" testScanAccumEpic
   , TestLabel "testScanLang" testScanLang
-  , TestLabel "testCmdToAccumEpic" testCmdToAccumEpic
-  , TestLabel "testCmd" testCmd
+  , TestLabel "testLexemeToAccumEpic" testLexemeToAccumEpic
+  , TestLabel "testLexeme" testLexeme
   , TestLabel "testPLang" testPLang
   , TestLabel "testPEpicOrOps" testPEpicOrOps
   , TestLabel "testPEpic" testPEpic
@@ -168,22 +168,22 @@ testPLang = TestCase $ do
                  (M.singleton speed_p $ VF 1.2)
                  False )
     , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty True )
-    , LangNonEpic $ LangNonEpicUnOp $ fast 2
-    , LangNonEpic $ LangNonEpicBinOp eStack
-    , LangNonEpic $ LangNonEpicBinOp concatEpic
+    , LangNonEpic $ NonEpicLexemeUnOp $ fast 2
+    , LangNonEpic $ NonEpicLexemeBinOp eStack
+    , LangNonEpic $ NonEpicLexemeBinOp concatEpic
     , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty False )
     ]
 
-testCmd = TestCase $ do
+testLexeme = TestCase $ do
   let str = "s1.2 1d2 *2 +| +- _ t2%3 "
-  assertBool "1" $ parse peCmds "" str == Right
-    [ CmdEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
+  assertBool "1" $ parse peLexemes "" str == Right
+    [ LexemeEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicLexemeOnce $ M.singleton deg_p $ VF 2
                  ]
-    , CmdNonEpic (LangNonEpicUnOp $ fast 2)
-    , CmdNonEpic (LangNonEpicBinOp eStack)
-    , CmdNonEpic (LangNonEpicBinOp concatEpic)
-    , CmdEpics [ EpicLexemeSilent
+    , LexemeNonEpic (NonEpicLexemeUnOp $ fast 2)
+    , LexemeNonEpic (NonEpicLexemeBinOp eStack)
+    , LexemeNonEpic (NonEpicLexemeBinOp concatEpic)
+    , LexemeEpics [ EpicLexemeSilent
                  , EpicLexemeDur $ 2%3
                  ]
     ]
@@ -191,8 +191,8 @@ testCmd = TestCase $ do
 testScanLang = TestCase $ do
   let (j,n,t,f) = (Just, Nothing,True,False)
       cdm = [ LangEpic (AccumEpic (j 2) n (j 3) f)
-            , LangNonEpic (LangNonEpicUnOp (+1))
-            , LangNonEpic LangNonEpicLeftBracket
+            , LangNonEpic (NonEpicLexemeUnOp (+1))
+            , LangNonEpic NonEpicLexemeLeftBracket
             ] -- scanLang doesn't match brackets, just converts them
       [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
         = scanLang loopa cdm
@@ -235,7 +235,7 @@ testSyFreq = TestCase $ do
   let f = _syFreq $     M.fromList [(speed_p,VF 3),(sound_p,VS "s")]
   assertBool "1" $ f == M.fromList [(qf_p,VF 3),   (sound_p,VS "s")]
 
-testCmdToAccumEpic = TestCase $ do
+testLexemeToAccumEpic = TestCase $ do
   let dur = 1
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
@@ -246,7 +246,7 @@ testCmdToAccumEpic = TestCase $ do
                                , EpicLexemeOnce speedMap ]
       seqBit = AccumEpic
                (Just dur) speedMap (M.union soundMap degMap) False
-  assertBool "1" $ seqBit == cmdToAccumEpic parseBitSet
+  assertBool "1" $ seqBit == lexemeToAccumEpic parseBitSet
 
 testMergeEvents = TestCase $ do
   let aEvs = [ ((0 % 1,0 % 1),M.fromList [(speed_p,VF 2)])

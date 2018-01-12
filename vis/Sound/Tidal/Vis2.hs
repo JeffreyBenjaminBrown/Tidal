@@ -11,7 +11,7 @@ import Sound.Tidal.Time
 import Sound.Tidal.Utils
 import Data.Ratio
 import Data.Maybe
-import System.Cmd
+import System.Lexeme
 import Data.List
 import Data.Ord         ( comparing )
 

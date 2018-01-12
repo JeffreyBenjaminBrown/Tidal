@@ -26,23 +26,23 @@ type Scale = ParamMap -> ParamMap
 data Timed o = Timed { timedDur :: Dur
                      , timedPayload :: o} deriving Eq
 
--- | = Cmd: Parsing starts here
-data LangNonEpic i = LangNonEpicUnOp (Epic i -> Epic i)
-                   | LangNonEpicBinOp (Epic i -> Epic i -> Epic i)
-                   | LangNonEpicLeftBracket | LangNonEpicRightBracket
+-- | = Lexeme: Parsing starts here
+data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
+                     | NonEpicLexemeBinOp (Epic i -> Epic i -> Epic i)
+                     | NonEpicLexemeLeftBracket | NonEpicLexemeRightBracket
 
 data EpicLexeme o = EpicLexemeDur     Dur
                   | EpicLexemeOnce    o
                   | EpicLexemeNewPersist o -- ^ these get merged with
-                           -- persistentCmds from earlier CmdEpics
+                           -- persistentLexemes from earlier LexemeEpics
                   | EpicLexemeSilent
                   deriving (Show, Eq, Ord)
 
-data Cmd i o = CmdEpics [EpicLexeme o]
-             | CmdNonEpic (LangNonEpic i)
+data Lexeme i o = LexemeEpics [EpicLexeme o]
+                | LexemeNonEpic (NonEpicLexeme i)
 
 
--- | = Lang: parsing reaches this once CmdEpics are accumulated
+-- | = Lang: parsing reaches this once LexemeEpics are accumulated
 
 -- | An AccumEpic in a list relies on earlier ones for meaning.
 data AccumEpic o = AccumEpic -- ^ o is usually Map, esp. ParamMap
@@ -54,7 +54,7 @@ data AccumEpic o = AccumEpic -- ^ o is usually Map, esp. ParamMap
   } deriving (Show, Eq, Ord)
 
 data Lang i o = LangEpic (AccumEpic o)
-              | LangNonEpic (LangNonEpic i) deriving Show
+              | LangNonEpic (NonEpicLexeme i) deriving Show
 
 -- | = EpicOrOp: the last parsing stage before the resulting Epic
 newtype EpicWrap a = EpicWrap (Epic a)
@@ -71,11 +71,11 @@ data EpicOrOp a = EpicNotOp (EpicWrap a)
 instance Show (EpicWrap a) where show _ = "<EpicWrap>"
 instance Show (UnaryWrap a) where show _ = "<UnaryWrap>"
 instance Show (BinaryWrap a) where show _ = "<BinaryWrap>"
-instance Show (LangNonEpic i) where
-  show (LangNonEpicUnOp _) =  "<LangNonEpicUnOp>"
-  show (LangNonEpicBinOp _) = "<LangNonEpicBinOp>"
-  show LangNonEpicLeftBracket = "["
-  show LangNonEpicRightBracket = "]"
+instance Show (NonEpicLexeme i) where
+  show (NonEpicLexemeUnOp _) =  "<NonEpicLexemeUnOp>"
+  show (NonEpicLexemeBinOp _) = "<NonEpicLexemeBinOp>"
+  show NonEpicLexemeLeftBracket = "["
+  show NonEpicLexemeRightBracket = "]"
 
 class Monoidoid inner o | o -> inner where
   mempty' :: o

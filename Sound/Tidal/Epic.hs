@@ -15,7 +15,7 @@ import Sound.Tidal.Epic.CombineEpics as E
 import Sound.Tidal.Epic.DirtNetwork as E
 import Sound.Tidal.Epic.Params as E
 import Sound.Tidal.Epic.Parse.Util as E
-import Sound.Tidal.Epic.Parse.Cmd as E
+import Sound.Tidal.Epic.Parse.Lexeme as E
 import Sound.Tidal.Epic.Parse.Expr as E
 import Sound.Tidal.Epic.Scale as E
 import Sound.Tidal.Epic.Parse.Eq as E

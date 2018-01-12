@@ -1,16 +1,16 @@
 -- | = Among the types in Parse.Types, the two tricky transformations in
 -- Parse.Transform involve two different ways of accumulating
--- the information in Cmds.
+-- the information in Lexemes.
 --
--- The first to run, `cmdToAccumEpic`, accumulates a set of instructions
+-- The first to run, `lexemeToAccumEpic`, accumulates a set of instructions
 -- like "t1%2 d1" into an AccumEpic (in this case, one with a duration of 1/2
 -- carrying a persistent singleton map from deg_p to VF 1) and
 -- no temporary map.
 --
 -- After that, `scanLang` scans across a series of AccumEpics to
 -- creates EpicOrOp values, where each contains the maps not just of the
--- Cmd corresponding to it, but also the persistent maps in all the prior
--- Cmds. (It might not be a map, though; it just has to be a Monoidoid.)
+-- Lexeme corresponding to it, but also the persistent maps in all the prior
+-- Lexemes. (It might not be a map, though; it just has to be a Monoidoid.)
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -37,17 +37,17 @@ fromAccumEpic :: forall i o. Monoidoid i o =>
 fromAccumEpic loopx = map (EpicNotOp . EpicWrap . timedToEpic loopx)
                            . _scanAccumEpic
 
-fromLangNonEpic :: LangNonEpic i -> EpicOrOp i
-fromLangNonEpic (LangNonEpicUnOp x)  = UnaryOp (UnaryWrap x)
-fromLangNonEpic (LangNonEpicBinOp x) = BinaryOp (BinaryWrap x)
-fromLangNonEpic LangNonEpicLeftBracket  = LeftBracket
-fromLangNonEpic LangNonEpicRightBracket = RightBracket
+fromNonEpicLexeme :: NonEpicLexeme i -> EpicOrOp i
+fromNonEpicLexeme (NonEpicLexemeUnOp x)  = UnaryOp (UnaryWrap x)
+fromNonEpicLexeme (NonEpicLexemeBinOp x) = BinaryOp (BinaryWrap x)
+fromNonEpicLexeme NonEpicLexemeLeftBracket  = LeftBracket
+fromNonEpicLexeme NonEpicLexemeRightBracket = RightBracket
 
 scanLang :: forall i o. Monoidoid i o =>
   (Time -> i -> Epic i) -> [Lang i o] -> [EpicOrOp i]
 scanLang loopx bs = toPartitions test
                             (fromAccumEpic loopx . map unwrapEpic)
-                            (map $ fromLangNonEpic . unwrapNonEpic)
+                            (map $ fromNonEpicLexeme . unwrapNonEpic)
                             bs
   where test (LangEpic _) = True
         test (LangNonEpic _) = False
@@ -59,7 +59,7 @@ _scanAccumEpic bs = map (uncurry Timed) $
   __scanAccumEpic (1, mempty') bs
 
 __scanAccumEpic :: Monoidoid i o => (Dur,o) -> [AccumEpic o] -> [(Dur,o)]
-__scanAccumEpic priorPersistentCmds [] = []
+__scanAccumEpic priorPersistentLexemes [] = []
 __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
   let next = mappend' keep prevMap
       now = foldl1 mappend' [temp, keep, prevMap]
@@ -70,25 +70,25 @@ __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
      : __scanAccumEpic (nowDur, next) bs
 
 
-cmdToAccumEpic :: forall i o. Monoidoid i o =>
+lexemeToAccumEpic :: forall i o. Monoidoid i o =>
   S.Set (EpicLexeme o) -> AccumEpic o
-cmdToAccumEpic s = AccumEpic dur once persist silent where
+lexemeToAccumEpic s = AccumEpic dur once persist silent where
   isDur, isSilent, isOnce :: EpicLexeme o -> Bool
   isDur (EpicLexemeDur _)   = True; isDur _    = False
   isSilent EpicLexemeSilent = True; isSilent _ = False
   isOnce (EpicLexemeOnce _) = True; isOnce _   = False
-  (durCmds, nonDurCmds)   = S.partition isDur s
-  (silentCmds, paramCmds) = S.partition isSilent nonDurCmds
-  (onceCmds, persistCmds) = S.partition isOnce paramCmds
+  (durLexemes, nonDurLexemes)   = S.partition isDur s
+  (silentLexemes, paramLexemes) = S.partition isSilent nonDurLexemes
+  (onceLexemes, persistLexemes) = S.partition isOnce paramLexemes
 
-  dur = case S.toList durCmds of (EpicLexemeDur t):_ -> Just t
-                                 _               -> Nothing
-  silent = if S.null silentCmds then False else True
-  once    = foldl mappend' mempty' $ cmdToPayload <$> S.toList onceCmds
-  persist = foldl mappend' mempty' $ cmdToPayload <$> S.toList persistCmds
+  dur = case S.toList durLexemes of (EpicLexemeDur t):_ -> Just t
+                                    _                   -> Nothing
+  silent = if S.null silentLexemes then False else True
+  once    = foldl mappend' mempty' $ lexemeToPayload <$> S.toList onceLexemes
+  persist = foldl mappend' mempty' $ lexemeToPayload <$> S.toList persistLexemes
 
-  cmdToPayload :: EpicLexeme o -> o
-  cmdToPayload  EpicLexemeSilent = error "cmdToPayload given silence"
-  cmdToPayload (EpicLexemeDur _) = error "cmdToPayload given a duration"
-  cmdToPayload (EpicLexemeOnce m) = m
-  cmdToPayload (EpicLexemeNewPersist m) = m
+  lexemeToPayload :: EpicLexeme o -> o
+  lexemeToPayload  EpicLexemeSilent = error "lexemeToPayload given silence"
+  lexemeToPayload (EpicLexemeDur _) = error "lexemeToPayload given a duration"
+  lexemeToPayload (EpicLexemeOnce m) = m
+  lexemeToPayload (EpicLexemeNewPersist m) = m
