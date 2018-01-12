@@ -54,20 +54,18 @@ peLang = pLang peLexemes
 psLang :: Parser [Lang Scale (Maybe Scale)]
 psLang = pLang psLexemes
 
-pLexemes :: Monoidoid i o => Parser [Lexeme i o] -> Parser [Lexeme i o]
-pLexemes p = concat <$> some f where f = p <|> (:[]) <$> pLexemeNonEpicLexeme
+pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
+pLexemes p = some $ p <|> pLexemeNonEpicLexeme
 peLexemes :: Parser [Lexeme ParamMap ParamMap]
 peLexemes = pLexemes peLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
 psLexemes = pLexemes psLexemeEpics
 
-pLexemeEpics :: Monoidoid i o => (Parser (EpicLexeme o)) -> Parser [Lexeme i o]
-pLexemeEpics p = sepBy1 (LexemeEpics <$> some p) (lexeme $ string ",,")
-  -- TODO ? ',,' cannot yet be used like other binary operators;
-  -- if one of its arguments is bracketed, it fails
-peLexemeEpics :: Parser [Lexeme ParamMap ParamMap]
+pLexemeEpics :: Monoidoid i o => (Parser (EpicLexeme o)) -> Parser (Lexeme i o)
+pLexemeEpics p = LexemeEpics <$> some p
+peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
 peLexemeEpics = pLexemeEpics PM.epicLexeme
-psLexemeEpics :: Parser [Lexeme Scale (Maybe Scale)]
+psLexemeEpics :: Parser (Lexeme Scale (Maybe Scale))
 psLexemeEpics = pLexemeEpics Sc.epicLexeme
 
 
