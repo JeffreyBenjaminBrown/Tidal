@@ -55,7 +55,7 @@ psLang :: Parser [Lang Scale (Maybe Scale)]
 psLang = pLang psLexemes
 
 pLexemes :: Monoidoid i o => Parser [Lexeme i o] -> Parser [Lexeme i o]
-pLexemes p = concat <$> some f where f = p <|> (:[]) <$> pLexemeLexemeNonEpic
+pLexemes p = concat <$> some f where f = p <|> (:[]) <$> pLexemeNonEpicLexeme
 peLexemes :: Parser [Lexeme ParamMap ParamMap]
 peLexemes = pLexemes peLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
@@ -72,8 +72,8 @@ psLexemeEpics = pLexemeEpics Sc.epicLexeme
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)
-pLexemeLexemeNonEpic :: Parser (Lexeme i o)
-pLexemeLexemeNonEpic = LexemeNonEpic <$> pNonEpicLexeme
+pLexemeNonEpicLexeme :: Parser (Lexeme i o)
+pLexemeNonEpicLexeme = LexemeNonEpic <$> pNonEpicLexeme
 
 pNonEpicLexeme, pNonEpicLexemeFast, pNonEpicLexemeStack, pNonEpicLexemeCat,
   pNonEpicLexemeLeftBracket, pNonEpicLexemeRightBracket :: Parser (NonEpicLexeme i)
