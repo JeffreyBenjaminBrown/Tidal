@@ -65,8 +65,11 @@ breathAddGaps !big !small (!s,!e) =
 
 breathContract :: Time -> Time -> Arc -> Arc
 breathContract !big !small (!s,!e) =
-  let !s' = small * fromIntegral (div' s big)
-  in (s', s' + e-s)
+  let !smallPhase0 = small * fromIntegral (div' s big)
+      diff = s - roundDownTo big s
+      length = e-s
+      smallStart = smallPhase0 + diff
+  in (smallStart, smallStart + length)
 
 breathExpand :: Time -> Time -> Arc -> Arc
 breathExpand !big !small (!s,!e) = let !n = fromIntegral $ div' s small
