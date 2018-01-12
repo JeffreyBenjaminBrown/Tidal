@@ -93,9 +93,15 @@ testBreathe = TestCase $ do
   assertBool "not bug, neg 5" $ eArc xb (-5,9) /= []
   assertBool "bug, neg 6" $ eArc xb (-6,9) /= []
 
-  assertBool "1" $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
-  assertBool "2" $ breathContract 5 2 (10,11) == (4,5)
+  assertBool "1"   $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
+  assertBool "1.1" $ breathAddGaps 5 2 (11,21) == [(11,12),(15,17),(20,21)]
+  assertBool "1.2" $ breathAddGaps 5 2 (9,24) == [(10,12),(15,17),(20,22)]
+  assertBool "2"   $ breathContract 5 2 (10,11) == (4,5)
+  assertBool "2.1" $ breathContract 5 2 (11,12) == (5,6)
+  assertBool "2.2" $ breathContract 5 2 (0,0) == (0,0)
+  assertBool "2.3" $ breathContract 5 2 (15,15) == (6,6)
   assertBool "3" $ breathExpand 5 2 (4,5) == (10,11)
+  assertBool "3.1" $ breathExpand 5 2 (5,6) == (11,12)
   let small = loopa 1 'a' +- loopa 1 'b'
       big = breathe 5 small
   assertBool "4" $ eArc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
