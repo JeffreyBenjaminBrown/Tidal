@@ -5,7 +5,7 @@ module Sound.Tidal.Epic.CombineEpics where
 import Control.Arrow (first)
 import Data.List (sortOn)
 
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Util
 import Sound.Tidal.Epic.Transform
@@ -109,4 +109,4 @@ applyMetaEpic    (Epic md mf)               obj    = Epic d' f' where
     where -- transformEvs :: [(Arc, Epic a -> Epic b)]
           transformEvs = mf a
           -- h :: (Arc, Epic a -> Epic b) -> [Ev b]
-          h (arc,tr) = eArc (tr obj) arc
+          h (theArc,tr) = arc (tr obj) theArc

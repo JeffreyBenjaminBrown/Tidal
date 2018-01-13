@@ -24,16 +24,16 @@ import Sound.Tidal.Transition (transition)
 import Sound.Tidal.Pattern (seqToRelOnsetDeltas, slow)
 import Sound.Tidal.Stream (ticksPerCycle)
 
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Util
 
 
 eSilence :: Epic a
-eSilence = Epic { period = Nothing, eArc = const [] }
+eSilence = Epic { period = Nothing, arc = const [] }
 
 durSilence :: Time -> Epic a
-durSilence t = Epic { period = Just t, eArc = const [] }
+durSilence t = Epic { period = Just t, arc = const [] }
 
 early, late, eSlow, eFast, dense, sparse :: Time -> Epic a -> Epic a
 early t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s+t, e+t) where

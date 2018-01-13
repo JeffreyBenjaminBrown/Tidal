@@ -8,7 +8,6 @@ module Sound.Tidal.Epic.Abbreviations (
   , pr
 
   -- | ==== Tidal
-  , arc
   , shh, dsh
   , fast, slow
   , rev
@@ -47,7 +46,6 @@ infixr 2 +-, +|
 (+-) = concatEpic
 (+|) = eStack
 
-arc = eArc
 shh = eSilence
 dsh = durSilence
 fast = eFast

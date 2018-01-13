@@ -23,7 +23,7 @@ import Sound.Tidal.Pattern (filterOnsetsInRange, seqToRelOnsetDeltas)
 import Sound.Tidal.Stream (ticksPerCycle, setter)
 import Sound.Tidal.Time
 import Sound.Tidal.Transition (transition)
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Utils
 import Sound.Tidal.Epic.Instances
@@ -73,7 +73,7 @@ eOnTick     backend     shape          epicsM         change tick = do
 -- (relative to the given arc), durations (PITFALL: relative to
 -- the arc), and values.
 eSeqToRelOnsetDeltas :: Arc -> Epic a -> [(Double, Double, a)]
-eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ eArc ep (s,e)
+eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ arc ep (s,e)
   where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
                           , fromRational $ (e'-s) / (e-s)
                           , x)

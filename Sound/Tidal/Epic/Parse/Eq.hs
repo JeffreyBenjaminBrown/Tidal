@@ -16,7 +16,7 @@ module Sound.Tidal.Epic.Parse.Eq where
 import Data.Map (Map(..),singleton)
 
 import Sound.Tidal.Epic.Types
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.Parse.Types
 
 import Sound.Tidal.Epic.Abbreviations
@@ -57,15 +57,15 @@ instance TestEpic (Map Param Value) where
              (singleton gain_p $ VF 2)
 
 instance Eq a => Eq (Epic a) where
-  (==) a b = let arc = (0,10) in eArc a arc == eArc b arc
+  (==) a b = let testRange = (-10,10) in arc a testRange == arc b testRange
 
 instance (Eq a, TestEpic a) => Eq (Epic a -> Epic a) where
   (==) f g = let t = testEpic
-                 arc = (0,10)
-             in eArc (f t) arc == eArc (g t) arc
+                 testRange = (0,10)
+             in arc (f t) testRange == arc (g t) testRange
 
 instance (Eq a, TestEpic a) => Eq (Epic a -> Epic a -> Epic a) where
   (==) f g = let t1 = testEpic
                  t2 = early 1 $ slow 2 testEpic
-                 arc = (0,10)
-             in eArc (f t1 t2) arc == eArc (g t1 t2) arc
+                 testRange = (0,10)
+             in arc (f t1 t2) testRange == arc (g t1 t2) testRange
