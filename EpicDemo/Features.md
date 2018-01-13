@@ -1,3 +1,6 @@
+(For instructions detailing how to set up and run the code, see `EpicDemo/Demo.hs`.)
+
+
 # The Epic type
 
 It's like a Pattern, but it includes a duration.

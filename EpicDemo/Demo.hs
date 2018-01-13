@@ -5,14 +5,14 @@
   -- Clone the repo: `git clone https://github.com/JeffreyBenjaminBrown/Tidal`
   -- Checkout this branch: `git checkout parseOps`
   -- Run `stack ghci`.
-  -- From within GHCI, call `:s Demo/Demo.hs`.
+  -- From within GHCI, call `:s EpicDemo/Demo.hs`.
   -- That will create a lot of noise, because it runs this whole file.
   -- To get a better sense of what's going on, it's probably more useful to
   -- step through the file one line at a time, by copying them into GHCI.
 
 :m Sound.Tidal.Epic
 import qualified Data.Map as M
-:s Demo/MakeVoices.hs
+:s EpicDemo/MakeVoices.hs
 
 b = 1/4
 can' = loope b can  -- a (1/4)-second loop of the can sample
