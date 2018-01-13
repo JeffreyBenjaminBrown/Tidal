@@ -63,4 +63,4 @@ cata, cat0 :: Time -> [a] -> Epic a
 cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
 
-syf = syFreq
+syf = syParams

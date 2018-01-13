@@ -45,7 +45,6 @@ main = runTestTT $ TestList
   , TestLabel "testPartitionAndGroupEvents" testPartitionAndGroupEvents
   , TestLabel "testOverlap" testOverlap
   , TestLabel "tDoubleTheDurationZeroBoundaries" tDoubleTheDurationZeroBoundaries
-  , TestLabel "testSyFreq" testSyFreq
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
   , TestLabel "testScanAccumEpic" testScanAccumEpic
   , TestLabel "testScanLang" testScanLang
@@ -59,7 +58,15 @@ main = runTestTT $ TestList
   , TestLabel "testBreathe" testBreathe
   , TestLabel "testBreathyConcatEpic" testBreathyConcatEpic
   , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
+  , TestLabel "testSyParams" testSyParams
   ]
+
+testSyParams = TestCase $ do
+  let x = (loopa 1 $ M.singleton gain_p $ VF 1)
+          +| (loopa 1 $ M.singleton speed_p $ VF 2)
+      y = (loopa 1 $ M.singleton amp_p $ VF 1)
+          +| (loopa 1 $ M.singleton qf_p $ VF 2)
+  assertBool "1" $ syParams x == y
 
 testBreathyConcatEpicIdea = TestCase $ do
   let x = dsh 1 +- loopa 1 'a'
@@ -232,10 +239,6 @@ testMergeEpics = TestCase $ do
   assertBool "f2" $
     eArc (f              &* speed (ever 2)) (0,1%4) ==
     [((0,0), M.singleton speed_p $ VF 4)]
-
-testSyFreq = TestCase $ do
-  let f = _syFreq $     M.fromList [(speed_p,VF 3),(sound_p,VS "s")]
-  assertBool "1" $ f == M.fromList [(qf_p,VF 3),   (sound_p,VS "s")]
 
 testLexemeToAccumEpic = TestCase $ do
   let dur = 1

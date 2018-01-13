@@ -28,15 +28,16 @@ quotUnif num den = if num < 0 then q - 1 else q
   where q = quot num den
 
 -- | for synths, convert speed_p parameter to qf_p (frequency) parameter
-syFreq :: ParamEpic -> ParamEpic
-syFreq = fmap _syFreq
+syParams :: ParamEpic -> ParamEpic
+syParams = fmap $ changeParam speed_p qf_p . changeParam gain_p amp_p
 
-_syFreq :: ParamMap -> ParamMap
-_syFreq m = mergeNumParamsWith (*) (*) mOtherParams mQf
+-- | use the value from the old param in the new param
+changeParam :: Param -> Param -> ParamMap -> ParamMap
+changeParam old new m = mergeNumParamsWith (*) (*) mOtherParams mQf
   where (mSpeed,mOtherParams) = M.partitionWithKey g m
         mQf = if null mSpeed then M.empty
-              else M.singleton qf_p $ (M.!) mSpeed speed_p
-        g k _ = if k == speed_p then True else False
+              else M.singleton new $ (M.!) mSpeed old
+        g k _ = if k == old then True else False
         -- PITFALL: It seems like "g deg_p _ = True; g _ _ = False"
         -- ought to work, but somehow no.
 

@@ -37,7 +37,8 @@ epicLexemeSilence = const EpicPhonemeSilent <$> char '_'
 pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try
   [parseSpeed, parseGain, parseSound, parseDegree, parseSustain
-  , parseQf, parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf ]
+  , parseQf, parseAmp
+  , parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf ]
 
 parseSpeed, parseGain, parseSound, parseDegree :: Parser ParamMap
 parseSpeed   = parseSingletonFloat  speed_p   $ ignore $ char 's'
@@ -45,13 +46,15 @@ parseGain    = parseSingletonFloat  gain_p    $ ignore $ char 'g'
 parseSound   = parseSingletonString sound_p   $ ignore $ char '_'
 parseDegree  = parseSingletonFloat  deg_p     $ ignore $ char 'd'
 parseSustain = parseSingletonFloat  sustain_p $ ignore $ string "sus"
-parseQf      = parseSingletonFloat  qf_p      $ ignore $ string "f"
 parseQfa     = parseSingletonFloat  qfa_p     $ ignore $ string "fa"
 parseQff     = parseSingletonFloat  qff_p     $ ignore $ string "ff"
 parseQpa     = parseSingletonFloat  qpa_p     $ ignore $ string "pa"
 parseQpf     = parseSingletonFloat  qpf_p     $ ignore $ string "pf"
 parseQaa     = parseSingletonFloat  qaa_p     $ ignore $ string "aa"
 parseQaf     = parseSingletonFloat  qaf_p     $ ignore $ string "af"
+  -- I don't think I need parseQf or parseAmp; I'll just use syNames
+parseQf      = parseSingletonFloat  qf_p      $ ignore $ string "f"
+parseAmp     = parseSingletonFloat  amp_p     $ ignore $ string "a"
 
 parseSingletonFloat :: Param -> Parser () -> Parser ParamMap
 parseSingletonFloat param prefix =
