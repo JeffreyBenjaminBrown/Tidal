@@ -1,8 +1,14 @@
--- | What I do to run this demo:
+-- | How to run this demo:
+  -- You don't need Emacs or Atom or any other editor
+    -- although you might use one to paste lines into GHCI.
+  -- Install Stack (the Haskell tool) and Git, if either is missing.
   -- Clone the repo: `git clone https://github.com/JeffreyBenjaminBrown/Tidal`
-  -- Checkout this branch: `git checkout epic`
-  -- Run `stack ghci`. (You'll need to have installed Stack.)
-  -- From within GHCI, call `:s Sound/Tidal/Epic/Demo.hs`.
+  -- Checkout this branch: `git checkout parseOps`
+  -- Run `stack ghci`.
+  -- From within GHCI, call `:s Demo/Demo.hs`.
+  -- That will create a lot of noise, because it runs this whole file.
+  -- To get a better sense of what's going on, it's probably more useful to
+  -- step through the file one line at a time, by copying them into GHCI.
 
 :m Sound.Tidal.Epic
 import qualified Data.Map as M
@@ -23,7 +29,7 @@ numEpic = cat $ map (loopa b) [1,1.5,2,2.5]
   -- 4 numbers over a second
 funcEpic = loopa 1 id +- loopa 1 (+0.75)
   -- a 2-second pattern: id for a second, then add 0.75
-v1 $ arpEpic &+ speed (funcEpic <*> numEpic)
+v1 $ arpEpic &+ speed (funcEpic <*> ((*3) <$> numEpic))
   -- play arpEpic, merging it with a speed Epic which contains
   -- funcEpic applied to numEpic
 v2 $ et (cat0 b $ map (+19) [0,3,7,12]) &+ sound (ever "arp")
@@ -49,5 +55,5 @@ v3 $ sound (ever "arp") &* scaleCycle <*> melody &* speed 2
 -- using the sy and sya synths
 -- note that sy needs an explicit sustain value, else it's inaudible
 v4 $ pe0 "_sy,,sus0.7"
-v4 $ (syParams $ scaleCycle <*> melody) &* sustain 2 &* qfa 1 &* qf 440 &* sound (ever "sy")
 v4 $ qf 440 &* sound (ever "sy")
+v4 $ (syParams $ scaleCycle <*> melody) &* sustain 2 &* qfa 1 &* qf 440 &* sound (ever "sy")
