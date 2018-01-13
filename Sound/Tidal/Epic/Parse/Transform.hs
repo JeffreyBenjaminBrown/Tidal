@@ -71,24 +71,24 @@ __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
 
 
 lexemeToAccumEpic :: forall i o. Monoidoid i o =>
-  S.Set (EpicLexeme o) -> AccumEpic o
+  S.Set (EpicPhoneme o) -> AccumEpic o
 lexemeToAccumEpic s = AccumEpic dur once persist silent where
-  isDur, isSilent, isOnce :: EpicLexeme o -> Bool
-  isDur (EpicLexemeDur _)   = True; isDur _    = False
-  isSilent EpicLexemeSilent = True; isSilent _ = False
-  isOnce (EpicLexemeOnce _) = True; isOnce _   = False
+  isDur, isSilent, isOnce :: EpicPhoneme o -> Bool
+  isDur (EpicPhonemeDur _)   = True; isDur _    = False
+  isSilent EpicPhonemeSilent = True; isSilent _ = False
+  isOnce (EpicPhonemeOnce _) = True; isOnce _   = False
   (durLexemes, nonDurLexemes)   = S.partition isDur s
   (silentLexemes, paramLexemes) = S.partition isSilent nonDurLexemes
   (onceLexemes, persistLexemes) = S.partition isOnce paramLexemes
 
-  dur = case S.toList durLexemes of (EpicLexemeDur t):_ -> Just t
+  dur = case S.toList durLexemes of (EpicPhonemeDur t):_ -> Just t
                                     _                   -> Nothing
   silent = if S.null silentLexemes then False else True
   once    = foldl mappend' mempty' $ lexemeToPayload <$> S.toList onceLexemes
   persist = foldl mappend' mempty' $ lexemeToPayload <$> S.toList persistLexemes
 
-  lexemeToPayload :: EpicLexeme o -> o
-  lexemeToPayload  EpicLexemeSilent = error "lexemeToPayload given silence"
-  lexemeToPayload (EpicLexemeDur _) = error "lexemeToPayload given a duration"
-  lexemeToPayload (EpicLexemeOnce m) = m
-  lexemeToPayload (EpicLexemeNewPersist m) = m
+  lexemeToPayload :: EpicPhoneme o -> o
+  lexemeToPayload  EpicPhonemeSilent = error "lexemeToPayload given silence"
+  lexemeToPayload (EpicPhonemeDur _) = error "lexemeToPayload given a duration"
+  lexemeToPayload (EpicPhonemeOnce m) = m
+  lexemeToPayload (EpicPhonemeNewPersist m) = m

@@ -179,14 +179,14 @@ testPLang = TestCase $ do
 testLexeme = TestCase $ do
   let str = "s1.2,,1d2 *2 +| +- _,,t2%3 "
   assertBool "1" $ parse peLexemes "" str == Right
-    [ LexemeEpics [ EpicLexemeNewPersist $ M.singleton speed_p $ VF 1.2
-                 , EpicLexemeOnce $ M.singleton deg_p $ VF 2
+    [ LexemeEpics [ EpicPhonemeNewPersist $ M.singleton speed_p $ VF 1.2
+                 , EpicPhonemeOnce $ M.singleton deg_p $ VF 2
                  ]
     , LexemeNonEpic (NonEpicLexemeUnOp $ fast 2)
     , LexemeNonEpic (NonEpicLexemeBinOp eStack)
     , LexemeNonEpic (NonEpicLexemeBinOp concatEpic)
-    , LexemeEpics [ EpicLexemeSilent
-                 , EpicLexemeDur $ 2%3
+    , LexemeEpics [ EpicPhonemeSilent
+                 , EpicPhonemeDur $ 2%3
                  ]
     ]
 
@@ -242,10 +242,10 @@ testLexemeToAccumEpic = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ EpicLexemeDur dur
-                               , EpicLexemeNewPersist soundMap
-                               , EpicLexemeNewPersist degMap
-                               , EpicLexemeOnce speedMap ]
+      parseBitSet = S.fromList [ EpicPhonemeDur dur
+                               , EpicPhonemeNewPersist soundMap
+                               , EpicPhonemeNewPersist degMap
+                               , EpicPhonemeOnce speedMap ]
       seqBit = AccumEpic
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == lexemeToAccumEpic parseBitSet

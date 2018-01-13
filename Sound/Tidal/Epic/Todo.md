@@ -1,4 +1,4 @@
-Now that ,, is used to glue EpicLexemes
+Now that ,, is used to glue EpicPhonemes
   Solve the two problems that introduces
     Lexeme is now not really what these things should be called
     Scale parsing won't work now, because they already use the lexeme function

@@ -31,14 +31,15 @@ data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
                      | NonEpicLexemeBinOp (Epic i -> Epic i -> Epic i)
                      | NonEpicLexemeLeftBracket | NonEpicLexemeRightBracket
 
-data EpicLexeme o = EpicLexemeDur     Dur
-                  | EpicLexemeOnce    o
-                  | EpicLexemeNewPersist o -- ^ these get merged with
-                           -- persistentLexemes from earlier LexemeEpics
-                  | EpicLexemeSilent
-                  deriving (Show, Eq, Ord)
+-- | EpicPhonemes abut each other in a LexemeEpic
+data EpicPhoneme o = EpicPhonemeDur     Dur
+                   | EpicPhonemeOnce    o
+                   | EpicPhonemeNewPersist o -- ^ these get merged with
+                     -- persistentLexemes from earlier LexemeEpics
+                   | EpicPhonemeSilent
+                   deriving (Show, Eq, Ord)
 
-data Lexeme i o = LexemeEpics [EpicLexeme o]
+data Lexeme i o = LexemeEpics [EpicPhoneme o]
                 | LexemeNonEpic (NonEpicLexeme i)
 
 

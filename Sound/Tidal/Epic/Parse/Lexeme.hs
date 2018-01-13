@@ -61,7 +61,7 @@ peLexemes = pLexemes peLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
 psLexemes = pLexemes psLexemeEpics
 
-pLexemeEpics :: Monoidoid i o => (Parser (EpicLexeme o)) -> Parser (Lexeme i o)
+pLexemeEpics :: Monoidoid i o => (Parser (EpicPhoneme o)) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (string ",,")
 peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
 peLexemeEpics = pLexemeEpics PM.epicLexeme
