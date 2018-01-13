@@ -29,47 +29,47 @@ import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Util
 
 
-eSilence :: Epic a
-eSilence = Epic { period = Nothing, arc = const [] }
+silence :: Epic a
+silence = Epic { period = Nothing, arc = const [] }
 
 durSilence :: Time -> Epic a
 durSilence t = Epic { period = Just t, arc = const [] }
 
-early, late, eSlow, eFast, dense, sparse :: Time -> Epic a -> Epic a
+early, late, slow, fast, dense, sparse :: Time -> Epic a -> Epic a
 early t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s+t, e+t) where
   g = map $ first $ mapArc $ \x -> x-t
 late  t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s-t, e-t) where
   g = map $ first $ mapArc $ \x -> x+t
-eSlow t (Epic d f) = Epic (fmap (*t) d) $ \(s,e) -> g $ f (s/t, e/t) where
+slow t (Epic d f) = Epic (fmap (*t) d) $ \(s,e) -> g $ f (s/t, e/t) where
   g = map $ first $ mapArc $ \x -> x*t
-eFast t (Epic d f) = Epic (fmap (/t) d) $ \(s,e) -> g $ f (s*t, e*t) where
+fast t (Epic d f) = Epic (fmap (/t) d) $ \(s,e) -> g $ f (s*t, e*t) where
   g = map $ first $ mapArc $ \x -> x/t
 dense t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s*t, e*t) where
   g = map $ first $ mapArc $ \x -> x/t
 sparse t (Epic d f) = Epic d            $ \(s,e) -> g $ f (s/t, e/t) where
   g = map $ first $ mapArc $ \x -> x*t
 
-eRev :: Epic a -> Epic a
-eRev    (Epic d f) = Epic d $ \(s,e) -> reverse $ g $ f (-e, -s)
+rev :: Epic a -> Epic a
+rev    (Epic d f) = Epic d $ \(s,e) -> reverse $ g $ f (-e, -s)
   -- reversal sorts by first element, because takeOverlappingEvs needs that
   where g = map $ first $ \(s,e) -> (-e,-s)
 
-eDur :: Time -> a -> Epic a
-eDur t x = Epic Nothing $ \arc ->
+for :: Time -> a -> Epic a
+for t x = Epic Nothing $ \arc ->
   let ov = overlap arc (0,t)
   in maybe [] (\arc -> [(arc,x)]) ov
 
 ever :: a -> Epic a
 ever a = Epic Nothing $ \arc -> [(arc,a)]
 
-eInstant :: a -> Epic a
-eInstant = eDur 0
+instant :: a -> Epic a
+instant = for 0
 
 -- | = loop* repeats the portion of an Epic from 0 to `dur`. PITFALL:
 -- Information (if any) originally in the `period` field is not preserved.
 loopa, loop0 :: Time -> a      -> Epic a
-loopa dur = loope dur . eDur dur
-loop0 dur = loope dur . eDur 0
+loopa dur = loope dur . for dur
+loop0 dur = loope dur . for 0
 
 loope :: Time -> Epic a -> Epic a
 loope dur e = Epic dur' fd' where

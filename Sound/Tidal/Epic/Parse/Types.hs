@@ -32,7 +32,7 @@ data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
                      | NonEpicLexemeLeftBracket | NonEpicLexemeRightBracket
 
 -- | EpicPhonemes abut each other in a LexemeEpic
-data EpicPhoneme o = EpicPhonemeDur     Dur
+data EpicPhoneme o = EpicPhonemfor     Dur
                    | EpicPhonemeOnce    o
                    | EpicPhonemeNewPersist o -- ^ these get merged with
                      -- persistentLexemes from earlier LexemeEpics

@@ -83,11 +83,11 @@ partitionArcAtTimes (a:b:ts) (c,d)
 -- | Produces a sorted list of arc endpoints.
 -- If `arcs` includes `(x,x)`, then `x` will appear twice in the output.
 boundaries :: [Arc] -> [Time]
-boundaries arcs = _doubleTheDurationZeroBoundaries arcs
+boundaries arcs = _doubleThforationZeroBoundaries arcs
   $ sortUniq $ map fst arcs ++ map snd arcs
 
-_doubleTheDurationZeroBoundaries :: [Arc] -> [Time] -> [Time]
-_doubleTheDurationZeroBoundaries arcs bounds = concatMap f bounds where
+_doubleThforationZeroBoundaries :: [Arc] -> [Time] -> [Time]
+_doubleThforationZeroBoundaries arcs bounds = concatMap f bounds where
   instants :: S.Set Time
   instants = S.fromList $ map fst $ filter (\(s,e) -> s == e) arcs
   f t = if S.member t instants then [t,t] else [t]

@@ -24,15 +24,15 @@ import Sound.Tidal.Epic.Scale
 epicLexeme, epicLexemePersist, epicLexemeOnce ::
   Parser (EpicPhoneme (Maybe Scale))
 epicLexeme = foldl1 (<|>)
-  [epicLexemePersist, epicLexemeOnce, epicLexemeDur, epicLexemeSilence]
+  [epicLexemePersist, epicLexemeOnce, epicLexemfor, epicLexemsilence]
 epicLexemePersist = lexeme $ EpicPhonemeNewPersist <$> pScale
 epicLexemeOnce = lexeme $ EpicPhonemeOnce <$> (ignore (char '1') >> pScale)
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
-epicLexemeDur, epicLexemeSilence :: Parser (EpicPhoneme a)
-epicLexemeDur = lexeme $ ignore (char 't') >> EpicPhonemeDur <$> ratio
+epicLexemfor, epicLexemsilence :: Parser (EpicPhoneme a)
+epicLexemfor = lexeme $ ignore (char 't') >> EpicPhonemfor <$> ratio
   -- >> todo ? accept floats as well as ratios
-epicLexemeSilence = lexeme $ const EpicPhonemeSilent <$> char '_'
+epicLexemsilence = lexeme $ const EpicPhonemeSilent <$> char '_'
 
 
 -- | = Scale-specific

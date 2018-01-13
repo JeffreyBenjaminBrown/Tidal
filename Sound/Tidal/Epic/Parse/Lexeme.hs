@@ -81,13 +81,13 @@ pUnOp = NonEpicLexemeUnOp . foldl1 (.) <$> some pSingleUnOp
 
 pSingleUnOp :: Parser (Epic a -> Epic a)
 pSingleUnOp = foldl1 (<|>) $ map try
-  [pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate]
+  [pNonEpicLexemfast, pNonEpicLexemslow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate]
 
-pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
-pNonEpicLexemeFast = lexeme $ do n <- symbol "*" >> ratio
-                                 return $ eFast n
-pNonEpicLexemeSlow = lexeme $ do n <- symbol "/" >> ratio
-                                 return $ eSlow n
+pNonEpicLexemfast, pNonEpicLexemslow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
+pNonEpicLexemfast = lexeme $ do n <- symbol "*" >> ratio
+                                return $ fast n
+pNonEpicLexemslow = lexeme $ do n <- symbol "/" >> ratio
+                                return $ slow n
 pNonEpicLexemeDense = lexeme $ do n <- symbol "**" >> ratio
                                   return $dense n
 pNonEpicLexemeSparse = lexeme $ do n <- symbol "//" >> ratio
@@ -97,12 +97,12 @@ pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio
 pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio
                                  return $ late n
 
-pBinOp, pNonEpicLexemeStack, pNonEpicLexemeCat :: Parser (NonEpicLexeme i)
-pBinOp = try pNonEpicLexemeStack <|> try pNonEpicLexemeCat
-pNonEpicLexemeStack = do lexeme $ symbol "+|"
-                         return $ NonEpicLexemeBinOp eStack
+pBinOp, pNonEpicLexemstack, pNonEpicLexemeCat :: Parser (NonEpicLexeme i)
+pBinOp = try pNonEpicLexemstack <|> try pNonEpicLexemeCat
+pNonEpicLexemstack = do lexeme $ symbol "+|"
+                        return $ NonEpicLexemeBinOp stack
 pNonEpicLexemeCat = do lexeme $ symbol "+-"
-                       return $ NonEpicLexemeBinOp concatEpic
+                       return $ NonEpicLexemeBinOp eConcat
 
 pBracket, pNonEpicLexemeLeftBracket, pNonEpicLexemeRightBracket :: Parser (NonEpicLexeme i)
 pBracket = pNonEpicLexemeLeftBracket <|> pNonEpicLexemeRightBracket

@@ -11,20 +11,20 @@ import Sound.Tidal.Epic.Util
 import Sound.Tidal.Epic.Transform
 
 
--- | The duration of `eStack a b` is the LCM of the durations of `a` and `b`.
-eStack :: Epic a -> Epic a -> Epic a
-eStack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
+-- | The duration of `stack a b` is the LCM of the durations of `a` and `b`.
+stack :: Epic a -> Epic a -> Epic a
+stack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
   \arc -> sortOn (fst . fst) $ f arc ++ g arc
   -- sort by first element because takeOverlappingEvs needs that
 
 -- | Only repeating Epics are concatenable.
 -- TODO: handle finite-duration non-repeating Epics too.
-concatEpic :: Epic a -> Epic a -> Epic a
-concatEpic (Epic Nothing _) _ = error "concatEpic requires repeating patterns"
-concatEpic e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
+eConcat :: Epic a -> Epic a -> Epic a
+eConcat (Epic Nothing _) _ = error "eConcat requires repeating patterns"
+eConcat e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
   let e1' =           breathe (t1+t2) e1
       e2' = late t1 $ breathe (t1+t2) e2
-  in eStack e1' e2'
+  in stack e1' e2'
 
 -- | "Breathe" a loop of length smallDur to cover a loop of length bigDur.
 -- First play the loop, then silence; repeat at next multiple of bigDur.

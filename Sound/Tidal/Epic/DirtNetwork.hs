@@ -41,7 +41,7 @@ eSuperDirtState port = do backend <- superDirtBackend port
 
 eStartVoice :: Backend a -> Shape -> IO (MVar (ParamEpic, [ParamEpic]))
 eStartVoice backend shape = do
-  epicsM <- newMVar (eSilence, [])
+  epicsM <- newMVar (silence, [])
   let ot = eOnTick backend shape epicsM :: TimeFrame -> Int -> IO ()
   forkIO $ clockedTick ticksPerCycle ot
   return epicsM

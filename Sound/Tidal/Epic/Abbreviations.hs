@@ -9,10 +9,6 @@ module Sound.Tidal.Epic.Abbreviations (
 
   -- | ==== Tidal
   , shh, dsh
-  , fast, slow
-  , rev
-  , tog
-  , for
 
   -- | == concatenation
   , cat, cata, cat0
@@ -43,16 +39,11 @@ infixr 3 &*, &+
 (&+) = mergeEpics (+) (+)
 (&*) = mergeEpics (*) (*)
 infixr 2 +-, +|
-(+-) = concatEpic
-(+|) = eStack
+(+-) = eConcat
+(+|) = stack
 
-shh = eSilence
+shh = silence
 dsh = durSilence
-fast = eFast
-slow = eSlow
-rev = eRev
-tog = eStack
-for = eDur
 
 -- | == concatenation
 cat :: [Epic a] -> Epic a
