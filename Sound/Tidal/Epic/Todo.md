@@ -1,4 +1,6 @@
-The t operator in the parser should apply also to bracketed expressions.
+t1%2, for 1,2 in [0,9], should affect bracketed exprs, not just lexemes.
+
+Scales should include transpose.
 
 Parser (Epic (Map String Value))
   and Map String Param -> Epic (Map String Value) -> Epic (Map Param Value)
