@@ -101,8 +101,9 @@ mergeEvents intOp floatOp aEvs bEvs =  k aEvs' bEvs' where
     bEvsMatch = takeWhile ((== arc) . fst) bEvs
     merge = (arc,) . mergeNumParamsWith intOp floatOp a . snd <$> bEvsMatch
 
-applyMetaEpic :: Epic (Epic a -> Epic b) -> Epic a -> Epic b
-applyMetaEpic    (Epic md mf)               obj    = Epic d' f' where
+-- | applyMetaEpic
+meta :: Epic (Epic a -> Epic b) -> Epic a -> Epic b
+meta    (Epic md mf)               obj    = Epic d' f' where
   d' = lcmRatios <$> md <*> period obj
   -- f' :: Arc -> [Ev b]
   f' a = concatMap h transformEvs

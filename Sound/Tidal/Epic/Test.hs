@@ -226,7 +226,7 @@ testSilence = TestCase $ do
 testApplyMetaEpic = TestCase $ do
   let me = cata 1 [id, fast 2]
       e  = cat0 1 [1, 2]
-      e' = applyMetaEpic me e
+      e' = meta me e
   assertBool "1" $ arc e' (0,2) == [((  0,   0), 1)
                                     ,((  1,   1), 1)
                                     ,((1.5, 1.5), 2)]

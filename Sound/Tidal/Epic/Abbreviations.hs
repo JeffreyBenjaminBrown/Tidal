@@ -34,7 +34,7 @@ pr :: Show a => [a] -> IO ()
 pr = mapM_ (putStrLn . show)
 
 infixl 4 <**>
-(<**>) = applyMetaEpic
+(<**>) = meta
 infixr 3 &*, &+
 (&+) = mergeEpics (+) (+)
 (&*) = mergeEpics (*) (*)
