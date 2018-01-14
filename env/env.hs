@@ -3,7 +3,7 @@
 
 :m Sound.Tidal.Epic
 :def! . readHsAsGhci
-:s Demo/MakeVoices.hs
+:s EpicDemo/MakeVoices.hs
 
 import Control.Concurrent.MVar
 import Data.Maybe

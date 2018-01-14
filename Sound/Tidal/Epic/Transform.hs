@@ -8,7 +8,7 @@ import Control.Concurrent
 import Data.Fixed
 import Data.List (sortOn, partition)
 import Data.Maybe
-import Data.Map hiding (map, mapMaybe, partition, foldl)
+import qualified Data.Map as M
 import Data.Ord
 import Data.Ratio
 import Data.Typeable
@@ -53,6 +53,23 @@ rev :: Epic a -> Epic a
 rev    (Epic d f) = Epic d $ \(s,e) -> reverse $ g $ f (-e, -s)
   -- reversal sorts by first element, because takeOverlappingEvs needs that
   where g = map $ first $ \(s,e) -> (-e,-s)
+
+-- | use the value from the old param in the new param
+chParam :: Param -> Param -> ParamMap -> ParamMap
+chParam old new m = mergeNumParamsWith (*) (*) mOtherParams mQf
+  where (mSpeed,mOtherParams) = M.partitionWithKey g m
+        mQf = if null mSpeed then M.empty
+              else M.singleton new $ (M.!) mSpeed old
+        g k _ = if k == old then True else False
+        -- PITFALL: It seems like "g deg_p _ = True; g _ _ = False"
+        -- ought to work, but somehow no.
+
+-- | use the value from the old param in the new param
+chVF :: Param -> (Double -> Double) -> ParamMap -> ParamMap
+chVF key f = M.mapWithKey g where
+  g :: Param -> Value -> Value
+  g k val@(VF v) = if k == key then VF $ f v else val
+  g k val        = if k == key then error $ show k ++ "holds no VF" else val
 
 for :: Time -> a -> Epic a
 for t x = Epic Nothing $ \arc ->

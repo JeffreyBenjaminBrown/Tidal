@@ -10,6 +10,7 @@ import qualified Data.Map as M
 import           Sound.Tidal.Epic.Instances
 import           Sound.Tidal.Epic.Params
 import           Sound.Tidal.Epic.Util (mergeNumParamsWith)
+import           Sound.Tidal.Epic.Transform (chParam)
 import           Sound.Tidal.Epic.Types
 import qualified Sound.Tidal.Params         as P
 import           Sound.Tidal.Epic.Types.Reimports
@@ -29,17 +30,7 @@ quotUnif num den = if num < 0 then q - 1 else q
 
 -- | for synths, convert speed_p parameter to qf_p (frequency) parameter
 syParams :: ParamEpic -> ParamEpic
-syParams = fmap $ changeParam speed_p qf_p . changeParam gain_p amp_p
-
--- | use the value from the old param in the new param
-changeParam :: Param -> Param -> ParamMap -> ParamMap
-changeParam old new m = mergeNumParamsWith (*) (*) mOtherParams mQf
-  where (mSpeed,mOtherParams) = M.partitionWithKey g m
-        mQf = if null mSpeed then M.empty
-              else M.singleton new $ (M.!) mSpeed old
-        g k _ = if k == old then True else False
-        -- PITFALL: It seems like "g deg_p _ = True; g _ _ = False"
-        -- ought to work, but somehow no.
+syParams = fmap $ chParam speed_p qf_p . chParam gain_p amp_p
 
 -- | parameter lookup. it's like lk12', but applied to deg_p.
 par12 :: [Double] -> (ParamMap -> ParamMap)
