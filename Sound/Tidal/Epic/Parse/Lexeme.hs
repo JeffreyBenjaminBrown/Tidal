@@ -70,7 +70,7 @@ prLang :: Integral a => Parser [Lang (Ratio a) (Maybe (Ratio a))]
 prLang = pLang prLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
-pLexemes p = some $ p <|> pLexemeNonEpicLexeme
+pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
 peLexemes :: Parser [Lexeme ParamMap ParamMap]
 peLexemes = pLexemes peLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]

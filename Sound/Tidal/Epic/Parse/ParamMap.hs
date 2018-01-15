@@ -16,7 +16,7 @@ import Sound.Tidal.Epic.Parse.Types
 
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Util (
-  Parser(..), anyWord, double, ignore, lexeme, ratio)
+  Parser(..), anyWord, double, ignore, ratio)
 
 
 -- | = Boilerplate, common to Scales, (Epic ParamMap) and eventually

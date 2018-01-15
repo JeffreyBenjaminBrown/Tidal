@@ -24,7 +24,7 @@ epicPhoneme, epicPhonemePersist ::
   Parser (EpicPhoneme (Maybe Scale))
 epicPhoneme = foldl1 (<|>)
   [epicPhonemePersist, epicPhonemeFor, epicPhonemeSilence]
-epicPhonemePersist = lexeme $ EpicPhonemeNewPersist <$> pMSWR
+epicPhonemePersist = EpicPhonemeNewPersist <$> pMSWR
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
 epicPhonemeFor, epicPhonemeSilence :: Parser (EpicPhoneme a)
