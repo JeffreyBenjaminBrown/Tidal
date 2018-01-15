@@ -193,7 +193,7 @@ testLexeme = TestCase $ do
     , LexemeNonEpic (NonEpicLexemeBinOp stack)
     , LexemeNonEpic (NonEpicLexemeBinOp eConcat)
     , LexemeEpics [ EpicPhonemeSilent
-                 , EpicPhonemfor $ 2%3
+                 , EpicPhonemeFor $ 2%3
                  ]
     ]
 
@@ -245,7 +245,7 @@ testLexemeToAccumEpic = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ EpicPhonemfor dur
+      parseBitSet = S.fromList [ EpicPhonemeFor dur
                                , EpicPhonemeNewPersist soundMap
                                , EpicPhonemeNewPersist degMap
                                , EpicPhonemeOnce speedMap ]

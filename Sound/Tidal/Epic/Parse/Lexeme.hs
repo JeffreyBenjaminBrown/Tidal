@@ -4,6 +4,7 @@ module Sound.Tidal.Epic.Parse.Lexeme where
 
 import qualified Data.Set as S
 import qualified Data.Map as M
+import           Data.Ratio
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
   (satisfy, string, char, space, space1, anyChar, tab, alphaNumChar)
@@ -18,6 +19,7 @@ import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
 import qualified Sound.Tidal.Epic.Parse.ParamMap as PM
 import qualified Sound.Tidal.Epic.Parse.Scale    as Sc
+import qualified Sound.Tidal.Epic.Parse.Number   as Number
 import           Sound.Tidal.Epic.Parse.Transform (scanLang, lexemeToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
@@ -34,6 +36,10 @@ pe  = _p peEpicOrOps loopa
 pe0 = _p peEpicOrOps loop0
 ps  = _p psEpicOrOps loopa
 ps0 = _p psEpicOrOps loop0
+pd  = _p pdEpicOrOps loopa
+pd0 = _p pdEpicOrOps loop0
+pr  = _p prEpicOrOps loopa
+pr0 = _p prEpicOrOps loop0
 
 pEpicOrOps :: (Monoidoid i o, Ord o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
@@ -43,6 +49,11 @@ peEpicOrOps ::
 peEpicOrOps = pEpicOrOps peLang
 psEpicOrOps :: (Time -> Scale -> Epic Scale) -> Parser [EpicOrOp Scale]
 psEpicOrOps = pEpicOrOps psLang
+pdEpicOrOps :: (Time -> Double -> Epic Double) -> Parser [EpicOrOp Double]
+pdEpicOrOps = pEpicOrOps pdLang
+prEpicOrOps :: Integral a =>
+  (Time -> (Ratio a) -> Epic (Ratio a)) -> Parser [EpicOrOp (Ratio a)]
+prEpicOrOps = pEpicOrOps prLang
 
 pLang :: (Monoidoid i o, Ord o) => Parser [Lexeme i o] -> Parser [Lang i o]
 pLang p = map f <$> p where
@@ -53,6 +64,10 @@ peLang :: Parser [Lang ParamMap ParamMap]
 peLang = pLang peLexemes
 psLang :: Parser [Lang Scale (Maybe Scale)]
 psLang = pLang psLexemes
+pdLang :: Parser [Lang Double (Maybe Double)]
+pdLang = pLang pdLexemes
+prLang :: Integral a => Parser [Lang (Ratio a) (Maybe (Ratio a))]
+prLang = pLang prLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ p <|> pLexemeNonEpicLexeme
@@ -60,13 +75,21 @@ peLexemes :: Parser [Lexeme ParamMap ParamMap]
 peLexemes = pLexemes peLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
 psLexemes = pLexemes psLexemeEpics
+pdLexemes :: Parser [Lexeme Double (Maybe Double)]
+pdLexemes = pLexemes pdLexemeEpics
+prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
+prLexemes = pLexemes prLexemeEpics
 
 pLexemeEpics :: Monoidoid i o => (Parser (EpicPhoneme o)) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (string ",,")
 peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
-peLexemeEpics = pLexemeEpics PM.epicLexeme
+peLexemeEpics = pLexemeEpics PM.epicPhoneme
 psLexemeEpics :: Parser (Lexeme Scale (Maybe Scale))
-psLexemeEpics = pLexemeEpics Sc.epicLexeme
+psLexemeEpics = pLexemeEpics Sc.epicPhoneme
+pdLexemeEpics :: Parser (Lexeme Double (Maybe Double))
+pdLexemeEpics = pLexemeEpics Number.epicPhonemeDouble
+prLexemeEpics :: Integral a => Parser (Lexeme (Ratio a) (Maybe (Ratio a)))
+prLexemeEpics = pLexemeEpics Number.epicPhonemeRatio
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)

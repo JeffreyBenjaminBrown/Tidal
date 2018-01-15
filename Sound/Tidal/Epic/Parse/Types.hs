@@ -29,7 +29,7 @@ data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
                      | NonEpicLexemeLeftBracket | NonEpicLexemeRightBracket
 
 -- | EpicPhonemes abut each other in a LexemeEpic
-data EpicPhoneme o = EpicPhonemfor     Dur
+data EpicPhoneme o = EpicPhonemeFor     Dur
                    | EpicPhonemeOnce    o
                    | EpicPhonemeNewPersist o -- ^ these get merged with
                      -- persistentLexemes from earlier LexemeEpics
@@ -37,7 +37,7 @@ data EpicPhoneme o = EpicPhonemfor     Dur
                    deriving (Show, Eq, Ord)
 
 data Lexeme i o = LexemeEpics [EpicPhoneme o]
-                | LexemeNonEpic (NonEpicLexeme i)
+                | LexemeNonEpic (NonEpicLexeme i) deriving Show
 
 
 -- | = Lang: parsing reaches this once LexemeEpics are accumulated

@@ -1,7 +1,7 @@
 -- Pitfall: With OverloadedStrings, `parse` needs a type signature
 -- to specify that the last argument is a String.
 
-module Sound.Tidal.Epic.Parse.ParamMap (epicLexeme) where
+module Sound.Tidal.Epic.Parse.ParamMap (epicPhoneme) where
 
 import           Control.Applicative
 import qualified Data.Map                   as M
@@ -21,14 +21,14 @@ import Sound.Tidal.Epic.Parse.Util (
 
 -- | = Boilerplate, common to Scales, (Epic ParamMap) and eventually
 -- (Epic (Map String Value))
-epicLexeme, epicLexemePersist, epicLexemeOnce :: Parser (EpicPhoneme ParamMap)
-epicLexeme = foldl1 (<|>) [epicLexemePersist, epicLexemeOnce, epicLexemfor, epicLexemsilence]
-epicLexemePersist = EpicPhonemeNewPersist <$> pSingleton
-epicLexemeOnce = EpicPhonemeOnce <$> (ignore (char '1') >> pSingleton)
+epicPhoneme, epicPhonemePersist, epicPhonemeOnce :: Parser (EpicPhoneme ParamMap)
+epicPhoneme = foldl1 (<|>) [epicPhonemePersist, epicPhonemeOnce, epicLexemfor, epicLexemsilence]
+epicPhonemePersist = EpicPhonemeNewPersist <$> pSingleton
+epicPhonemeOnce = EpicPhonemeOnce <$> (ignore (char '1') >> pSingleton)
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
 epicLexemfor, epicLexemsilence :: Parser (EpicPhoneme a)
-epicLexemfor = ignore (char 't') >> EpicPhonemfor <$> ratio
+epicLexemfor = ignore (char 't') >> EpicPhonemeFor <$> ratio
   -- >> todo ? accept floats as well as ratios
 epicLexemsilence = const EpicPhonemeSilent <$> char '_'
 

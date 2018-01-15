@@ -5,7 +5,6 @@
 module Sound.Tidal.Epic.Abbreviations (
   -- | ==== from Prelude or Data.List
   repli
-  , pr
 
   -- | ==== Tidal
   , shh, dsh
@@ -30,8 +29,6 @@ import Sound.Tidal.Stream (mergeNumWith)
 
 
 repli = replicate
-pr :: Show a => [a] -> IO ()
-pr = mapM_ (putStrLn . show)
 
 infixl 4 <**>
 (<**>) = meta

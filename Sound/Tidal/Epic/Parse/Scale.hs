@@ -1,4 +1,4 @@
-module Sound.Tidal.Epic.Parse.Scale (epicLexeme) where
+module Sound.Tidal.Epic.Parse.Scale (epicPhoneme) where
 
 import           Control.Applicative
 import qualified Data.Map                   as M
@@ -20,17 +20,17 @@ import Sound.Tidal.Epic.Scale
 
 -- | = Boilerplate, common to Scales, (Epic ParamMap) and eventually
 -- (Epic (Map String Value))
-epicLexeme, epicLexemePersist ::
+epicPhoneme, epicPhonemePersist ::
   Parser (EpicPhoneme (Maybe Scale))
-epicLexeme = foldl1 (<|>)
-  [epicLexemePersist, epicLexemeFor, epicLexemeSilence]
-epicLexemePersist = lexeme $ EpicPhonemeNewPersist <$> pMSWR
+epicPhoneme = foldl1 (<|>)
+  [epicPhonemePersist, epicPhonemeFor, epicPhonemeSilence]
+epicPhonemePersist = lexeme $ EpicPhonemeNewPersist <$> pMSWR
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
-epicLexemeFor, epicLexemeSilence :: Parser (EpicPhoneme a)
-epicLexemeFor = lexeme $ ignore (char 't') >> EpicPhonemfor <$> ratio
+epicPhonemeFor, epicPhonemeSilence :: Parser (EpicPhoneme a)
+epicPhonemeFor = lexeme $ ignore (char 't') >> EpicPhonemeFor <$> ratio
   -- >> todo ? accept floats as well as ratios
-epicLexemeSilence = lexeme $ const EpicPhonemeSilent <$> char '_'
+epicPhonemeSilence = lexeme $ const EpicPhonemeSilent <$> char '_'
 
 
 -- | = Scale-specific
