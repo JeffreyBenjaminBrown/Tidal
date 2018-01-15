@@ -1,8 +1,4 @@
-Parse patterns of numbers.
-  One could then map, say, `early` across the pattern.
-  > x = early <$> loopa 1 1
-  > :t x
-  x :: Epic (Epic a -> Epic a)
+In parsed strings, duration control is still kind of verbose.
 
 t1%2, for 1,2 in [0,9], should affect bracketed exprs, not just lexemes.
 
