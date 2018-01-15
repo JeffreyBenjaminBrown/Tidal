@@ -13,6 +13,7 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Parse.Types
 
+import Sound.Tidal.Epic.Util (mergeNumParamsWith)
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Util (
   Parser(..), anyWord, double, ignore, lexeme, ratio)
@@ -25,8 +26,8 @@ epicLexeme, epicLexemePersist, epicLexemeOnce ::
   Parser (EpicPhoneme (Maybe Scale))
 epicLexeme = foldl1 (<|>)
   [epicLexemePersist, epicLexemeOnce, epicLexemfor, epicLexemsilence]
-epicLexemePersist = lexeme $ EpicPhonemeNewPersist <$> pScale
-epicLexemeOnce = lexeme $ EpicPhonemeOnce <$> (ignore (char '1') >> pScale)
+epicLexemePersist = lexeme $ EpicPhonemeNewPersist <$> pMSWR
+epicLexemeOnce = lexeme $ EpicPhonemeOnce <$> (ignore (char '1') >> pMSWR)
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
 epicLexemfor, epicLexemsilence :: Parser (EpicPhoneme a)
@@ -54,8 +55,19 @@ scaleNames = [
     , "aol3", "aol5", "loc2", "loc4"
   ] :: [String]
 
-pScale :: Parser (Maybe Scale)
+pScale :: Parser Scale
 pScale = foldl1 (<|>) _individualScaleParsers where
-  _individualScaleParsers :: [Parser (Maybe Scale)]
+  _individualScaleParsers :: [Parser Scale]
   _individualScaleParsers = map f $ zip scales scaleNames
-    where f (scale,name) = lexeme $ string name >> return (Just scale)
+    where f (scale,name) = string name >> return scale
+
+pScaleWithRoot :: Parser Scale
+pScaleWithRoot = transposedScale <|> pScale where 
+  transposedScale = 
+    do r <- (\n -> 2**(n/12)) <$> double
+       s <- pScale
+       let transpose = mergeNumParamsWith (*) (*) (M.singleton speed_p $ VF r)
+       return $ transpose . s -- transpose second, else might have no speeds
+
+pMSWR :: Parser (Maybe Scale)
+pMSWR = Just <$> pScaleWithRoot

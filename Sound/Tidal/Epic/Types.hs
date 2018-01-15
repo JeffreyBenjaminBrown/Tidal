@@ -15,3 +15,5 @@ data Epic a = Epic {period :: Maybe Time -- ^ Nothing if not repeating
   -- Currently period is meaningful for repeating Epics, not others.
                    } deriving Typeable
 type ParamEpic = Epic ParamMap
+
+type Scale = ParamMap -> ParamMap
