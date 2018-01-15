@@ -63,6 +63,6 @@ hsToGhci s = do s1 <- mapM (parse line "") $ lines s
 -- (Note that no quotation marks surround the filepath in the macro.)
 readHsAsGhci :: FilePath -> IO String
 readHsAsGhci filename = do
-  s <- readFile filename
+  s <- readFile $ filename ++ ".hs"
   case hsToGhci s of Left e -> (putStrLn $ show e) >> return ""
                      Right s -> return s
