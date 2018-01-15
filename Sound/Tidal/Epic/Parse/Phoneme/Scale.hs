@@ -1,4 +1,4 @@
-module Sound.Tidal.Epic.Parse.Scale (epicPhoneme) where
+module Sound.Tidal.Epic.Parse.Phoneme.Scale (epicPhoneme) where
 
 import           Control.Applicative
 import qualified Data.Map                   as M

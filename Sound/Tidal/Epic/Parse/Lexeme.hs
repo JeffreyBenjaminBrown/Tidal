@@ -17,9 +17,9 @@ import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Parse.Eq
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
-import qualified Sound.Tidal.Epic.Parse.ParamMap as PM
-import qualified Sound.Tidal.Epic.Parse.Scale    as Sc
-import qualified Sound.Tidal.Epic.Parse.Number   as Number
+import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap as PM
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale    as Sc
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Number   as Number
 import           Sound.Tidal.Epic.Parse.Transform (scanLang, lexemeToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
