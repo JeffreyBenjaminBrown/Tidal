@@ -52,8 +52,11 @@ scaleCycle = cata (b*8) [dim,lyd,aug]
 scaledMelody = scaleCycle <*> melody
 v3 $ sound (ever "arp") &* scaleCycle <*> melody &* speed 2
 
--- using the sy and sya synths
--- note that sy needs an explicit sustain value, else it's inaudible
+-- | = using the sy and sya synths
+
+-- NOTE: sy needs an explicit sustain value, else it's inaudible
 v4 $ pe0 "_sy,,sus0.7"
-v4 $ qf 440 &* sound (ever "sy")
-v4 $ (syParams $ scaleCycle <*> melody) &* sustain 2 &* qfa 1 &* qf 440 &* sound (ever "sy")
+v4 $ (syParams $ ps "//4 maj 6dor" <*> pe0 "**2 d0 +- *2 d2 d3 +- **16%3 d4") &* sustain 2 &* qfa 1 &* qf 220 &* sound (ever "sy")
+-- NOTE: The following are happily equivalent (they differ at s200 v. f200)
+v1 $ syParams $ ps "maj aug" <*> pe0 "*4 d0 d2 d4 d6" &* pe "_sy,,sus0.6,,s200"
+v1 $ syParams $ ps "maj aug" <*> pe0 "*4 d0 d2 d4 d6" &* pe "_sy,,sus0.6,,f200"
