@@ -15,6 +15,10 @@ can = pe "_bottle,,s0.6,,g0.9 _can,,g1.2,,s0.8"
 canline = pe0 "*4 s1 s1.2 s1.5"
 meta (cata 1 [id,id,fast 2])
 
+-- At this point I've defined all the bits but made no sound.
+-- After that each paragraph (roughly) of the below was evaluated, live,
+-- and mostly in order, but when I got to the end I jumped back to the middle
+-- to work my way down again, twice.
 
 hush
 scales = slow 8 $ ps "dor"
