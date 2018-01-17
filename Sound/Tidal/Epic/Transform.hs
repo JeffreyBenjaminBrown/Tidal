@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TupleSections #-}
 
 module Sound.Tidal.Epic.Transform where
@@ -117,3 +118,32 @@ _loope dur (Epic _ fe) = Epic (Just dur) fd where
 
 window :: Arc -> Epic a -> Epic a
 window win (Epic _ f) = Epic Nothing $ \arc -> maybe [] f $ overlap win arc
+
+-- | map Time t to Time t + k sin t
+-- Since Time = Rational, must approximate the result
+-- ASSUMES k small enough that the mapping is invertible
+warp :: forall a. Float -> Time -> Time -> Epic a -> Epic a
+warp tolerance phase90 period (Epic d e) = Epic d f where
+  close = approxRational tolerance
+  thisWarp = warpTime' tolerance phase90 period
+  warpBoth :: Arc -> Arc
+  warpBoth (s,t) = (thisWarp s, thisWarp t)
+  f :: Arc -> [(Arc,a)]
+  f (s,t) = takeOverlappingEvs (s,t) $ map (first warpBoth) $ e (s',t')
+    where (s',t') = (s - period, t + period)
+
+-- | (warp p90 t p) maps Time t such that
+-- (1) It will be the same at every multiple of p/2 (phase = 0, 180 degrees)
+-- (2) The value it used to take at phase=90 degrees, it now takes at
+-- (3) phase=d degrees, where d = 2 pi * p90
+warpTime' :: Float -> Time -> Time -> Time -> Time
+warpTime' tolerance phase90 period =
+  let strength = period * (phase90 - 1%4)
+  in warpTime tolerance (fromRational strength) period
+
+-- | (warp s t p) maps Time t to Time t + s sin (2 pi t / p)
+warpTime :: Float -> Float -> Time -> Time -> Time
+warpTime tolerance strength period t =
+  let close = flip approxRational tolerance
+  in t + (close $ strength * sin (
+             fromRational t * 2 * pi / fromRational period))

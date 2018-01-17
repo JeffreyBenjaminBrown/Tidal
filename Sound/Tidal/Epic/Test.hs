@@ -59,7 +59,36 @@ main = runTestTT $ TestList
   , TestLabel "testBreathyConcatEpic" testBreathyConcatEpic
   , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
   , TestLabel "testSyParams" testSyParams
+  , TestLabel "testWarp" testWarp
   ]
+
+testWarp = TestCase $ do
+  let f = warpTime 0 0 0 -- strength 0 + laziness => no division by 0
+  assertBool "1" $ f 0 == 0
+  assertBool "1" $ f 0.1 == 0.1
+  assertBool "1" $ f (-0.1) == -0.1
+  let g = warpTime 0.01 0.03 1
+  assertBool "2" $ g 0 == 0
+  assertBool "2" $ g 0.1 > 0.1
+  assertBool "2" $ g 0.5 == 0.5
+  assertBool "2" $ g 0.6 < 0.6
+  let f = fast 4 $ cata 1 [1..4]
+      wf = warp 0.001 0.30 1 f
+      [   ((a,b),_)
+        , ((a1,b1),_)
+        , ((a2,b2),_)
+        , ((a3,b3),_) ] = arc wf (0,1)
+  assertBool "3" $ b == a1 && b1 == a2 && b2 == a3
+  assertBool "3" $ a == 0 && a1 == 3/10 && a2 == 1/2 && a3 == 7/10
+  let f = fast 4 $ cata 2 [1..4]
+      wf = warp 0.001 0.30 2 f
+      [   ((a,b),_)
+        , ((a1,b1),_)
+        , ((a2,b2),_)
+        , ((a3,b3),_) ] = arc wf (0,2)
+  assertBool "4" $ b == a1 && b1 == a2 && b2 == a3
+  assertBool "4" $ a == 0 && a1 == 3/5 && a2 == 1 && a3 == 7/5 && b3 == 2
+  return ()
 
 testSyParams = TestCase $ do
   let x = (loopa 1 $ M.singleton gain_p $ VF 1)
