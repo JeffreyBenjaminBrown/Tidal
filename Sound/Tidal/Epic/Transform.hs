@@ -10,6 +10,7 @@ import Data.Fixed
 import Data.List (sortOn, partition)
 import Data.Maybe
 import qualified Data.Map as M
+import qualified Data.Set as S
 import Data.Ord
 import Data.Ratio
 import Data.Typeable
@@ -147,3 +148,14 @@ warpTime tolerance strength period t =
   let close = flip approxRational tolerance
   in t + (close $ strength * sin (
              fromRational t * 2 * pi / fromRational period))
+
+-- | = remap* is to make an abstract map concrete (e.g. into a ParamMap)
+remap' :: Ord k2 => (k1->k2) -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
+remap' sf df = M.mapKeys sf . M.map df
+
+remapm :: (Ord k1,Ord k2) =>
+  M.Map k1 k2 -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
+remapm sm df = composeMaps sm . M.map df
+
+remap :: (Ord k, Ord k') => M.Map k k' -> M.Map k Double -> M.Map k' Value
+remap = flip remapm VF

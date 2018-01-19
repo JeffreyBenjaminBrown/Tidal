@@ -16,6 +16,11 @@ import Sound.Tidal.Epic.Types
 plist :: Show a => [a] -> IO ()
 plist = mapM_ (putStrLn . show)
 
+composeMaps :: (Ord k, Ord r) => M.Map k r -> M.Map k a -> M.Map r a
+composeMaps f m = let s = S.fromList $ M.keys f
+                      m' = M.restrictKeys m s
+                  in M.mapKeys ((M.!) f) m
+
 div' :: Time -> Time -> Int
 div' num den = floor $ num / den
 

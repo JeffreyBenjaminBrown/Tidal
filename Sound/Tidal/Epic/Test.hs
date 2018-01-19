@@ -60,7 +60,13 @@ main = runTestTT $ TestList
   , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
   , TestLabel "testSyParams" testSyParams
   , TestLabel "testWarp" testWarp
+  , TestLabel "testRemap" testRemap
   ]
+
+testRemap = TestCase $ do
+  let theRemap = M.fromList [("a",deg_p)]
+      abstract = M.fromList [("a",1)]
+  assertBool "1" $ remap theRemap abstract == M.fromList [(deg_p,VF 1)]
 
 testWarp = TestCase $ do
   let f = warpTime 0 0 0 -- strength 0 + laziness => no division by 0
