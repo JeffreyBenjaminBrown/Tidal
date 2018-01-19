@@ -19,7 +19,8 @@ import Sound.Tidal.Epic.Parse.Lexeme as E
 import Sound.Tidal.Epic.Parse.Expr as E
 import Sound.Tidal.Epic.Scale as E
 import Sound.Tidal.Epic.Parse.Eq as E
-import Sound.Tidal.Epic.Parse.Phoneme.Number as E
+import Sound.Tidal.Epic.Parse.Phoneme.Map as E
+-- import Sound.Tidal.Epic.Parse.Phoneme.Number as E
 -- import Sound.Tidal.Epic.Parse.Phoneme.Scale as E
 -- import Sound.Tidal.Epic.Parse.Phoneme.ParamMap as E
 import Sound.Tidal.Epic.Parse.Transform as E

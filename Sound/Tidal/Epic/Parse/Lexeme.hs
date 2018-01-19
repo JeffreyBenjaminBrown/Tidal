@@ -17,7 +17,8 @@ import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Parse.Eq
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
-import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap as PM
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Map      as PM
+import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap as PPM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale    as Sc
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Number   as Number
 import           Sound.Tidal.Epic.Parse.Transform (scanLang, lexemeToAccumEpic)
@@ -34,10 +35,16 @@ _p p loopx s = case parse (sc >> p loopx) "" s of
 pe,pe0 :: String -> Epic ParamMap
 pe  = _p peEpicOrOps loopa
 pe0 = _p peEpicOrOps loop0
+pm,pm0 :: String -> Epic PM.MSD
+pm  = _p pmEpicOrOps loopa
+pm0 = _p pmEpicOrOps loop0
+ps :: String -> Epic Scale
 ps  = _p psEpicOrOps loopa
 ps0 = _p psEpicOrOps loop0
+pd :: String -> Epic Double
 pd  = _p pdEpicOrOps loopa
 pd0 = _p pdEpicOrOps loop0
+pr :: String -> Epic (Ratio Integer)
 pr  = _p prEpicOrOps loopa
 pr0 = _p prEpicOrOps loop0
 
@@ -47,6 +54,9 @@ pEpicOrOps p loopx = scanLang loopx <$> p
 peEpicOrOps ::
   (Time -> ParamMap -> Epic ParamMap) -> Parser [EpicOrOp ParamMap]
 peEpicOrOps = pEpicOrOps peLang
+pmEpicOrOps ::
+  (Time -> PM.MSD -> Epic PM.MSD) -> Parser [EpicOrOp PM.MSD]
+pmEpicOrOps = pEpicOrOps pmLang
 psEpicOrOps :: (Time -> Scale -> Epic Scale) -> Parser [EpicOrOp Scale]
 psEpicOrOps = pEpicOrOps psLang
 pdEpicOrOps :: (Time -> Double -> Epic Double) -> Parser [EpicOrOp Double]
@@ -62,6 +72,8 @@ pLang p = map f <$> p where
     LexemeNonEpic nonEpic -> LangNonEpic nonEpic
 peLang :: Parser [Lang ParamMap ParamMap]
 peLang = pLang peLexemes
+pmLang :: Parser [Lang PM.MSD PM.MSD]
+pmLang = pLang pmLexemes
 psLang :: Parser [Lang Scale (Maybe Scale)]
 psLang = pLang psLexemes
 pdLang :: Parser [Lang Double (Maybe Double)]
@@ -73,6 +85,8 @@ pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
 peLexemes :: Parser [Lexeme ParamMap ParamMap]
 peLexemes = pLexemes peLexemeEpics
+pmLexemes :: Parser [Lexeme PM.MSD PM.MSD]
+pmLexemes = pLexemes pmLexemeEpics
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
 psLexemes = pLexemes psLexemeEpics
 pdLexemes :: Parser [Lexeme Double (Maybe Double)]
@@ -83,7 +97,9 @@ prLexemes = pLexemes prLexemeEpics
 pLexemeEpics :: Monoidoid i o => (Parser (EpicPhoneme o)) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (string ",,")
 peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
-peLexemeEpics = pLexemeEpics PM.epicPhoneme
+peLexemeEpics = pLexemeEpics PPM.epicPhoneme
+pmLexemeEpics :: Parser (Lexeme PM.MSD PM.MSD)
+pmLexemeEpics = pLexemeEpics PM.epicPhoneme
 psLexemeEpics :: Parser (Lexeme Scale (Maybe Scale))
 psLexemeEpics = pLexemeEpics Sc.epicPhoneme
 pdLexemeEpics :: Parser (Lexeme Double (Maybe Double))

@@ -36,7 +36,7 @@ epicLexemsilence = const EpicPhonemeSilent <$> char '_'
 -- | = (Epic ParamMap)-specific
 pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try
-  [parseSpeed, parseGain, parseSound, parseDegree, parseSustain
+  [parseSpeed, parseGain, parseSound, parseDegree, parseSustain, parsePan
   , parseQf, parseAmp
   , parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf ]
 
@@ -46,6 +46,7 @@ parseGain    = parseSingletonFloat  gain_p    $ ignore $ char 'g'
 parseSound   = parseSingletonString sound_p   $ ignore $ char '_'
 parseDegree  = parseSingletonFloat  deg_p     $ ignore $ char 'd'
 parseSustain = parseSingletonFloat  sustain_p $ ignore $ string "sus"
+parsePan     = parseSingletonFloat  pan_p     $ ignore $ string "pan"
 parseQfa     = parseSingletonFloat  qfa_p     $ ignore $ string "fa"
 parseQff     = parseSingletonFloat  qff_p     $ ignore $ string "ff"
 parseQpa     = parseSingletonFloat  qpa_p     $ ignore $ string "pa"

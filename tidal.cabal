@@ -34,6 +34,7 @@ library
                        Sound.Tidal.Epic.Parse.Lexeme
                        Sound.Tidal.Epic.Parse.Expr
                        Sound.Tidal.Epic.Parse.Eq
+                       Sound.Tidal.Epic.Parse.Phoneme.Map
                        Sound.Tidal.Epic.Parse.Phoneme.Number
                        Sound.Tidal.Epic.Parse.Phoneme.ParamMap
                        Sound.Tidal.Epic.Parse.Phoneme.Scale

@@ -4,8 +4,9 @@ import           Control.Applicative
 import           Data.Ratio
 import           Data.Void (Void)
 import           Text.Megaparsec
-import           Text.Megaparsec.Char
-  (satisfy, string, char, space, space1, anyChar, tab, alphaNumChar)
+import           Text.Megaparsec.Char (
+  satisfy, string, char, space, space1, anyChar, tab
+  , alphaNumChar, letterChar)
 import qualified Text.Megaparsec.Char.Lexer as L
 
 
@@ -51,3 +52,6 @@ word w = lexeme $ string w <* notFollowedBy wordChar
 
 anyWord :: Parser String
 anyWord = some wordChar  <* notFollowedBy wordChar
+
+anyDigitlessWord :: Parser String
+anyDigitlessWord = some letterChar  <* notFollowedBy letterChar
