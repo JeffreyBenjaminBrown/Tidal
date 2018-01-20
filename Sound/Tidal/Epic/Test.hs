@@ -66,7 +66,11 @@ main = runTestTT $ TestList
 testRemap = TestCase $ do
   let theRemap = M.fromList [("a",deg_p)]
       abstract = M.fromList [("a",1)]
-  assertBool "1" $ remap theRemap abstract == M.fromList [(deg_p,VF 1)]
+  assertBool "1" $ remapMd theRemap abstract == M.fromList [(deg_p,VF 1)]
+  let ea = pm0 "a0 a2" -- Epic (Map String Double) -> ParamEpic
+  assertBool "2" $ (remapMd theRemap <$> ea) == pe0 "d0 d2"
+  let ed = pd0 "0 2" -- Epic Double -> ParamEpic
+  assertBool "3" $ (remapPd deg_p <$> ed) == pe0 "d0 d2"
 
 testWarp = TestCase $ do
   let f = warpTime 0 0 0 -- strength 0 + laziness => no division by 0

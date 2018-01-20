@@ -150,12 +150,23 @@ warpTime tolerance strength period t =
              fromRational t * 2 * pi / fromRational period))
 
 -- | = remap* is to make an abstract map concrete (e.g. into a ParamMap)
-remap' :: Ord k2 => (k1->k2) -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
-remap' sf df = M.mapKeys sf . M.map df
+-- For usage examples, see Test.hs
+-- To remap the keys and leave the values unchanged, use Util.composeMaps
 
-remapm :: (Ord k1,Ord k2) =>
-  M.Map k1 k2 -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
-remapm sm df = composeMaps sm . M.map df
+-- | The most abstract possible variety of remap
+remap :: Ord k2 => (k1->k2) -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
+remap sf df = M.mapKeys sf . M.map df
 
-remap :: (Ord k, Ord k') => M.Map k k' -> M.Map k Double -> M.Map k' Value
-remap = flip remapm VF
+-- | Mq: The first arg is a map and the second is any arbitrary function
+remapMq :: (Ord k1,Ord k2) =>
+          M.Map k1 k2 -> (v1->v2) -> M.Map k1 v1    -> M.Map k2 v2
+remapMq sm df = composeMaps sm . M.map df
+
+-- | Md: The first arg is a map and the values, Doubles, get wrapped in VF
+remapMd :: (Ord k, Ord k') =>
+          M.Map k k'              -> M.Map k Double -> M.Map k' Value
+remapMd = flip remapMq VF
+
+-- | Pd: The first arg is a Param and the values, Doubles, get wrapped in VF
+remapPd :: Param                   -> Double         -> ParamMap
+remapPd par = M.singleton par . VF
