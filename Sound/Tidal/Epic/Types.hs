@@ -1,3 +1,5 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Sound.Tidal.Epic.Types where
 
 import Control.Lens
