@@ -128,7 +128,7 @@ pNonEpicLexemfast = lexeme $ do n <- symbol "*" >> ratio
 pNonEpicLexemslow = lexeme $ do n <- symbol "/" >> ratio
                                 return $ slow n
 pNonEpicLexemeDense = lexeme $ do n <- symbol "**" >> ratio
-                                  return $dense n
+                                  return $ dense n
 pNonEpicLexemeSparse = lexeme $ do n <- symbol "//" >> ratio
                                    return $ sparse n
 pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio

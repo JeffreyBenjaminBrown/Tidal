@@ -2,7 +2,6 @@ module Sound.Tidal.Epic.DirtNetwork where
 
 import Control.Applicative
 import Control.Concurrent
---import Control.DeepSeq (deepseq) -- TODO: try using
 import Data.Fixed
 import Data.List
 import Data.Maybe
@@ -73,7 +72,7 @@ eOnTick     backend     shape          epicsM         change tick = do
 -- (relative to the given arc), durations (PITFALL: relative to
 -- the arc), and values.
 eSeqToRelOnsetDeltas :: Arc -> Epic a -> [(Double, Double, a)]
-eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ arc ep (s,e)
+eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ _arc ep (s,e)
   where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
                           , fromRational $ (e'-s) / (e-s)
                           , x)

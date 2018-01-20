@@ -57,15 +57,15 @@ instance TestEpic (Map Param Value) where
              (singleton gain_p $ VF 2)
 
 instance Eq a => Eq (Epic a) where
-  (==) a b = let testRange = (-10,10) in arc a testRange == arc b testRange
+  (==) a b = let testRange = (-10,10) in _arc a testRange == _arc b testRange
 
 instance (Eq a, TestEpic a) => Eq (Epic a -> Epic a) where
   (==) f g = let t = testEpic
                  testRange = (0,10)
-             in arc (f t) testRange == arc (g t) testRange
+             in _arc (f t) testRange == _arc (g t) testRange
 
 instance (Eq a, TestEpic a) => Eq (Epic a -> Epic a -> Epic a) where
   (==) f g = let t1 = testEpic
                  t2 = early 1 $ slow 2 testEpic
                  testRange = (0,10)
-             in arc (f t1 t2) testRange == arc (g t1 t2) testRange
+             in _arc (f t1 t2) testRange == _arc (g t1 t2) testRange

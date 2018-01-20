@@ -32,10 +32,10 @@ import Sound.Tidal.Epic.Util
 
 
 silence :: Epic a
-silence = Epic { period = Nothing, arc = const [] }
+silence = Epic { _period = Nothing, _arc = const [] }
 
 durSilence :: Time -> Epic a
-durSilence t = Epic { period = Just t, arc = const [] }
+durSilence t = Epic { _period = Just t, _arc = const [] }
 
 early, late, slow, fast, dense, sparse :: Time -> Epic a -> Epic a
 early t (Epic d f) = Epic d             $ \(s,e) -> g $ f (s+t, e+t) where

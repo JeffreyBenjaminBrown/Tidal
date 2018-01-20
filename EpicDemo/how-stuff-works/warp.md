@@ -12,17 +12,17 @@ We can define that function as follows:
 
     w = warp 0.001 0.30 1
 
-The last argument is its period. The second to last indicates that we are slowing down the 25% mark to land on the 30% mark. The first is a tolerance, necessary because internally it converts floating points to rational numbers. (If I knew it was cpu-friendly I would just set that tolerance to a very low number.)
+The last argument is its _period. The second to last indicates that we are slowing down the 25% mark to land on the 30% mark. The first is a tolerance, necessary because internally it converts floating points to rational numbers. (If I knew it was cpu-friendly I would just set that tolerance to a very low number.)
 
 Here's how it looks in action. (plist is just a function that pretty-prints a list.)
 
-    > plist $ arc f (0,1) -- the original (non-warped) Epic
+    > plist $ _arc f (0,1) -- the original (non-warped) Epic
     ((0 % 1,1 % 4),1)
     ((1 % 4,1 % 2),2)
     ((1 % 2,3 % 4),3)
     ((3 % 4,1 % 1),4)
 
-    > plist $ arc (w f) (0,1) -- the warped Epic
+    > plist $ _arc (w f) (0,1) -- the warped Epic
     ((0 % 1,3 % 10),1)
     ((3 % 10,1 % 2),2)
     ((1 % 2,7 % 10),3)

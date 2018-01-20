@@ -49,6 +49,15 @@ breathe bigDur (Epic (Just smallDur) ef) = Epic (Just bigDur) $ \(s,e) ->
   in map (first $ breathExpand bigDur smallDur)
      $ concatMap ef contracted
 
+breathe2 :: Time -> Time -> Epic a -> Epic a
+breathe2 bigDur smallDur (Epic _ ef) = Epic (Just bigDur) $ \(s,e) ->
+  let covered = breathAddGaps bigDur smallDur (s,e)
+        -- the non-gaps, the intervals that will carry payloads
+      contracted = map (breathContract bigDur smallDur) covered
+        -- the inner intervals, on which ef is computed
+  in map (first $ breathExpand bigDur smallDur)
+     $ concatMap ef contracted
+
 breathAddGaps :: Time -> Time -> Arc -> [Arc]
 breathAddGaps big small (s,e) =
   if s >= e -- todo ? does this violate the idiom established by `overlap`?
@@ -104,10 +113,10 @@ mergeEvents intOp floatOp aEvs bEvs =  k aEvs' bEvs' where
 -- | applyMetaEpic
 meta :: Epic (Epic a -> Epic b) -> Epic a -> Epic b
 meta    (Epic md mf)               obj    = Epic d' f' where
-  d' = lcmRatios <$> md <*> period obj
+  d' = lcmRatios <$> md <*> _period obj
   -- f' :: Arc -> [Ev b]
   f' a = concatMap h transformEvs
     where -- transformEvs :: [(Arc, Epic a -> Epic b)]
           transformEvs = mf a
           -- h :: (Arc, Epic a -> Epic b) -> [Ev b]
-          h (theArc,tr) = arc (tr obj) theArc
+          h (theArc,tr) = _arc (tr obj) theArc

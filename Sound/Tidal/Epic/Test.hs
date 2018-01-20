@@ -87,7 +87,7 @@ testWarp = TestCase $ do
       [   ((a,b),_)
         , ((a1,b1),_)
         , ((a2,b2),_)
-        , ((a3,b3),_) ] = arc wf (0,1)
+        , ((a3,b3),_) ] = _arc wf (0,1)
   assertBool "3" $ b == a1 && b1 == a2 && b2 == a3
   assertBool "3" $ a == 0 && a1 == 3/10 && a2 == 1/2 && a3 == 7/10
   let f = fast 4 $ cata 2 [1..4]
@@ -95,7 +95,7 @@ testWarp = TestCase $ do
       [   ((a,b),_)
         , ((a1,b1),_)
         , ((a2,b2),_)
-        , ((a3,b3),_) ] = arc wf (0,2)
+        , ((a3,b3),_) ] = _arc wf (0,2)
   assertBool "4" $ b == a1 && b1 == a2 && b2 == a3
   assertBool "4" $ a == 0 && a1 == 3/5 && a2 == 1 && a3 == 7/5 && b3 == 2
   return ()
@@ -109,35 +109,35 @@ testSyParams = TestCase $ do
 
 testBreathyConcatEpicIdea = TestCase $ do
   let x = dsh 1 +- loopa 1 'a'
-  assertBool "1" $ arc (late 1 $ breathe 5 $ early 1 x) (0,7)
+  assertBool "1" $ _arc (late 1 $ breathe 5 $ early 1 x) (0,7)
     == [((1,2),'a'),((6,7),'a')]
   let y = loopa 2 'a' +- dsh 1 -- imagine e +- y, where period e = 2
-  assertBool "2" $ arc (late 2 $ breathe 5 y) (0,8)
+  assertBool "2" $ _arc (late 2 $ breathe 5 y) (0,8)
     == [((2,4),'a'),((7,8),'a')]
 
 testBreathyConcatEpic = TestCase $ do
   let ab = sparse 2 $ loopa 1 'a' +- loopa 1 'b'
       c =             loopa 2 'c' +- dsh 1
-  assertBool "1" $ arc (eConcat ab c) (0,5)
+  assertBool "1" $ _arc (eConcat ab c) (0,5)
     == [((0,2),'a'), ((2, 4),'c')]
-  assertBool "2" $ arc (eConcat ab c) (5,10)
+  assertBool "2" $ _arc (eConcat ab c) (5,10)
     == [((5,7),'b'), ((7,9),'c')]
 
 testBreathe = TestCase $ do
   let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
       xb = breathe 5 x
-  assertBool "no bug,  1" $ arc xb (1,9) /= []
-  assertBool "no bug,  2" $ arc xb (2,9) /= []
-  assertBool "bug,  3" $ arc xb (3,9) /= []
-  assertBool "bug,  4" $ arc xb (4,9) /= []
-  assertBool "no bug,  5" $ arc xb (5,9) /= []
-  assertBool "no bug,  6" $ arc xb (6,9) /= []
-  assertBool "bug, neg 1" $ arc xb (-1,9) /= []
-  assertBool "bug, neg 2" $ arc xb (-2,9) /= []
-  assertBool "not bug, neg 3" $ arc xb (-3,9) /= []
-  assertBool "not bug, neg 4" $ arc xb (-4,9) /= []
-  assertBool "not bug, neg 5" $ arc xb (-5,9) /= []
-  assertBool "bug, neg 6" $ arc xb (-6,9) /= []
+  assertBool "no bug,  1" $ _arc xb (1,9) /= []
+  assertBool "no bug,  2" $ _arc xb (2,9) /= []
+  assertBool "bug,  3" $ _arc xb (3,9) /= []
+  assertBool "bug,  4" $ _arc xb (4,9) /= []
+  assertBool "no bug,  5" $ _arc xb (5,9) /= []
+  assertBool "no bug,  6" $ _arc xb (6,9) /= []
+  assertBool "bug, neg 1" $ _arc xb (-1,9) /= []
+  assertBool "bug, neg 2" $ _arc xb (-2,9) /= []
+  assertBool "not bug, neg 3" $ _arc xb (-3,9) /= []
+  assertBool "not bug, neg 4" $ _arc xb (-4,9) /= []
+  assertBool "not bug, neg 5" $ _arc xb (-5,9) /= []
+  assertBool "bug, neg 6" $ _arc xb (-6,9) /= []
 
   assertBool "1"   $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
   assertBool "1.1" $ breathAddGaps 5 2 (11,21) == [(11,12),(15,17),(20,21)]
@@ -150,13 +150,13 @@ testBreathe = TestCase $ do
   assertBool "3.1" $ breathExpand 5 2 (5,6) == (11,12)
   let small = loopa 1 'a' +- loopa 1 'b'
       big = breathe 5 small
-  assertBool "4" $ arc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
+  assertBool "4" $ _arc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
   let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
   assertBool "5" $
-    arc          (breathe 5 $ early 1 x) (0,5) ==
+    _arc          (breathe 5 $ early 1 x) (0,5) ==
     [((0 % 1,1 % 1),'b'),((2 % 1,3 % 1),'a')]
   assertBool "this is just like that, except plus a late" $
-    arc (late 1 $ breathe 5 $ early 1 x) (0,10) /= []
+    _arc (late 1 $ breathe 5 $ early 1 x) (0,10) /= []
 
 
 -- The scale is only in effect for the first period.
@@ -244,7 +244,7 @@ testScanLang = TestCase $ do
             ] -- scanLang doesn't match brackets, just converts them
       [(EpicNotOp (EpicWrap ep)), UnaryOp (UnaryWrap g), LeftBracket]
         = scanLang loopa cdm
-  assertBool "1" $ arc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
+  assertBool "1" $ _arc (g ep) (0,3) == [((0 % 1,2 % 1),4),((2 % 1,3 % 1),4)]
 
 testScanAccumEpic = TestCase $ do
   let (cdm, j,n,t,f) = (AccumEpic, Just, Nothing, True, False)
@@ -259,24 +259,24 @@ testScanAccumEpic = TestCase $ do
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do
-  assertBool "1" $ arc (pe0 "_+-s1") (0,2)
+  assertBool "1" $ _arc (pe0 "_+-s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
 
 testApplyMetaEpic = TestCase $ do
   let me = cata 1 [id, fast 2]
       e  = cat0 1 [1, 2]
       e' = meta me e
-  assertBool "1" $ arc e' (0,2) == [((  0,   0), 1)
+  assertBool "1" $ _arc e' (0,2) == [((  0,   0), 1)
                                     ,((  1,   1), 1)
                                     ,((1.5, 1.5), 2)]
 
 testMergeEpics = TestCase $ do
   let f = speed $ cat0 (1%4) [2,1]
   assertBool "f1" $
-    arc (speed (ever 2) &* f             ) (0,1%4) ==
+    _arc (speed (ever 2) &* f             ) (0,1%4) ==
     [((0,0), M.singleton speed_p $ VF 4)]
   assertBool "f2" $
-    arc (f              &* speed (ever 2)) (0,1%4) ==
+    _arc (f              &* speed (ever 2)) (0,1%4) ==
     [((0,0), M.singleton speed_p $ VF 4)]
 
 testLexemeToAccumEpic = TestCase $ do
@@ -339,80 +339,80 @@ testLaws = TestCase $ do
       x1 = pure 10
       a = (4,6)
       ev = [(a,10)]
-      f p = arc p a
-  assertBool "functor 1" $ arc (fmap id x1) a == ev
+      f p = _arc p a
+  assertBool "functor 1" $ _arc (fmap id x1) a == ev
   let p1 = fmap ((+2).(*3)) x1
       p2 = fmap (+2) . fmap (*3) $ x1
     in assertBool "functor 2" $ f p1 == f p2
-  assertBool "applic 1" $ arc (f1 <*> x1) a == ev
+  assertBool "applic 1" $ _arc (f1 <*> x1) a == ev
   assertBool "applic 2" $ f (f2 <*> x1) == f (pure $ (+2) 10)
   -- ambition ? could test the other 2 applicative laws, but don't know why
 
 testStack = TestCase $ do
   let p1 =          for 1 'a'
       p2 = late 1 $ for 1 'b'
-  assertBool "1" $ arc (stack p1 p2) (0,1) == [((0,1),'a')]
+  assertBool "1" $ _arc (stack p1 p2) (0,1) == [((0,1),'a')]
 
 testConcatEpic = TestCase $ do
   let p1 = loope 2 $ for 1 'a'
       p2 = loope 3 $ for 1 'b'
       p = eConcat p1 p2
-  assertBool "1" $ period p == (Just 5)
-  assertBool "2" $ arc p (0,7) ==  [((0,1),'a')
+  assertBool "1" $ _period p == (Just 5)
+  assertBool "2" $ _arc p (0,7) ==  [((0,1),'a')
                                     ,((2,3),'b')
                                     ,((5,6),'a')]
 
 testEpicPatternIsh = TestCase $ do
   let p = for 1 () :: Epic ()
-  assertBool "1" $ arc (early (1/2) p) (-1,1) == [((-1/2, 1/2), ())]
-  assertBool "2" $ arc (late  (1/2) p) (-1,1) == [((1/2 , 1  ), ())]
-  assertBool "3" $ arc (slow 2     p) (-1,3) == [((  0 , 2  ), ())]
-  assertBool "4" $ arc (fast 2     p) (-1,3) == [((  0 , 1/2), ())]
-  assertBool "5" $ arc (rev        p) (-2,1) == [(( -1 , 0  ), ())]
+  assertBool "1" $ _arc (early (1/2) p) (-1,1) == [((-1/2, 1/2), ())]
+  assertBool "2" $ _arc (late  (1/2) p) (-1,1) == [((1/2 , 1  ), ())]
+  assertBool "3" $ _arc (slow 2     p) (-1,3) == [((  0 , 2  ), ())]
+  assertBool "4" $ _arc (fast 2     p) (-1,3) == [((  0 , 1/2), ())]
+  assertBool "5" $ _arc (rev        p) (-2,1) == [(( -1 , 0  ), ())]
   let q = stack (late 1 $ fmap (const 1) p)
                  (late 3 $ fmap (const 2) p)
-  assertBool "6" $ arc (rev q) (-5,1) == [ (( -4 , -3  ), 2)
+  assertBool "6" $ _arc (rev q) (-5,1) == [ (( -4 , -3  ), 2)
                                            , (( -2 , -1  ), 1) ]
 
 testApplyEpic = TestCase $ do
   let f1 =          for 1 (+1)
       f2 = late 2 $ for 2 (+2)
       f3 = late 4 $ for 2 (+3)
-      g1 = Epic Nothing $ \a -> arc f1 a ++ arc f2 a ++ arc f3 a
+      g1 = Epic Nothing $ \a -> _arc f1 a ++ _arc f2 a ++ _arc f3 a
       x = loope 2 $ for 1 (1 :: Int)
-  assertBool "1" $ arc (f1 <*> x) (0,4) == [((0,1),2)]
-  assertBool "tricky!" $ arc (g1 <*> x) (0,8) ==
+  assertBool "1" $ _arc (f1 <*> x) (0,4) == [((0,1),2)]
+  assertBool "tricky!" $ _arc (g1 <*> x) (0,8) ==
     [ ((0,1),2),  ((2,3),3),  ((4,5),4) ]
   -- An earlier version of takeOverlappingEvs caused the event at time 4
   -- to undergo both (+2) (with duration 0) and (+3) (with duration 1).
   let g2 = loope 4 g1
-  assertBool "3" $ arc (g2 <*> x) (0,8) ==
+  assertBool "3" $ _arc (g2 <*> x) (0,8) ==
     [ ((0,1),2),  ((2,3),3),  ((4,5),2),  ((6,7),3)]
-  assertBool "4" $ period g2 == Just 4
-  assertBool "5" $ period (g2 <*> x) == Just 4
+  assertBool "4" $ _period g2 == Just 4
+  assertBool "5" $ _period (g2 <*> x) == Just 4
   let f = stack (for 1 (+1)) (late (1/2) $ for 1 (+2))
       x =         for 1 1
   assertBool "overlapping functions induce concurrency"
-    $ arc (f <*> x) (0,1) == [((0,1),2),  ((1/2,1),3)]
+    $ _arc (f <*> x) (0,1) == [((0,1),2),  ((1/2,1),3)]
   let f =         for 1 (+1)
       x = stack (for 1 1  ) (late (1/2) $ for 1 2)
   assertBool "overlapping objects are concurrency"
-    $ arc (f <*> x) (0,1) == [((0,1),2),  ((1/2,1),3)]
+    $ _arc (f <*> x) (0,1) == [((0,1),2),  ((1/2,1),3)]
   let f = stack (for 1 (+1)) (late (1/2) $ for 1 (+2))
       x = stack (for 1 1  ) (late (1/2) $ for 1 2)
   assertBool "concurrent objects and functions multiply like the list monad"
-    $ arc (f <*> x) (0,1)
+    $ _arc (f <*> x) (0,1)
     == [((0,1), 2),  ((1/2,1),3),  ((1/2,1), 3),  ((1/2,1), 4)]
 
 testApplyEpic2 = TestCase $ do
   let e1 = loopa 1 (+1) <*> (loopa 1 1 +- loopa 1 2)
       e2 =                   loopa 1 2 +- loopa 1 3
-  assertBool "works on unit interval" $ arc e1 (0,1) == arc e2 (0,1)
-  assertBool "<*> fails beyond (0,1)" $ arc e1 (0,2) == arc e2 (0,2)
+  assertBool "works on unit interval" $ _arc e1 (0,1) == _arc e2 (0,1)
+  assertBool "<*> fails beyond (0,1)" $ _arc e1 (0,2) == _arc e2 (0,2)
 
 testWindow = TestCase $ do
   let ep = window (2,5) $ loope 2 $ for 1 ()
-  assertBool "1" $ arc ep (2,5) == [((2,3),())
+  assertBool "1" $ _arc ep (2,5) == [((2,3),())
                                     ,((4,5),())]
 
 testTakeOverlappingEvents = TestCase $ do
@@ -425,13 +425,13 @@ testTakeOverlappingEvents = TestCase $ do
 
 testEDur = TestCase $ do
   let p1 = for 1 ()
-      events1 = arc p1 (0,2)
+      events1 = _arc p1 (0,2)
       a1 = head events1
   assertBool "interval" $ fst a1 == (0,1)
   assertBool "exactly one event" $ length events1 == 1
-  assertBool "no overlap, early" $ null $ arc p1 (-3,-2)
-  assertBool "no overlap, late" $ null $ arc p1 (2,3)
-  let events2 = arc p1 (1/2,3/2)
+  assertBool "no overlap, early" $ null $ _arc p1 (-3,-2)
+  assertBool "no overlap, late" $ null $ _arc p1 (2,3)
+  let events2 = _arc p1 (1/2,3/2)
       a2 = head events2
   assertBool "interval 2" $ fst a2 == (1/2,1)
   assertBool "exaclty one event, again" $ length events2 == 1
@@ -453,7 +453,7 @@ testOverlap = TestCase $ do
 
 testERepeat = TestCase $ do
   let p = loope 2 $ instant ()
-  assertBool "1" $ arc p (0,4) == [((0,0),()), ((2,2),())]
+  assertBool "1" $ _arc p (0,4) == [((0,0),()), ((2,2),())]
 
 testLcmRatios = TestCase $ do
   assertBool "1" $ lcmRatios (1%3) (1%6) == (1%3)
