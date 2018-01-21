@@ -13,6 +13,14 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 
 
+(<*<) :: Applicative f => f (a -> b) -> f a -> f b
+(<*<) = (<*>)
+infixr 4 <*<
+
+(<$<) :: Applicative f => (a -> b) -> f a -> f b
+(<$<) = (<$>)
+infixr 4 <$<
+  
 plist :: Show a => [a] -> IO ()
 plist = mapM_ (putStrLn . show)
 

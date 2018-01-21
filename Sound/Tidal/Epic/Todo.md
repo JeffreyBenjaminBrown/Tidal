@@ -1,3 +1,8 @@
+scale de-transposer
+  Takes an Epic Scale x, returns an Epic (ParamMap -> ParamMap) y,
+  such that if y is applied to ParamEpic z, z won't sound transposed
+  by the roots of the scale.
+
 x-voice coordination
 
 Music theory- and across voice-aware scale, degree, chord sequence manipulations.
