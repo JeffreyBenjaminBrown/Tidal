@@ -163,16 +163,16 @@ testBreathe = TestCase $ do
 testParseScale = TestCase $ do
   let scale = maj
       eScale = ps "maj"
-      eDegs = pe "d0 +- d2 +- d4"
+      eDegs = pe "d0 - d2 - d4"
   assertBool "because <*> fails" $ (scale <$> eDegs) == (eScale <*> eDegs)
 
 testPEpic = TestCase $ do
   let str = "s1.2"
       str2 = "[s1.2]"
       str2p5 = "[s1.2,,1d2]"
-      str3 = "s1.2 +- d2"
-      str4 = "s1.2 +- d2 +| d3"
-      str5 = "s1.2 +- [d2 +| *2 d3]"
+      str3 = "s1.2 - d2"
+      str4 = "s1.2 - d2 | d3"
+      str5 = "s1.2 - [d2 | *2 d3]"
       sm = M.singleton speed_p $ VF 1.2
       dm2 = M.singleton deg_p $ VF 2
       dm3 = M.singleton deg_p $ VF 3
@@ -189,7 +189,7 @@ testPEpic = TestCase $ do
                                       ) )
 
 testPEpicOrOps = TestCase $ do
-  let str = "s1.2 +- 1d2 +| 1d3"
+  let str = "s1.2 - 1d2 | 1d3"
       sm = M.singleton speed_p $ VF 1.2
       dm2 = M.singleton deg_p $ VF 2
       dm3 = M.singleton deg_p $ VF 3
@@ -208,7 +208,7 @@ testPEpicOrOps = TestCase $ do
   assertBool "e3" $ e3 == loopa 1 (M.union sm dm3)
 
 testPLang = TestCase $ do
-  let str = "s1.2,,1d2 +| t2%3,,_ *2 +- t2%3"
+  let str = "s1.2,,1d2 | t2%3,,_ *2 - t2%3"
       Right parsed = parse peLang "" str
       shouldBe = [ LangEpic ( AccumEpic Nothing
                               (M.singleton deg_p $ VF 2)
@@ -223,7 +223,7 @@ testPLang = TestCase $ do
   assertBool "1" $ parsed == shouldBe
 
 testLexeme = TestCase $ do
-  let str = "s1.2,,1d2 *2 +| +- _,,t2%3 "
+  let str = "s1.2,,1d2 *2 | - _,,t2%3 "
   assertBool "1" $ parse peLexemes "" str == Right
     [ LexemeEpics [ EpicPhonemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicPhonemeOnce $ M.singleton deg_p $ VF 2
@@ -259,7 +259,7 @@ testScanAccumEpic = TestCase $ do
     [(2,j 3), (2,j 3), (1,j 4), (1,j 5), (1, n)]
 
 testSilence = TestCase $ do
-  assertBool "1" $ _arc (pe0 "_+-s1") (0,2)
+  assertBool "1" $ _arc (pe0 "_ - s1") (0,2)
     == [((1,1),M.singleton speed_p $ VF 1)]
 
 testApplyMetaEpic = TestCase $ do

@@ -17,6 +17,9 @@ stack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
   \arc -> sortOn (fst . fst) $ f arc ++ g arc
   -- sort by first element because takeOverlappingEvs needs that
 
+stacka :: Time -> [a] -> Epic a
+stacka t = foldr1 stack . fmap (loopa t)
+
 -- | Only repeating Epics are concatenable.
 -- TODO: handle finite-duration non-repeating Epics too.
 append :: Epic a -> Epic a -> Epic a

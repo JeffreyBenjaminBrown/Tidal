@@ -17,7 +17,10 @@ module Sound.Tidal.Epic.Abbreviations (
 
   -- | == Params
   , syp
+  , stackaParamR
   ) where
+
+import Data.Ratio
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.CombineEpics
@@ -50,3 +53,8 @@ cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
 
 syp = syParams
+
+-- | Stack a list of Ratios as parameter values
+-- Handy for just intonation: v1 $ tone &* stackaParamR 1 qf_p [1,2,11%4]
+stackaParamR :: Time -> Param -> [Ratio Integer] -> Epic ParamMap
+stackaParamR t p = stacka t . fmap (remapPd p . fromRational)

@@ -35,32 +35,37 @@ epicLexemsilence = const EpicPhonemeSilent <$> char '_'
 
 -- | = (Epic ParamMap)-specific
 pSingleton :: Parser ParamMap
-pSingleton = foldl1 (<|>) $ map try
-  [parseSpeed, parseGain, parseSound, parseDegree, parseSustain, parsePan
-  , parseQf, parseAmp
+pSingleton = foldl1 (<|>) $ map try [parseSpeed, parseSpeedr, parseGain
+  , parseSound, parseDegree, parseSustain, parsePan
+  , parseQf, parseQfr, parseAmp
   , parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf ]
 
-parseSpeed, parseGain, parseSound, parseDegree :: Parser ParamMap
-parseSpeed   = parseSingletonFloat  speed_p   $ ignore $ char 's'
-parseGain    = parseSingletonFloat  gain_p    $ ignore $ char 'g'
-parseSound   = parseSingletonString sound_p   $ ignore $ char '_'
-parseDegree  = parseSingletonFloat  deg_p     $ ignore $ char 'd'
-parseSustain = parseSingletonFloat  sustain_p $ ignore $ string "sus"
-parsePan     = parseSingletonFloat  pan_p     $ ignore $ string "pan"
-parseQfa     = parseSingletonFloat  qfa_p     $ ignore $ string "fa"
-parseQff     = parseSingletonFloat  qff_p     $ ignore $ string "ff"
-parseQpa     = parseSingletonFloat  qpa_p     $ ignore $ string "pa"
-parseQpf     = parseSingletonFloat  qpf_p     $ ignore $ string "pf"
-parseQaa     = parseSingletonFloat  qaa_p     $ ignore $ string "aa"
-parseQaf     = parseSingletonFloat  qaf_p     $ ignore $ string "af"
-  -- I don't think I need parseQf or parseAmp; I'll just use syNames
-parseQf      = parseSingletonFloat  qf_p      $ ignore $ string "f"
-parseAmp     = parseSingletonFloat  amp_p     $ ignore $ string "a"
+parseSpeed, parseSpeedr, parseGain, parseSound, parseDegree, parseSustain, parsePan, parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
+parseSpeed   = pSingletonFloat  speed_p            $ ignore $ char 's'
+parseSpeedr  = pSingletonFloatFromRational speed_p $ ignore $ string "sr"
+parseGain    = pSingletonFloat  gain_p             $ ignore $ char 'g'
+parseSound   = pSingletonString sound_p            $ ignore $ char '_'
+parseDegree  = pSingletonFloat  deg_p              $ ignore $ char 'd'
+parseSustain = pSingletonFloat  sustain_p          $ ignore $ string "sus"
+parsePan     = pSingletonFloat  pan_p              $ ignore $ string "pan"
+parseQfa     = pSingletonFloat  qfa_p              $ ignore $ string "fa"
+parseQff     = pSingletonFloat  qff_p              $ ignore $ string "ff"
+parseQpa     = pSingletonFloat  qpa_p              $ ignore $ string "pa"
+parseQpf     = pSingletonFloat  qpf_p              $ ignore $ string "pf"
+parseQaa     = pSingletonFloat  qaa_p              $ ignore $ string "aa"
+parseQaf     = pSingletonFloat  qaf_p              $ ignore $ string "af"
+parseQf      = pSingletonFloat  qf_p               $ ignore $ string "f"
+parseQfr     = pSingletonFloatFromRational  qf_p   $ ignore $ string "fr"
+parseAmp     = pSingletonFloat  amp_p     $ ignore $ string "a"
 
-parseSingletonFloat :: Param -> Parser () -> Parser ParamMap
-parseSingletonFloat param prefix =
+pSingletonFloat :: Param -> Parser () -> Parser ParamMap
+pSingletonFloat param prefix =
   M.singleton param . VF <$> (prefix >> double)
 
-parseSingletonString :: Param -> Parser () -> Parser ParamMap
-parseSingletonString param prefix =
+pSingletonFloatFromRational :: Param -> Parser () -> Parser ParamMap
+pSingletonFloatFromRational param prefix =
+  M.singleton param . VF . fromRational <$> (prefix >> ratio)
+
+pSingletonString :: Param -> Parser () -> Parser ParamMap
+pSingletonString param prefix =
   M.singleton param . VS <$> (prefix >> anyWord)

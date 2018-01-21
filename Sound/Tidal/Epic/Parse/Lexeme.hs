@@ -95,7 +95,7 @@ prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
 prLexemes = pLexemes prLexemeEpics
 
 pLexemeEpics :: Monoidoid i o => (Parser (EpicPhoneme o)) -> Parser (Lexeme i o)
-pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (string ",,")
+pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (some $ char ',')
 peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
 peLexemeEpics = pLexemeEpics PPM.epicPhoneme
 pmLexemeEpics :: Parser (Lexeme PM.MSD PM.MSD)
@@ -138,9 +138,9 @@ pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio
 
 pBinOp, pNonEpicLexemstack, pNonEpicLexemeCat :: Parser (NonEpicLexeme i)
 pBinOp = try pNonEpicLexemstack <|> try pNonEpicLexemeCat
-pNonEpicLexemstack = do lexeme $ symbol "+|"
+pNonEpicLexemstack = do lexeme $ symbol "|"
                         return $ NonEpicLexemeBinOp stack
-pNonEpicLexemeCat = do lexeme $ symbol "+-"
+pNonEpicLexemeCat = do lexeme $ symbol "-"
                        return $ NonEpicLexemeBinOp append
 
 pBracket, pNonEpicLexemeLeftBracket, pNonEpicLexemeRightBracket :: Parser (NonEpicLexeme i)
