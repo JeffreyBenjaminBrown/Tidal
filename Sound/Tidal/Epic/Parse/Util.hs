@@ -22,10 +22,10 @@ lexeme :: Parser a -> Parser a
 lexeme = L.lexeme sc
 
 integer :: Integral a => Parser a
-integer = lexeme L.decimal
+integer = L.decimal
 
 double :: Parser Double
-double = lexeme $ realToFrac <$> L.signed sc L.scientific where
+double = realToFrac <$> L.signed (return ()) L.scientific
   -- Here it's safe (and avoids another dependency), but in general, note:
   -- "Avoid applying toRational (or realToFrac) to scientific numbers coming from an untrusted source and use toRealFloat instead. The latter guards against excessive space usage." https://hackage.haskell.org/package/scientific-0.3.5.2/docs/Data-Scientific.html
 
@@ -48,7 +48,7 @@ wordChar = alphaNumChar <|> char '-'
 -- | The notFollowedBy makes word different from symbol.
 -- For instance, word "(" will fail where symbol "(" would not.
 word :: String -> Parser String -- | could fail half-in, so requires "try"
-word w = lexeme $ string w <* notFollowedBy wordChar
+word w = string w <* notFollowedBy wordChar
 
 anyWord :: Parser String
 anyWord = some wordChar  <* notFollowedBy wordChar
