@@ -42,7 +42,7 @@ deriving instance (Eq o, Eq (NonEpicLexeme i)) => Eq (Lexeme i o)
 deriving instance (Eq i, Eq o, TestEpic i) => Eq (Lang i o)
 
 mkTestEpic :: a -> a -> Epic a
-mkTestEpic a b = eConcat f g where
+mkTestEpic a b = append f g where
   f = stack (loopa 1 a) (loopa 2 b)
   g = loopa 3 b
 

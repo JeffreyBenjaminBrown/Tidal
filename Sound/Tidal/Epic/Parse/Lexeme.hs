@@ -141,7 +141,7 @@ pBinOp = try pNonEpicLexemstack <|> try pNonEpicLexemeCat
 pNonEpicLexemstack = do lexeme $ symbol "+|"
                         return $ NonEpicLexemeBinOp stack
 pNonEpicLexemeCat = do lexeme $ symbol "+-"
-                       return $ NonEpicLexemeBinOp eConcat
+                       return $ NonEpicLexemeBinOp append
 
 pBracket, pNonEpicLexemeLeftBracket, pNonEpicLexemeRightBracket :: Parser (NonEpicLexeme i)
 pBracket = pNonEpicLexemeLeftBracket <|> pNonEpicLexemeRightBracket

@@ -16,7 +16,7 @@ module Sound.Tidal.Epic.Abbreviations (
   , (+-), (+|)
 
   -- | == Params
-  , syf
+  , syp
   ) where
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
@@ -36,7 +36,7 @@ infixr 3 &*, &+
 (&+) = mergeEpics (+) (+)
 (&*) = mergeEpics (*) (*)
 infixr 2 +-, +|
-(+-) = eConcat
+(+-) = append
 (+|) = stack
 
 shh = silence
@@ -49,4 +49,4 @@ cata, cat0 :: Time -> [a] -> Epic a
 cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
 
-syf = syParams
+syp = syParams

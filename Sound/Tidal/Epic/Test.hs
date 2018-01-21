@@ -118,9 +118,9 @@ testBreathyConcatEpicIdea = TestCase $ do
 testBreathyConcatEpic = TestCase $ do
   let ab = sparse 2 $ loopa 1 'a' +- loopa 1 'b'
       c =             loopa 2 'c' +- dsh 1
-  assertBool "1" $ _arc (eConcat ab c) (0,5)
+  assertBool "1" $ _arc (append ab c) (0,5)
     == [((0,2),'a'), ((2, 4),'c')]
-  assertBool "2" $ _arc (eConcat ab c) (5,10)
+  assertBool "2" $ _arc (append ab c) (5,10)
     == [((5,7),'b'), ((7,9),'c')]
 
 testBreathe = TestCase $ do
@@ -203,7 +203,7 @@ testPEpicOrOps = TestCase $ do
             ] = parse (peEpicOrOps loopa) "" str
   assertBool "e1" $ e1 == loopa 1 sm
   assertBool "e2" $ e2 == loopa 1 (M.union sm dm2)
-  assertBool "o1" $ o1 == eConcat
+  assertBool "o1" $ o1 == append
   assertBool "o2" $ o2 == stack
   assertBool "e3" $ e3 == loopa 1 (M.union sm dm3)
 
@@ -217,7 +217,7 @@ testPLang = TestCase $ do
                  , LangNonEpic $ NonEpicLexemeBinOp stack
                  , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty True )
                  , LangNonEpic $ NonEpicLexemeUnOp $ fast 2
-                 , LangNonEpic $ NonEpicLexemeBinOp eConcat
+                 , LangNonEpic $ NonEpicLexemeBinOp append
                  , LangEpic ( AccumEpic (Just $ 2%3) M.empty M.empty False )
                  ]
   assertBool "1" $ parsed == shouldBe
@@ -230,7 +230,7 @@ testLexeme = TestCase $ do
                  ]
     , LexemeNonEpic (NonEpicLexemeUnOp $ fast 2)
     , LexemeNonEpic (NonEpicLexemeBinOp stack)
-    , LexemeNonEpic (NonEpicLexemeBinOp eConcat)
+    , LexemeNonEpic (NonEpicLexemeBinOp append)
     , LexemeEpics [ EpicPhonemeSilent
                  , EpicPhonemeFor $ 2%3
                  ]
@@ -356,7 +356,7 @@ testStack = TestCase $ do
 testConcatEpic = TestCase $ do
   let p1 = loope 2 $ for 1 'a'
       p2 = loope 3 $ for 1 'b'
-      p = eConcat p1 p2
+      p = append p1 p2
   assertBool "1" $ _period p == (Just 5)
   assertBool "2" $ _arc p (0,7) ==  [((0,1),'a')
                                     ,((2,3),'b')

@@ -19,9 +19,9 @@ stack (Epic df f) (Epic dg g) = Epic (lcmRatios <$> df <*> dg) $
 
 -- | Only repeating Epics are concatenable.
 -- TODO: handle finite-duration non-repeating Epics too.
-eConcat :: Epic a -> Epic a -> Epic a
-eConcat (Epic Nothing _) _ = error "eConcat requires repeating patterns"
-eConcat e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
+append :: Epic a -> Epic a -> Epic a
+append (Epic Nothing _) _ = error "append requires repeating patterns"
+append e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
   let e1' =           breathe (t1+t2) e1
       e2' = late t1 $ breathe (t1+t2) e2
   in stack e1' e2'
