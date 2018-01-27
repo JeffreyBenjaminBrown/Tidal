@@ -16,6 +16,10 @@ import qualified Sound.Tidal.Params         as P
 import           Sound.Tidal.Epic.Types.Reimports
 
 
+transposeScale :: Double -> Scale -> Scale
+transposeScale d s = transp . s -- transpose 2nd; else might have no speeds
+  where transp = mergeNumParamsWith (*) (*) (M.singleton speed_p $ VF d)
+
 -- | ==== looking up scale degrees
 -- | == 12 tone scales
 remUnif :: Integral a => a -> a -> a

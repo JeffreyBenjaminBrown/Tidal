@@ -66,8 +66,7 @@ pScaleWithRoot = transposedScale <|> pScale where
   transposedScale = 
     do r <- (\n -> 2**(n/12)) <$> double
        s <- pScale
-       let transpose = mergeNumParamsWith (*) (*) (M.singleton speed_p $ VF r)
-       return $ transpose . s -- transpose second, else might have no speeds
+       return $ transposeScale r s
 
 pMSWR :: Parser (Maybe Scale)
 pMSWR = Just <$> pScaleWithRoot
