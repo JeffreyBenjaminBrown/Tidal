@@ -40,14 +40,16 @@ library
                        Sound.Tidal.Epic.Parse.Phoneme.Scale
                        Sound.Tidal.Epic.Parse.Transform
                        Sound.Tidal.Epic.Parse.Types
-                       Sound.Tidal.Epic.Parse.Utils
+                       Sound.Tidal.Epic.Parse.Util
                        Sound.Tidal.Epic.ReadHsAsGhci
                        Sound.Tidal.Epic.Scale
                        Sound.Tidal.Epic.Sounds
                        Sound.Tidal.Epic.Test
                        Sound.Tidal.Epic.Transform
                        Sound.Tidal.Epic.Types
+                       Sound.Tidal.Epic.Types.Reimports
                        Sound.Tidal.Epic.Util
+                       Sound.Tidal.Epic.Waveforms
                        Sound.Tidal.Pattern
                        Sound.Tidal.Stream
                        Sound.Tidal.OscStream
