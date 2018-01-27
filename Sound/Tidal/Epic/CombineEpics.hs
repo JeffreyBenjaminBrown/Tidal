@@ -3,6 +3,7 @@
 module Sound.Tidal.Epic.CombineEpics where
 
 import Control.Arrow (first)
+import Data.Fixed (div', mod')
 import Data.List (sortOn)
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
@@ -81,7 +82,7 @@ breathContract big small (s,e) =
 
 breathExpand :: Time -> Time -> Arc -> Arc
 breathExpand big small (s,e) = let n = fromIntegral $ div' s small
-                                   r = rem' s small
+                                   r = mod' s small
                                    z = n * big -- phase zero
                                in (z + r, z + r + e-s)
 

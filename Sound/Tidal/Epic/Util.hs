@@ -3,6 +3,7 @@
 module Sound.Tidal.Epic.Util where
 
 import Control.Arrow (first)
+import Data.Fixed (div')
 import Data.List (sortOn, partition)
 import Data.List.Unique (sortUniq)
 import qualified Data.Map as M
@@ -28,12 +29,6 @@ composeMaps :: (Ord k, Ord r) => M.Map k r -> M.Map k a -> M.Map r a
 composeMaps f m = let s = S.fromList $ M.keys f
                       m' = M.restrictKeys m s
                   in M.mapKeys ((M.!) f) m
-
-div' :: Time -> Time -> Int
-div' num den = floor $ num / den
-
-rem' :: Time -> Time -> Time
-rem' num den = num - den * fromIntegral (div' num den)
 
 roundDownTo :: Time -> Time -> Time
 roundDownTo den num = den * fromIntegral (div' num den)

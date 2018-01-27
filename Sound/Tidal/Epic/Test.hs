@@ -14,6 +14,7 @@ import Sound.Tidal.Epic.Abbreviations
 import Sound.Tidal.Epic.CombineEpics
 import Sound.Tidal.Epic.DirtNetwork
 import Sound.Tidal.Epic.Parse.Eq
+import Sound.Tidal.Epic.Harmony
 import Sound.Tidal.Epic.Instances
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Lexeme
@@ -61,7 +62,22 @@ main = runTestTT $ TestList
   , TestLabel "testSyParams" testSyParams
   , TestLabel "testWarp" testWarp
   , TestLabel "testRemap" testRemap
+  , TestLabel "testPartialScore" testPartialScore
   ]
+
+testPartialScore = TestCase $ do
+  let h = Harmony { baseScale = maj
+                  , root = 1
+                  , scaleSize = 7
+                  , chord = [0,2,4] }
+      rules = [InScale 1, InChord 10, DegDiff 100, Unique 1000]
+      original = 3
+      others = [0,4]
+      score' = score h others original rules :: Degree -> Score
+  assertBool "3"   $ score' 3 == 10
+  assertBool "2"   $ score' 2 == 100
+  assertBool "4"   $ score' 4 == 1100
+  assertBool "3.5" $ score' 3.5 == 61 -- 1 + 10 + (1/2)*100
 
 testRemap = TestCase $ do
   let theRemap = M.fromList [("a",deg_p)]
