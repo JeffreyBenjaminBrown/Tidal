@@ -7,3 +7,6 @@ import           Sound.Tidal.Epic.Params
 
 scaleFromHarmony :: Harmony -> Scale
 scaleFromHarmony h = transposeScale (fromRational $ root h) (baseScale h)
+
+-- harmonize :: Harmony -> [ScoreRule] -> ParamMap -> ParamMap
+-- should look like Epic.Scale.par12

@@ -10,7 +10,7 @@ import qualified Data.Map as M
 import           Sound.Tidal.Epic.Instances
 import           Sound.Tidal.Epic.Params
 import           Sound.Tidal.Epic.Util (mergeNumParamsWith)
-import           Sound.Tidal.Epic.Transform (chParam)
+import           Sound.Tidal.Epic.Transform (chParam, chVF)
 import           Sound.Tidal.Epic.Types
 import qualified Sound.Tidal.Params         as P
 import           Sound.Tidal.Epic.Types.Reimports
@@ -45,10 +45,10 @@ par12 scale map = mergeNumParamsWith (*) (*) mOtherParams $ g mDegree where
     -- PITFALL: It seems like "f deg_p _ = True; f _ _ = False"
     -- ought to work, but somehow no.
   g :: ParamMap -> ParamMap
-  g m = if M.null m then m
-        else (let VF deg = (M.!) m deg_p
-                  k = 2**(1/12)
-              in M.singleton P.speed_p $ VF $ k ** lk12' scale deg )
+  g = chParam deg_p speed_p . chVF deg_p rescale where
+    k = 2**(1/12)
+    rescale :: Double -> Double
+    rescale deg = k ** lk12' scale deg
 
 lk12 :: Epic [Double] -> Epic (Double -> Double)
 lk12 = fmap lk12'
