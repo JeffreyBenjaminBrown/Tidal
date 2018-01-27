@@ -34,22 +34,25 @@ epicPhonemeSilence = lexeme $ const EpicPhonemeSilent <$> char '_'
 
 
 -- | = Scale-specific
+
+-- WARNING: Hack: To prevent something like "phr3" from parsing as "phr",
+-- for any two scales x, y such that y is a prefix of x, locate y second.
 scales = [
-  dim,   dimd,   aug,   augd,   hol
-  ,   maj,   dor,   phr,   lyd,   mix,   aol,   loc
-  ,   maj5,   dor4,   phr3,   lyd2,   loc47,   aol7,   loc6
+  maj5,   dor4,   phr3,   lyd2,   loc47,   aol7,   loc6
   ,   maj6,   dor5,   phr4,   lyd3,   mix2,   lyd25,   loc7
   ,   maj3,   dor7,   dor2,   phr6,   lyd5,   lyd7,   mix4,   mix6
     ,   aol3,   aol5,   loc2,   loc4
+  , dimd,   dim,   augd,   aug,   hol
+  ,   maj,   dor,   phr,   lyd,   mix,   aol,   loc
   ] :: [ParamMap -> ParamMap]
 
 scaleNames = [
-  "dim", "dimd", "aug", "augd", "hol"
-  , "maj", "dor", "phr", "lyd", "mix", "aol", "loc"
-  , "maj5", "dor4", "phr3", "lyd2", "loc47", "aol7", "loc6"
+  "maj5", "dor4", "phr3", "lyd2", "loc47", "aol7", "loc6"
   , "maj6", "dor5", "phr4", "lyd3", "mix2", "lyd25", "loc7"
   , "maj3", "dor7", "dor2", "phr6", "lyd5", "lyd7", "mix4", "mix6"
     , "aol3", "aol5", "loc2", "loc4"
+  , "dimd", "dim", "augd", "aug", "hol"
+  , "maj", "dor", "phr", "lyd", "mix", "aol", "loc"
   ] :: [String]
 
 pScale :: Parser Scale

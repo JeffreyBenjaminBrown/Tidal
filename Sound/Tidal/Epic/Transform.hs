@@ -151,7 +151,8 @@ warpTime tolerance strength period t =
 
 -- | = remap* is to make an abstract map concrete (e.g. into a ParamMap)
 -- For usage examples, see Test.hs
--- To remap the keys and leave the values unchanged, use Util.composeMaps
+-- To remap doubles (without keys), use M.!
+-- To remap a map's keys and leave its values unchanged, use Util.composeMaps
 
 -- | The most abstract possible variety of remap
 remap :: Ord k2 => (k1->k2) -> (v1->v2) -> M.Map k1 v1 -> M.Map k2 v2
