@@ -10,9 +10,10 @@ import Sound.Tidal.Stream
 import Sound.Tidal.Dirt
 
 import Sound.Tidal.Epic.Abbreviations as E
-import Sound.Tidal.Epic.Instances as E
 import Sound.Tidal.Epic.CombineEpics as E
 import Sound.Tidal.Epic.DirtNetwork as E
+import Sound.Tidal.Epic.Harmony as E
+import Sound.Tidal.Epic.Instances as E
 import Sound.Tidal.Epic.Params as E
 import Sound.Tidal.Epic.Parse.Util as E
 import Sound.Tidal.Epic.Parse.Lexeme as E
