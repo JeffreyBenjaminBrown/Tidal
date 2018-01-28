@@ -1,3 +1,4 @@
+cps 2
 scale = ps "/32 [maj - *2 7phr3 - *4 5dor4 -2mix]"
 sy = pe "_sy,sus1,f200"
 onSy degPat = sy &* syParams (scale <*> degPat)
@@ -9,7 +10,7 @@ changes = toChange <$< e where
   toChange = (M.!) $ M.fromList
     $ zip [0..] [id, early (1/2), dense 2, early (1/2) . dense 2]
 
-v1 $ onSy (remapPd deg_p <$< e0)
+v0 $ onSy (remapPd deg_p <$< e0)
   +| onSy (remapPd deg_p
             <$< cata 4 [(+9),(+11),(+13),(+14)]
             <*< slow 4 changes
