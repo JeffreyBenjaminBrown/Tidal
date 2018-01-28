@@ -171,3 +171,6 @@ remapMd = flip remapMq VF
 -- | Pd: The first arg is a Param and the values, Doubles, get wrapped in VF
 remapPd :: Param                   -> Double         -> ParamMap
 remapPd par = M.singleton par . VF
+
+remapPs :: Param                   -> String         -> ParamMap
+remapPs par = M.singleton par . VS

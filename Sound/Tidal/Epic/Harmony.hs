@@ -8,8 +8,8 @@ import           Sound.Tidal.Epic.Scale
 import           Sound.Tidal.Epic.Params
 
 
-scaleFromHarmony :: Harmony -> Scale
-scaleFromHarmony h = transposeScale (fromRational $ root h) (baseScale h)
+harmonyScale :: Harmony -> Scale
+harmonyScale h = transposeScale (fromRational $ root h) (baseScale h)
 
 score ::      Harmony -> [Degree] -> Degree -> [ScoreRule] -> Degree -> Score
 score                h others orig rules d = sum $ map f rules where

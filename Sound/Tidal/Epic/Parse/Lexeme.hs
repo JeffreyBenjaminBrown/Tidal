@@ -25,6 +25,9 @@ import           Sound.Tidal.Epic.Parse.Transform (scanLang, lexemeToAccumEpic)
 import           Sound.Tidal.Epic.Parse.Util
 
 
+doubleParse :: (a -> Epic b) -> (a -> Epic b) -> (a -> (Epic b, Epic b))
+doubleParse f g s = (f s, g s)
+
 _p :: ((Time -> i -> Epic i) -> Parser [EpicOrOp i])
    -> (Time -> i -> Epic i) -> String -> Epic i
 _p p loopx s = case parse (sc >> p loopx) "" s of
@@ -35,18 +38,27 @@ _p p loopx s = case parse (sc >> p loopx) "" s of
 pe,pe0 :: String -> Epic ParamMap
 pe  = _p peEpicOrOps loopa
 pe0 = _p peEpicOrOps loop0
+pe2 = doubleParse pe pe0
+
 pm,pm0 :: String -> Epic PM.MSD
 pm  = _p pmEpicOrOps loopa
 pm0 = _p pmEpicOrOps loop0
+pm2 = doubleParse pm pm0
+
 ps :: String -> Epic Scale
 ps  = _p psEpicOrOps loopa
 ps0 = _p psEpicOrOps loop0
+ps2 = doubleParse ps ps0
+
 pd :: String -> Epic Double
 pd  = _p pdEpicOrOps loopa
 pd0 = _p pdEpicOrOps loop0
+pd2 = doubleParse pd pd0
+
 pr :: String -> Epic (Ratio Integer)
 pr  = _p prEpicOrOps loopa
 pr0 = _p prEpicOrOps loop0
+pr2 = doubleParse pr pr0
 
 pEpicOrOps :: (Monoidoid i o, Ord o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
