@@ -176,5 +176,6 @@ remapPs :: Param                   -> String         -> ParamMap
 remapPs par = M.singleton par . VS
 
 -- | Usually, define k = defaultMap a as, then map k over an Epic Double
-defaultMap :: a -> [a] -> Double -> a
-defaultMap dflt as d = maybe dflt id $ M.lookup d $ M.fromList $ zip [0..] as
+defaultMap :: [a] -> Double -> a
+defaultMap (dfault:as) d =
+  maybe dfault id  $  M.lookup d  $  M.fromList  $  zip [0..] as

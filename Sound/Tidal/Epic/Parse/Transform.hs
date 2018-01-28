@@ -58,6 +58,9 @@ _scanAccumEpic :: Monoidoid i o => [AccumEpic o] -> [Timed o]
 _scanAccumEpic bs = map (uncurry Timed) $
   __scanAccumEpic (1, mempty') bs
 
+_scanAccumEpicTimeless :: Monoidoid i o => [AccumEpic o] -> [o]
+_scanAccumEpicTimeless bs = map snd $ __scanAccumEpic (1, mempty') bs
+
 __scanAccumEpic :: Monoidoid i o => (Dur,o) -> [AccumEpic o] -> [(Dur,o)]
 __scanAccumEpic priorPersistentLexemes [] = []
 __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =

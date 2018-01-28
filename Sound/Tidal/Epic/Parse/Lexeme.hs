@@ -1,9 +1,10 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE LambdaCase, ScopedTypeVariables #-}
 
 module Sound.Tidal.Epic.Parse.Lexeme where
 
 import qualified Data.Set as S
 import qualified Data.Map as M
+import           Data.Maybe (catMaybes)
 import           Data.Ratio
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
@@ -16,12 +17,14 @@ import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.CombineEpics
 import           Sound.Tidal.Epic.Parse.Eq
 import           Sound.Tidal.Epic.Transform
+import           Sound.Tidal.Epic.Util (toPartitions)
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Map      as PM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap as PPM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale    as Sc
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Number   as Number
-import           Sound.Tidal.Epic.Parse.Transform (scanLang, lexemeToAccumEpic)
+import           Sound.Tidal.Epic.Parse.Transform (
+  scanLang, lexemeToAccumEpic, _scanAccumEpicTimeless)
 import           Sound.Tidal.Epic.Parse.Util
 
 
@@ -77,6 +80,24 @@ prEpicOrOps :: Integral a =>
   (Time -> (Ratio a) -> Epic (Ratio a)) -> Parser [EpicOrOp (Ratio a)]
 prEpicOrOps = pEpicOrOps prLang
 
+-- | Like pe, pel accumulates parameters across lexemes.
+-- It is useful for building arguments to defaultMap.
+pel :: String -> [ParamMap]
+pel s = case parse (sc >> _pel) "" s of Left e -> error $ show e
+                                        Right r -> r
+  where _pel :: Parser [ParamMap]
+        _pel = catMaybes . f <$> peLang where
+          f :: Monoidoid a b => [Lang a b] -> [Maybe b]
+          f aes = toPartitions
+                  (\case LangEpic _ -> True; LangNonEpic _ -> False)
+                  (g . map unwrapEpic)
+                  (const [Nothing])
+                  aes
+          unwrapEpic :: Lang i o -> AccumEpic o
+          unwrapEpic (LangEpic x) = x -- partial func, ok with toPartitions
+          g :: Monoidoid i a => [AccumEpic a] -> [Maybe a]
+          g aes = map Just $ _scanAccumEpicTimeless aes
+
 pLang :: (Monoidoid i o, Ord o) => Parser [Lexeme i o] -> Parser [Lang i o]
 pLang p = map f <$> p where
   f c = case c of
@@ -106,7 +127,7 @@ pdLexemes = pLexemes pdLexemeEpics
 prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
 prLexemes = pLexemes prLexemeEpics
 
-pLexemeEpics :: Monoidoid i o => (Parser (EpicPhoneme o)) -> Parser (Lexeme i o)
+pLexemeEpics :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (some $ char ',')
 peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
 peLexemeEpics = pLexemeEpics PPM.epicPhoneme
