@@ -132,17 +132,19 @@ pUnOp = NonEpicLexemeUnOp . foldl1 (.) <$> some pSingleUnOp
 
 pSingleUnOp :: Parser (Epic a -> Epic a)
 pSingleUnOp = foldl1 (<|>) $ map try
-  [pNonEpicLexemfast, pNonEpicLexemslow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate]
+  [pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate]
 
-pNonEpicLexemfast, pNonEpicLexemslow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
-pNonEpicLexemfast = lexeme $ do n <- symbol "*" >> ratio
-                                return $ fast n
-pNonEpicLexemslow = lexeme $ do n <- symbol "/" >> ratio
-                                return $ slow n
+pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
+pNonEpicLexemeFast = lexeme $ do n <- symbol "*" >> ratio
+                                 return $ fast n
+pNonEpicLexemeSlow = lexeme $ do n <- symbol "/" >> ratio
+                                 return $ slow n
 pNonEpicLexemeDense = lexeme $ do n <- symbol "**" >> ratio
                                   return $ dense n
 pNonEpicLexemeSparse = lexeme $ do n <- symbol "//" >> ratio
                                    return $ sparse n
+pNonEpicLexemeRotate = lexeme $ do n <- symbol "*//" >> ratio
+                                   return $ fast n . sparse n
 pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio
                                   return $ early n
 pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio
