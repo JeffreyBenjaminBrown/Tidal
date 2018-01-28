@@ -1,8 +1,8 @@
 f n = cata 1 [id, late n]
-v1 $ pe0 "_bd | [*2 //2 _cr,,s0.75 s1 - /7 _]"
+v1 $ pe0 "_bd | [*//2 _cr,,s0.75 s1 - /7 _]"
 v2 $ meta (f (1/4) +| (early 1 $ f $ 1/8)) $ pe0 "<1%2 _sn"
 v2 $ meta (f $ 1/4) $ pe0 "<1%2 _sn"
-v3 $ fast 2 $ meta (f $ 1/4) $ pe0 "<1%2 _hc - *4 //4 _hc _hc _ho _hc"
+v3 $ fast 2 $ meta (f $ 1/4) $ pe0 "<1%2 _hc - *//4 _hc _hc _ho _hc"
 
 v4 $ pe "_sy,,sus1,,f80,,fa1.3,,ff2"
   &* meta
