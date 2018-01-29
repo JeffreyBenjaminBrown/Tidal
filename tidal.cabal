@@ -45,6 +45,7 @@ library
                        Sound.Tidal.Epic.ReadHsAsGhci
                        Sound.Tidal.Epic.Scale
                        Sound.Tidal.Epic.Sounds
+                       Sound.Tidal.Epic.SyTimbres
                        Sound.Tidal.Epic.Test
                        Sound.Tidal.Epic.Transform
                        Sound.Tidal.Epic.Types

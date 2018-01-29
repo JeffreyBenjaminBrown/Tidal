@@ -32,9 +32,18 @@ quotUnif :: Integral a => a -> a -> a
 quotUnif num den = if num < 0 then q - 1 else q
   where q = quot num den
 
--- | for synths, convert speed_p parameter to qf_p (frequency) parameter
+-- | for synths, convert speed_p parameter to qf_p (frequency) parameter,
+-- or gain_p to amp_p, or both.
+-- TODO ? why is amp louder than gain? These are all equally loud:
+  -- v0 $ pe0 "_sy,f440,sus1"
+  -- v0 $ pe0 "_sy,f440,sus1,g1"
+  -- v0 $ pe0 "_sy,f440,sus1,a0.42" -- but amp defaults to 1 in SuperCollider!
 syParams :: ParamEpic -> ParamEpic
 syParams = fmap $ chParam speed_p qf_p . chParam gain_p amp_p
+syFreq   :: ParamEpic -> ParamEpic
+syFreq   = fmap $ chParam speed_p qf_p
+syAmp    :: ParamEpic -> ParamEpic
+syAmp    = fmap $                        chParam gain_p amp_p
 
 -- | parameter lookup. it's like lk12', but applied to deg_p.
 par12 :: [Double] -> (ParamMap -> ParamMap)

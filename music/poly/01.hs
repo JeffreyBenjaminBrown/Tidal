@@ -7,14 +7,15 @@ drums = dsh 1 -- written this way, any component below is easily commented out
   +| (early (1/2) $ (period .~ Just 4 $ toToms     <$<        seq0) +- dsh 1)
   +| (fast 4      $ (period .~ Just 3 $ toChiff    <$<        seq0) +- dsh 2)
 
-scales = ps "maj"
+scales = ps "/5 maj 5maj6"
 onSy deg_epic = (syParams $ scales <*> deg_epic &* pe "_sy,sus1,f220")
 melody = remapPd deg_p <$< (*2) <$< seq0
-transposes = slow 5 $ remapPd deg_p <$< (*(-2)) <$< seq
+transposes = slow 10 $ remapPd deg_p <$< (*(-2)) <$< seq
 
 v0 $ drums
   +| (onSy $ melody &+ transposes)
-  +| (onSy $ (fast 2 $ chVF deg_p (+9) <$< melody)
-      &+ transposes &* pe "g0.3")
-  +| (onSy $ (late 0.5 $ chVF deg_p (+18) <$< melody)
-      &+ transposes &* pe "g0.15 | pa2.25")
+  +| onSy (pe "g0.3"
+           &* (fast 2 $ chVF deg_p (+9) <$< melody)
+           &+ transposes)
+  +| onSy ((late 0.5 $ chVF deg_p (+18) <$< melody)
+           &+ transposes &* pe "g0.15 | pa2.25")
