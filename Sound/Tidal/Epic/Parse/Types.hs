@@ -95,6 +95,17 @@ instance Monoidoid i (Maybe i) where
   null' = isNothing
   unwrap = fromJust
 
+type Transform a = Epic a -> Epic a
+
+instance Monoidoid (Transform a) (Transform a) where
+  mempty' = id
+  mappend' = (.) -- ^ is never used, because all phonemes are EpicPhoneOnces
+  null' = const False -- ^ tricky : the use of null' is to replace a null
+    -- expression with silence. (It is only used once, in Parse.Transform.)
+    -- In this case, a transform (an Epic a -> Epic a) can already create
+    -- silence, so no special handling is needed.
+  unwrap = id
+
 -- | = These instances for Eq and Ord are dumb, just enough to enable parsing.
 instance Eq (EpicWrap   a) where (==) _ _ = False
 instance Eq (UnaryWrap  a) where (==) _ _ = False

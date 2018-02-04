@@ -1,3 +1,4 @@
+cps 1.5
 (seq,seq0) = pd2 "0 - *//2 3 2 - 0 - *//2 [**2 1 - 1] - *2 1 0"
 toDrums = defaultMap $ pel "_cr _bd,:0 _sn _cp _cow"
 toBiggerDrums = defaultMap $ pel "_cr _clubkick,:0 _sn _cp _bleep"

@@ -18,10 +18,11 @@ import           Sound.Tidal.Epic.Parse.Eq
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Util (toPartitions)
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
-import qualified Sound.Tidal.Epic.Parse.Phoneme.Map      as PM
-import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap as PPM
-import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale    as Sc
-import qualified Sound.Tidal.Epic.Parse.Phoneme.Number   as Number
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Map       as PM
+import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap  as PPM
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale     as Sc
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Number    as Number
+import qualified Sound.Tidal.Epic.Parse.Phoneme.Transform as Transform
 import           Sound.Tidal.Epic.Parse.Transform (
   scanLang, lexemeToAccumEpic, _scanAccumEpicTimeless)
 import           Sound.Tidal.Epic.Parse.Util
@@ -62,7 +63,12 @@ pr  = _p prEpicOrOps loopa
 pr0 = _p prEpicOrOps loop0
 pr2 = doubleParse pr pr0
 
-pEpicOrOps :: (Monoidoid i o, Ord o) =>
+pt :: String -> Epic (Transform a)
+pt  = _p ptEpicOrOps loopa
+pt0 = _p ptEpicOrOps loop0
+pt2 = doubleParse pt pt0
+
+pEpicOrOps :: (Monoidoid i o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
 pEpicOrOps p loopx = scanLang loopx <$> p
 peEpicOrOps ::
@@ -78,6 +84,9 @@ pdEpicOrOps = pEpicOrOps pdLang
 prEpicOrOps :: Integral a =>
   (Time -> (Ratio a) -> Epic (Ratio a)) -> Parser [EpicOrOp (Ratio a)]
 prEpicOrOps = pEpicOrOps prLang
+ptEpicOrOps :: (Time -> (Transform a) -> Epic (Transform a))
+            -> Parser [EpicOrOp (Transform a)]
+ptEpicOrOps = pEpicOrOps ptLang
 
 -- | Like pe, pel accumulates parameters across lexemes.
 -- It is useful for building arguments to defaultMap.
@@ -97,7 +106,7 @@ pel s = case parse (sc >> _pel) "" s of Left e -> error $ show e
           g :: Monoidoid i a => [AccumEpic a] -> [Maybe a]
           g aes = map Just $ _scanAccumEpicTimeless aes
 
-pLang :: (Monoidoid i o, Ord o) => Parser [Lexeme i o] -> Parser [Lang i o]
+pLang :: (Monoidoid i o) => Parser [Lexeme i o] -> Parser [Lang i o]
 pLang p = map f <$> p where
   f c = case c of
     LexemeEpics list -> LangEpic $ lexemeToAccumEpic list
@@ -112,6 +121,8 @@ pdLang :: Parser [Lang Double (Maybe Double)]
 pdLang = pLang pdLexemes
 prLang :: Integral a => Parser [Lang (Ratio a) (Maybe (Ratio a))]
 prLang = pLang prLexemes
+ptLang :: Parser [Lang (Transform a) (Transform a)]
+ptLang = pLang ptLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
@@ -125,6 +136,8 @@ pdLexemes :: Parser [Lexeme Double (Maybe Double)]
 pdLexemes = pLexemes pdLexemeEpics
 prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
 prLexemes = pLexemes prLexemeEpics
+ptLexemes :: Parser [Lexeme (Transform a) (Transform a)]
+ptLexemes = pLexemes ptLexemeEpics
 
 pLexemeEpics :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (some $ char ',')
@@ -138,6 +151,8 @@ pdLexemeEpics :: Parser (Lexeme Double (Maybe Double))
 pdLexemeEpics = pLexemeEpics Number.epicPhonemeDouble
 prLexemeEpics :: Integral a => Parser (Lexeme (Ratio a) (Maybe (Ratio a)))
 prLexemeEpics = pLexemeEpics Number.epicPhonemeRatio
+ptLexemeEpics :: Parser (Lexeme (Transform a) (Transform a))
+ptLexemeEpics = pLexemeEpics Transform.epicPhoneme
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)
@@ -154,6 +169,9 @@ pSingleUnOp :: Parser (Epic a -> Epic a)
 pSingleUnOp = foldl1 (<|>) $ map try
   [pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate]
 
+-- PITFALL: These parse functions that operate on the payloads of
+-- a parsed string; they are not the payloads themselves. To parse
+-- an Epic (Epic a -> Epic a), see Parse.Phoneme.Transform
 pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
 pNonEpicLexemeFast = lexeme $ do n <- symbol "*" >> ratio
                                  return $ fast n

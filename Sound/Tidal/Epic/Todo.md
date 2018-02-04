@@ -1,3 +1,5 @@
+search for "todo" in the code
+
 startWhenIWant:
   Here's a hack. It requires restarting GHCI.
   Run as three separate lines iin GHCI, pasted all at once:
