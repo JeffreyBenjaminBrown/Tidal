@@ -171,10 +171,10 @@ pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio
 pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio
                                  return $ late n
 
-pBinOp, pNonEpicLexemstack, pNonEpicLexemeCat :: Parser (NonEpicLexeme i)
-pBinOp = try pNonEpicLexemstack <|> try pNonEpicLexemeCat
-pNonEpicLexemstack = do lexeme $ symbol "|"
-                        return $ NonEpicLexemeBinOp stack
+pBinOp, pNonEpicLexemeStack, pNonEpicLexemeCat :: Parser (NonEpicLexeme i)
+pBinOp = try pNonEpicLexemeStack <|> try pNonEpicLexemeCat
+pNonEpicLexemeStack = do lexeme $ symbol "|"
+                         return $ NonEpicLexemeBinOp stack
 pNonEpicLexemeCat = do lexeme $ symbol "-"
                        return $ NonEpicLexemeBinOp append
 
