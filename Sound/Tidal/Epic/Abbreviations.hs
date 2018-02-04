@@ -14,12 +14,14 @@ module Sound.Tidal.Epic.Abbreviations (
   , (<**>)
   , (&+), (&*)
   , (+-), (+|)
+  , swing
 
   -- | == Params
   , syp
   , stackaParamR
   ) where
 
+import Control.Lens ((.~))
 import Data.Ratio
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
@@ -45,6 +47,7 @@ infixr 2 +-, +|
 shh = silence
 dsh = durSilence
 
+
 -- | == concatenation
 cat :: [Epic a] -> Epic a
 cat = foldl1 (+-)
@@ -52,6 +55,12 @@ cata, cat0 :: Time -> [a] -> Epic a
 cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
 
+swing :: Time -> Time -> Epic a -> Epic a
+swing bigDur smallDur ep = ep' +- dsh (bigDur - smallDur)
+  where ep' = period .~ Just smallDur $ fast (bigDur / smallDur) ep
+
+
+-- | == parameters
 syp = syParams
 
 -- | Stack a list of Ratios as parameter values
