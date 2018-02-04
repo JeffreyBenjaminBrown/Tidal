@@ -21,4 +21,4 @@ import qualified Text.Megaparsec.Char.Lexer as L
 -- | = Everything else
 :set prompt "> "
 :def! . readHsAsGhci
-:s ../EpicDemo/MakeVoices.hs
+:s ../demo/MakeVoices.hs

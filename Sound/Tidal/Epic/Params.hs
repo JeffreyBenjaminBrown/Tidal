@@ -5,7 +5,7 @@ module Sound.Tidal.Epic.Params (
   -- | ==== Params
   -- | == for the sy and sya synths
   , qf,  qf_p,  qa, qa_p
-  , qfa, qfa_p, qff, qff_p
+  , qfa, qfa_p, qff, qff_p, qffabs, qffabs_p
   , qpa, qpa_p, qpf, qpf_p
   , qaa, qaa_p, qaf, qaf_p
 
@@ -160,6 +160,8 @@ qf = fParam qf_p
 qfa = fParam qfa_p
 (_, qff_p) = P.pF "qff" (Just 1)
 qff = fParam qff_p
+(_, qffabs_p) = P.pF "qffabs" (Just 1)
+qffabs = fParam qffabs_p
 (_, qpa_p) = P.pF "qpa" (Just 1)
 qpa = fParam qpa_p
 (_, qpf_p) = P.pF "qpf" (Just 1)

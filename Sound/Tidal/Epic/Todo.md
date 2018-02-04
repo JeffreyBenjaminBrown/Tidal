@@ -1,8 +1,8 @@
-xstartWhenIWant:
+startWhenIWant:
   Here's a hack. It requires restarting GHCI.
   Run as three separate lines iin GHCI, pasted all at once:
     :s env.hs (without MakeVoices)
-    :s ../EpicDemo/MakeVoices.hs
+    :s ../demo/MakeVoices.hs
     v0 $ dsh 1 +- pe0 "_cp - /16 **16 _sn"
 
 scale de-transposer

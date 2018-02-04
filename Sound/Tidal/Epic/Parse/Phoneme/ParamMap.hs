@@ -38,9 +38,9 @@ pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try [parseSpeed, parseSpeedr, parseGain
   , parseSound, parseSample, parseDegree, parseSustain, parsePan
   , parseQf, parseQfr, parseAmp
-  , parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf ]
+  , parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf ]
 
-parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseQfa, parseQff, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
+parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
 parseSpeed   = pSingletonFloat  speed_p            $ ignore $ char 's'
 parseSpeedr  = pSingletonFloatFromRational speed_p $ ignore $ string "sr"
 parseGain    = pSingletonFloat  gain_p             $ ignore $ char 'g'
@@ -51,6 +51,7 @@ parseSustain = pSingletonFloat  sustain_p          $ ignore $ string "sus"
 parsePan     = pSingletonFloat  pan_p              $ ignore $ string "pan"
 parseQfa     = pSingletonFloat  qfa_p              $ ignore $ string "fa"
 parseQff     = pSingletonFloat  qff_p              $ ignore $ string "ff"
+parseQffabs  = pSingletonFloat  qffabs_p           $ ignore $ string "ffabs"
 parseQpa     = pSingletonFloat  qpa_p              $ ignore $ string "pa"
 parseQpf     = pSingletonFloat  qpf_p              $ ignore $ string "pf"
 parseQaa     = pSingletonFloat  qaa_p              $ ignore $ string "aa"
