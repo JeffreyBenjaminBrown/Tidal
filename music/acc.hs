@@ -14,3 +14,6 @@ v1 $ (syParams <$< ps "//4 maj 6dor" <*< pe0 "**2 d0 - *2 d2 d3 - **8%3 d4") &* 
 v2 $ pe0 "*2 _bd _sn +| <1%8 *8 //2 [_ho,,g0.7 - [//2 _ho _hc]]"
 
 v0 $ pe0 "*3 fr1%4 fr1%2 t1%2,f1.5 f1.2" &* pe "_sy,sus1,f440,fa0.02,ffabs4,ff0.004" &* pe "f1 | fr7%4 | fr8%5"
+
+v0 $ fast 2 $ meta (pt "/2 fa2 - *//2 ea1%4,fa2 la1%4") $ pe0 "_bd _sn"
+v0 $ fast 2 $ meta (pt "/2 fa2 - *//2 ea1%4,fa2 la1%4") $ pe0 "_bd - *2 _sn _hc"
