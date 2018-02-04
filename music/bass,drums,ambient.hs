@@ -8,7 +8,7 @@ v3 $ fast 2 $ meta (f $ 1/4) $ pe0 "<1%2 _hc - *//4 _hc _hc _ho _hc"
 
 v4 $ pe "_sy,,sus1,,f80,,fa1.3,,ff2"
   &* meta
-      ((spread 4 $ f $ 1/8) +| loopa 1 id)
+      ((space 4 $ f $ 1/8) +| loopa 1 id)
       (pe0 "**2 f1 - >1%8 **2 f1.5")
   &* (fast 2 $ pe "f1 - *2 //4 [f1.2 f0.95]")
   &* (slow 4 $ pe "f1 - *3 f1.5 f2")

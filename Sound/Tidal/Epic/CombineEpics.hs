@@ -26,65 +26,65 @@ stacka t = foldr1 stack . fmap (loopa t)
 append :: Epic a -> Epic a -> Epic a
 append (Epic Nothing _) _ = error "append requires repeating patterns"
 append e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
-  let e1' =           spread (t1+t2) e1
-      e2' = late t1 $ spread (t1+t2) e2
+  let e1' =           space (t1+t2) e1
+      e2' = late t1 $ space (t1+t2) e2
   in stack e1' e2'
 
--- | "Spread" a loop of length smallDur to cover a loop of length bigDur.
+-- | "Space" a loop of length smallDur to cover a loop of length bigDur.
 -- First play the loop, then silence; repeat at next multiple of bigDur.
 -- Purpose: if an epic has a glue-duration distinct from its true duration,
 -- e.g. thanks to "sparse", concat will still work as expected.
--- Example: Imagine spreading an epic E of length S=2 across a length B=5.
+-- Example: Imagine spaceing an epic E of length S=2 across a length B=5.
 -- The interval (0,2) is unchanged from E.
 -- The interval (2,5) is silent.
 -- The interval (5,7) carries what (2,4) carries under E.
 -- The interval (7,10) is silent ...
 --
--- ASSUMES b > ed. You can spread a small loop into a bigger interval;
+-- ASSUMES b > ed. You can space a small loop into a bigger interval;
 -- the reverse doesn't make obvious sense.
 
-spread :: Time -> Epic a -> Epic a
-spread bigDur (Epic Nothing _) = error "Spread is only defined for loops."
-spread bigDur (Epic (Just smallDur) ef) = Epic (Just bigDur) $ \(s,e) ->
-  let covered = addGapsForSpread bigDur smallDur (s,e)
+space :: Time -> Epic a -> Epic a
+space bigDur (Epic Nothing _) = error "Space is only defined for loops."
+space bigDur (Epic (Just smallDur) ef) = Epic (Just bigDur) $ \(s,e) ->
+  let covered = addGapsForSpace bigDur smallDur (s,e)
         -- the non-gaps, the intervals that will carry payloads
-      contracted = map (contractForSpread bigDur smallDur) covered
+      contracted = map (contractForSpace bigDur smallDur) covered
         -- the inner intervals, on which ef is computed
-  in map (first $ expandForSpread bigDur smallDur)
+  in map (first $ expandForSpace bigDur smallDur)
      $ concatMap ef contracted
 
-spread2 :: Time -> Time -> Epic a -> Epic a
-spread2 bigDur smallDur (Epic _ ef) = Epic (Just bigDur) $ \(s,e) ->
-  let covered = addGapsForSpread bigDur smallDur (s,e)
+space2 :: Time -> Time -> Epic a -> Epic a
+space2 bigDur smallDur (Epic _ ef) = Epic (Just bigDur) $ \(s,e) ->
+  let covered = addGapsForSpace bigDur smallDur (s,e)
         -- the non-gaps, the intervals that will carry payloads
-      contracted = map (contractForSpread bigDur smallDur) covered
+      contracted = map (contractForSpace bigDur smallDur) covered
         -- the inner intervals, on which ef is computed
-  in map (first $ expandForSpread bigDur smallDur)
+  in map (first $ expandForSpace bigDur smallDur)
      $ concatMap ef contracted
 
-addGapsForSpread :: Time -> Time -> Arc -> [Arc]
-addGapsForSpread big small (s,e) =
+addGapsForSpace :: Time -> Time -> Arc -> [Arc]
+addGapsForSpace big small (s,e) =
   if s >= e -- todo ? does this violate the idiom established by `overlap`?
   then []
   else let z = roundDownTo big s -- the first phase 0 before (or equal to) s
            z' = z + big -- the next phase 0
            endOne = z + small -- the end of the first covered interval
            ov = overlap (z,endOne) (s,e)
-       in maybe [] (:[]) ov ++ addGapsForSpread big small (z',e)
+       in maybe [] (:[]) ov ++ addGapsForSpace big small (z',e)
 
-contractForSpread :: Time -> Time -> Arc -> Arc
-contractForSpread big small (s,e) =
+contractForSpace :: Time -> Time -> Arc -> Arc
+contractForSpace big small (s,e) =
   let smallPhase0 = small * fromIntegral (div' s big)
       diff = s - roundDownTo big s
       length = e-s
       smallStart = smallPhase0 + diff
   in (smallStart, smallStart + length)
 
-expandForSpread :: Time -> Time -> Arc -> Arc
-expandForSpread big small (s,e) = let n = fromIntegral $ div' s small
-                                      r = mod' s small
-                                      z = n * big -- phase zero
-                                  in (z + r, z + r + e-s)
+expandForSpace :: Time -> Time -> Arc -> Arc
+expandForSpace big small (s,e) = let n = fromIntegral $ div' s small
+                                     r = mod' s small
+                                     z = n * big -- phase zero
+                                 in (z + r, z + r + e-s)
 
 mergeEpics :: (Int->Int->Int) -> (Double->Double-> Double) ->
               ParamEpic -> ParamEpic -> ParamEpic
