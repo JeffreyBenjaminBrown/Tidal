@@ -1,10 +1,6 @@
 syFreq, etc.: convert from ParamEpic -> ParamEpic to ParamMap -> ParamMap
-  that way I can use it with <$<, instead of jumping to fixity=0 with $
-
-Why are these different volumes?
-    v0 $ (pe0 "_sy,g1,f440,sus1")
-    v0 $ (pe0 "_sy,a1,f440,sus1")
-    guess: because there's compression in Dirt
+  that way I can use it with <$< (fixity 4),
+  instead of jumping to fixity=0 with $
 
 scale de-transposer
   Takes an Epic Scale x, returns an Epic (ParamMap -> ParamMap) y,

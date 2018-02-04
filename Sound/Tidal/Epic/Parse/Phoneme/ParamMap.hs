@@ -57,7 +57,7 @@ parseQaa     = pSingletonFloat  qaa_p              $ ignore $ string "aa"
 parseQaf     = pSingletonFloat  qaf_p              $ ignore $ string "af"
 parseQf      = pSingletonFloat  qf_p               $ ignore $ string "f"
 parseQfr     = pSingletonFloatFromRational  qf_p   $ ignore $ string "fr"
-parseAmp     = pSingletonFloat              amp_p  $ ignore $ string "a"
+parseAmp     = pSingletonFloat              qa_p   $ ignore $ string "a"
 
 pSingletonFloat :: Param -> Parser () -> Parser ParamMap
 pSingletonFloat param prefix =

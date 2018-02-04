@@ -3,4 +3,4 @@ packages:
 - '.'
 extra-deps:
 - Unique-0.4.7.1
-resolver: nightly-2017-12-21
+resolver: lts-10.4

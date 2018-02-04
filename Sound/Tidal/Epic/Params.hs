@@ -4,7 +4,7 @@ module Sound.Tidal.Epic.Params (
 
   -- | ==== Params
   -- | == for the sy and sya synths
-  , qf,  qf_p,  amp, amp_p
+  , qf,  qf_p,  qa, qa_p
   , qfa, qfa_p, qff, qff_p
   , qpa, qpa_p, qpf, qpf_p
   , qaa, qaa_p, qaf, qaf_p
@@ -152,8 +152,8 @@ mdeg    f                  =  fmap $ fpar deg_p f
 
 -- | == params for the sy and sya synths
 -- >> TODO: some of these defauls are probably wrong
-(_, amp_p ) = P.pF "amp"  (Just 440)
-amp = fParam qf_p
+(_, qa_p ) = P.pF "qa"  (Just 440)
+qa = fParam qf_p
 (_, qf_p ) = P.pF "qf"  (Just 440)
 qf = fParam qf_p
 (_, qfa_p) = P.pF "qfa" (Just 1)

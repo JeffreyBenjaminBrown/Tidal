@@ -119,7 +119,7 @@ testWarp = TestCase $ do
 testSyParams = TestCase $ do
   let x = (loopa 1 $ M.singleton gain_p $ VF 1)
           +| (loopa 1 $ M.singleton speed_p $ VF 2)
-      y = (loopa 1 $ M.singleton amp_p $ VF 1)
+      y = (loopa 1 $ M.singleton qa_p $ VF 1)
           +| (loopa 1 $ M.singleton qf_p $ VF 2)
   assertBool "1" $ syParams x == y
 
