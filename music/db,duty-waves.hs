@@ -9,11 +9,11 @@ v3 $ meta (meta (halfEarly 1) $ halfSlow 8)
   $ meta (early 1 $ stutHalf $ 1/8)
   $ pe0 "*4 _hc,,g0.9" &* pe "*3%2 g0.8 g0.9 g1"
 
-v4 $ syFreq $ syHeavyBass
+v4 $ syFreq <$< syHeavyBass
   &* (meta (stutHalf $ 1/4) $ pe0 "t1%4,,f1 f1 f1 _ _ f1.5 _ g0.5")
   &* pe "/8 f1 f1.15"
 
-v5 $ fast 2 ( syFreq $ syHeavyBass
+v5 $ fast 2 ( syFreq <$< syHeavyBass
               &* ( meta (stutHalf $ 1/4)
                   $ meta (slow 4 $ halfEarly $ 1/2)
                   $ meta (early 0.5 $ slow 8 $ halfSlow 2)

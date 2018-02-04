@@ -1,10 +1,7 @@
-:set prompt "> "
+-- | = Libraries
 :set -XOverloadedStrings
 
 :m Sound.Tidal.Epic
-:def! . readHsAsGhci
-:s ../EpicDemo/MakeVoices.hs
-
 import Control.Concurrent.MVar
 import Control.Lens
 import Data.Maybe
@@ -20,3 +17,8 @@ import System.Environment (lookupEnv)
 import Text.Megaparsec
 -- import Text.Megaparsec.Char (satisfy, string, space, space1, anyChar, tab)
 import qualified Text.Megaparsec.Char.Lexer as L
+
+-- | = Everything else
+:set prompt "> "
+:def! . readHsAsGhci
+:s ../EpicDemo/MakeVoices.hs

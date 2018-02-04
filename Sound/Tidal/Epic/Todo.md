@@ -1,3 +1,13 @@
+write an unBreathe, which contracts
+  see, e.g., music/notSwing.hs
+
+startWhenIWant:
+  Here's a hack. It requires restarting GHCI.
+  Run as three separate lines iin GHCI, pasted all at once:
+    :s env.hs (without MakeVoices)
+    :s ../EpicDemo/MakeVoices.hs
+    v0 $ dsh 1 +- pe0 "_cp - /16 **16 _sn"
+
 syFreq, etc.: convert from ParamEpic -> ParamEpic to ParamMap -> ParamMap
   that way I can use it with <$< (fixity 4),
   instead of jumping to fixity=0 with $

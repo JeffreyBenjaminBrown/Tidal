@@ -34,12 +34,12 @@ quotUnif num den = if num < 0 then q - 1 else q
 
 -- | for synths, convert speed_p parameter to qf_p (frequency) parameter,
 -- or gain_p to qa_p, or both.
-syParams :: ParamEpic -> ParamEpic
-syParams = fmap $ chParam speed_p qf_p . chParam gain_p qa_p
-syFreq   :: ParamEpic -> ParamEpic
-syFreq   = fmap $ chParam speed_p qf_p
-syAmp    :: ParamEpic -> ParamEpic
-syAmp    = fmap $                        chParam gain_p qa_p
+syParams :: ParamMap -> ParamMap
+syParams = chParam speed_p qf_p . chParam gain_p qa_p
+syFreq   :: ParamMap -> ParamMap
+syFreq   = chParam speed_p qf_p
+syAmp    :: ParamMap -> ParamMap
+syAmp    =                        chParam gain_p qa_p
 
 -- | parameter lookup. it's like lk12', but applied to deg_p.
 par12 :: [Double] -> (ParamMap -> ParamMap)

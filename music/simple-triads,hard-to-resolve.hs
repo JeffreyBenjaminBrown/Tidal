@@ -6,8 +6,10 @@ riseSeq = cata 3 $ fmap (chVF deg_p . (+)) $ [-1..2] ++ reverse [0..3]
 pedaledRises = (period .~ Just 2 $ riseSeq <*< arpeg)
   +- (fast 3 $ period .~ Just 3 $ riseSeq <*< arpeg)
 
-v1 $ syParams $ tone &* pe "s2" &* scaleSeq <*< noTranspose <*< pedaledRises
-v2 $ syParams $ tone &* pe "s2" &* scaleSeq <*< noTranspose
+-- must use pe "f2" when outside of syParams
+v1 $ tone &* pe "f2" &* syParams <$< scaleSeq <*< noTranspose <*< pedaledRises
+-- can use pe "f2" or pe "s2" when inside syParams
+v2 $ (syParams <$<) $ tone &* pe "s2" &* scaleSeq <*< noTranspose
   <*< ( meta (cata 3 [id,id,early $ 1/3])
         $ chVF deg_p (+2) <$> pedaledRises )
-v3 $ syParams $ tone &* scaleSeq <*> (early 0 arpeg)
+v3 $ tone &* syParams <$< scaleSeq <*< (early 0 arpeg)

@@ -121,7 +121,7 @@ testSyParams = TestCase $ do
           +| (loopa 1 $ M.singleton speed_p $ VF 2)
       y = (loopa 1 $ M.singleton qa_p $ VF 1)
           +| (loopa 1 $ M.singleton qf_p $ VF 2)
-  assertBool "1" $ syParams x == y
+  assertBool "1" $ (syParams <$< x) == y
 
 testBreathyConcatEpicIdea = TestCase $ do
   let x = dsh 1 +- loopa 1 'a'

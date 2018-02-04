@@ -1,7 +1,7 @@
 cps 2.5
 scales = slow 6 $ ps "maj dim 2dor 3dim 4phr -3aol"
 sy = pe "_sy,sus1,f220"
-onSy deg_epic = (syParams $ scales <*> deg_epic &* sy)
+onSy deg_epic = (syParams <$< scales <*< deg_epic &* sy)
 e = pd "0 0 1 0 2 0"
 e0 = pd0 "0 0 1 0 2 0"
 deg_epic = remapPd deg_p <$> e0

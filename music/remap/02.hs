@@ -1,7 +1,7 @@
 cps 2
 scale = ps "/32 [maj - *2 7phr3 - *4 5dor4 -2mix]"
-sy = pe "_sy,sus1,f200"
-onSy degPat = sy &* syParams (scale <*> degPat)
+sy = pe "_sy,sus1,f200,a0.5"
+onSy degPat = syParams <$< (scale <*< degPat &* sy)
 (e,e0) = pd2 "2 0 3 0 2 0 - //2 *4 2 3 2 1 - 0"
 drums = pe "g0.9" &* remapPs sound_p <$< toDrum <$< e0 where
   toDrum = (M.!) $ M.fromList $ zip [0..] ["hc", "sn", "bd", "can"]
