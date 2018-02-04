@@ -56,7 +56,7 @@ main = runTestTT $ TestList
   , TestLabel "testPEpic" testPEpic
   , TestLabel "testSilence" testSilence
   , TestLabel "testParseScale" testParseScale
-  , TestLabel "testBreathe" testBreathe
+  , TestLabel "testSpread" testSpread
   , TestLabel "testBreathyConcatEpic" testBreathyConcatEpic
   , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
   , TestLabel "testSyParams" testSyParams
@@ -125,10 +125,10 @@ testSyParams = TestCase $ do
 
 testBreathyConcatEpicIdea = TestCase $ do
   let x = dsh 1 +- loopa 1 'a'
-  assertBool "1" $ _arc (late 1 $ breathe 5 $ early 1 x) (0,7)
+  assertBool "1" $ _arc (late 1 $ spread 5 $ early 1 x) (0,7)
     == [((1,2),'a'),((6,7),'a')]
   let y = loopa 2 'a' +- dsh 1 -- imagine e +- y, where period e = 2
-  assertBool "2" $ _arc (late 2 $ breathe 5 y) (0,8)
+  assertBool "2" $ _arc (late 2 $ spread 5 y) (0,8)
     == [((2,4),'a'),((7,8),'a')]
 
 testBreathyConcatEpic = TestCase $ do
@@ -139,9 +139,9 @@ testBreathyConcatEpic = TestCase $ do
   assertBool "2" $ _arc (append ab c) (5,10)
     == [((5,7),'b'), ((7,9),'c')]
 
-testBreathe = TestCase $ do
+testSpread = TestCase $ do
   let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
-      xb = breathe 5 x
+      xb = spread 5 x
   assertBool "no bug,  1" $ _arc xb (1,9) /= []
   assertBool "no bug,  2" $ _arc xb (2,9) /= []
   assertBool "bug,  3" $ _arc xb (3,9) /= []
@@ -155,24 +155,24 @@ testBreathe = TestCase $ do
   assertBool "not bug, neg 5" $ _arc xb (-5,9) /= []
   assertBool "bug, neg 6" $ _arc xb (-6,9) /= []
 
-  assertBool "1"   $ breathAddGaps 5 2 (0,11) == [(0,2),(5,7),(10,11)]
-  assertBool "1.1" $ breathAddGaps 5 2 (11,21) == [(11,12),(15,17),(20,21)]
-  assertBool "1.2" $ breathAddGaps 5 2 (9,24) == [(10,12),(15,17),(20,22)]
-  assertBool "2"   $ breathContract 5 2 (10,11) == (4,5)
-  assertBool "2.1" $ breathContract 5 2 (11,12) == (5,6)
-  assertBool "2.2" $ breathContract 5 2 (0,0) == (0,0)
-  assertBool "2.3" $ breathContract 5 2 (15,15) == (6,6)
-  assertBool "3" $ breathExpand 5 2 (4,5) == (10,11)
-  assertBool "3.1" $ breathExpand 5 2 (5,6) == (11,12)
+  assertBool "1"   $ addGapsForSpread 5 2 (0,11) == [(0,2),(5,7),(10,11)]
+  assertBool "1.1" $ addGapsForSpread 5 2 (11,21) == [(11,12),(15,17),(20,21)]
+  assertBool "1.2" $ addGapsForSpread 5 2 (9,24) == [(10,12),(15,17),(20,22)]
+  assertBool "2"   $ contractForSpread 5 2 (10,11) == (4,5)
+  assertBool "2.1" $ contractForSpread 5 2 (11,12) == (5,6)
+  assertBool "2.2" $ contractForSpread 5 2 (0,0) == (0,0)
+  assertBool "2.3" $ contractForSpread 5 2 (15,15) == (6,6)
+  assertBool "3"   $ expandForSpread 5 2 (4,5) == (10,11)
+  assertBool "3.1" $ expandForSpread 5 2 (5,6) == (11,12)
   let small = loopa 1 'a' +- loopa 1 'b'
-      big = breathe 5 small
+      big = spread 5 small
   assertBool "4" $ _arc big (0,6) == [((0,1),'a'), ((1,2),'b'), ((5,6),'a')]
   let x = loopa 1 'a' +- loopa 1 'b' +- dsh 1
   assertBool "5" $
-    _arc          (breathe 5 $ early 1 x) (0,5) ==
+    _arc          (spread 5 $ early 1 x) (0,5) ==
     [((0 % 1,1 % 1),'b'),((2 % 1,3 % 1),'a')]
   assertBool "this is just like that, except plus a late" $
-    _arc (late 1 $ breathe 5 $ early 1 x) (0,10) /= []
+    _arc (late 1 $ spread 5 $ early 1 x) (0,10) /= []
 
 
 -- The scale is only in effect for the first period.

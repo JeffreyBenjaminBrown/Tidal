@@ -1,5 +1,6 @@
 write an unBreathe, which contracts
   see, e.g., music/notSwing.hs
+  rename: breathe -> spread, unbreathe -> squish
 
 startWhenIWant:
   Here's a hack. It requires restarting GHCI.
