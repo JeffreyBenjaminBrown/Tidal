@@ -300,10 +300,10 @@ testLexemeToAccumEpic = TestCase $ do
       soundMap = M.singleton sound_p $ VS "hatc"
       speedMap = M.singleton speed_p $ VF 2
       degMap = M.singleton deg_p $ VF 3
-      parseBitSet = S.fromList [ EpicPhonemeFor dur
-                               , EpicPhonemeNewPersist soundMap
-                               , EpicPhonemeNewPersist degMap
-                               , EpicPhonemeOnce speedMap ]
+      parseBitSet = [ EpicPhonemeFor dur
+                    , EpicPhonemeNewPersist soundMap
+                    , EpicPhonemeNewPersist degMap
+                    , EpicPhonemeOnce speedMap ]
       seqBit = AccumEpic
                (Just dur) speedMap (M.union soundMap degMap) False
   assertBool "1" $ seqBit == lexemeToAccumEpic parseBitSet

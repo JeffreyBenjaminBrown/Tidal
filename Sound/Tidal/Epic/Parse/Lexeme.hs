@@ -2,7 +2,6 @@
 
 module Sound.Tidal.Epic.Parse.Lexeme where
 
-import qualified Data.Set as S
 import qualified Data.Map as M
 import           Data.Maybe (catMaybes)
 import           Data.Ratio
@@ -101,7 +100,7 @@ pel s = case parse (sc >> _pel) "" s of Left e -> error $ show e
 pLang :: (Monoidoid i o, Ord o) => Parser [Lexeme i o] -> Parser [Lang i o]
 pLang p = map f <$> p where
   f c = case c of
-    LexemeEpics list -> LangEpic $ lexemeToAccumEpic $ S.fromList list
+    LexemeEpics list -> LangEpic $ lexemeToAccumEpic list
     LexemeNonEpic nonEpic -> LangNonEpic nonEpic
 peLang :: Parser [Lang ParamMap ParamMap]
 peLang = pLang peLexemes

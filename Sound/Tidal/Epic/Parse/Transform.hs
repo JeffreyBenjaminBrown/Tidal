@@ -17,6 +17,7 @@
 module Sound.Tidal.Epic.Parse.Transform where
 
 import qualified Data.Set as S
+import qualified Data.List as L
 import           Sound.Tidal.Epic.Parse.Types
 import           Sound.Tidal.Epic.Types.Reimports
 import           Sound.Tidal.Epic.Types
@@ -72,23 +73,22 @@ __scanAccumEpic (prevDur, prevMap) (AccumEpic mdur temp keep sil : bs) =
   in (nowDur, ignoreIfSilent now)
      : __scanAccumEpic (nowDur, next) bs
 
-
 lexemeToAccumEpic :: forall i o. Monoidoid i o =>
-  S.Set (EpicPhoneme o) -> AccumEpic o
+  [EpicPhoneme o] -> AccumEpic o
 lexemeToAccumEpic s = AccumEpic dur once persist silent where
   isDur, isSilent, isOnce :: EpicPhoneme o -> Bool
   isDur (EpicPhonemeFor _)   = True; isDur _    = False
   isSilent EpicPhonemeSilent = True; isSilent _ = False
   isOnce (EpicPhonemeOnce _) = True; isOnce _   = False
-  (durLexemes, nonDurLexemes)   = S.partition isDur s
-  (silentLexemes, paramLexemes) = S.partition isSilent nonDurLexemes
-  (onceLexemes, persistLexemes) = S.partition isOnce paramLexemes
+  (durLexemes, nonDurLexemes)   = L.partition isDur s
+  (silentLexemes, paramLexemes) = L.partition isSilent nonDurLexemes
+  (onceLexemes, persistLexemes) = L.partition isOnce paramLexemes
 
-  dur = case S.toList durLexemes of (EpicPhonemeFor t):_ -> Just t
-                                    _                   -> Nothing
-  silent = if S.null silentLexemes then False else True
-  once    = foldl mappend' mempty' $ lexemeToPayload <$> S.toList onceLexemes
-  persist = foldl mappend' mempty' $ lexemeToPayload <$> S.toList persistLexemes
+  dur = case durLexemes of (EpicPhonemeFor t):_ -> Just t
+                           _                    -> Nothing
+  silent = if L.null silentLexemes then False else True
+  once    = foldl mappend' mempty' $ lexemeToPayload <$> onceLexemes
+  persist = foldl mappend' mempty' $ lexemeToPayload <$> persistLexemes
 
   lexemeToPayload :: EpicPhoneme o -> o
   lexemeToPayload  EpicPhonemeSilent = error "lexemeToPayload given silence"
