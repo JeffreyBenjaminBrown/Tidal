@@ -9,8 +9,8 @@
   -- That will create a lot of noise, because it runs this whole file.
   -- To get a better sense of what's going on, it's probably more useful to
   -- step through the file one line at a time, by copying them into GHCI.
-  -- Some of it relies on the "sy" synth, which can be found at:
-    -- https://github.com/JeffreyBenjaminBrown/play/blob/b3bd3218561eacc1b2450174475d8947bac7acaf/tidal/synths%20sy%2C%20sya.scd
+  -- Some of it relies on the "sy" SuperCollider synth
+    -- defined at sc-synth/sy,sya.scd
 
 :m Sound.Tidal.Epic
 import qualified Data.Map as M

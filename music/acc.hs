@@ -17,3 +17,4 @@ v0 $ pe0 "*3 fr1%4 fr1%2 t1%2,f1.5 f1.2" &* pe "_sy,sus1,f440,fa0.02,ffabs4,ff0.
 
 v0 $ fast 2 $ meta (pt "/2 fa2 - *//2 ea1%4,fa2 la1%4") $ pe0 "_bd _sn"
 v0 $ fast 2 $ meta (pt "/2 fa2 - *//2 ea1%4,fa2 la1%4") $ pe0 "_bd - *2 _sn _hc"
+v0 $ fast 2 $ meta (pt "/2 fa2 - *//2 ea1%4,fa2 la1%4") $ pe0 "*//2 _bd [_bd | *//2 _cp _ho] - *2 _sn _hc"
