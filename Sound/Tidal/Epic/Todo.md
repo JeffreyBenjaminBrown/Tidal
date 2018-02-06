@@ -1,3 +1,7 @@
+scales
+  parser: accept lists, ratios
+  types: use an Epic [Float], so that scales can be subsetted
+
 search for "todo" in the code
 
 startWhenIWant:
