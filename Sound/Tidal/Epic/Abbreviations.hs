@@ -5,57 +5,49 @@
 module Sound.Tidal.Epic.Abbreviations (
   -- | ==== from Prelude or Data.List
   repli
-  , pr
 
   -- | ==== Tidal
-  , arc
-  , shh
-  , fast, slow
-  , rev
-  , tog
-  , for
+  , shh, dsh
 
   -- | == concatenation
   , cat, cata, cat0
-  , loope, loopa, loop0
   , (<**>)
   , (&+), (&*)
   , (+-), (+|)
+  , chPeriod
+  , swing
 
   -- | == Params
-  , syf
+  , syp
+  , stackaParamR
   ) where
+
+import Control.Lens ((.~))
+import Data.Ratio
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.CombineEpics
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Instances
-import Sound.Tidal.Epic.Scales
+import Sound.Tidal.Epic.Scale
 import Sound.Tidal.Stream (mergeNumWith)
 
 
 repli = replicate
-pr :: Show a => [a] -> IO ()
-pr = mapM_ (putStrLn . show)
 
 infixl 4 <**>
-(<**>) = applyMetaEpic
+(<**>) = meta
 infixr 3 &*, &+
 (&+) = mergeEpics (+) (+)
 (&*) = mergeEpics (*) (*)
 infixr 2 +-, +|
-(+-) = concatEpic
-(+|) = eStack
+(+-) = append
+(+|) = stack
 
-arc = eArc
-shh = eSilence
+shh = silence
 dsh = durSilence
-fast = eFast
-slow = eSlow
-rev = eRev
-tog = eStack
-for = eDur
+
 
 -- | == concatenation
 cat :: [Epic a] -> Epic a
@@ -64,10 +56,18 @@ cata, cat0 :: Time -> [a] -> Epic a
 cata t = foldl1 (+-) . map (loopa t)
 cat0 t = foldl1 (+-) . map (loop0 t)
 
-loope        :: Time -> Epic a -> Epic a
-loope = eRepeat
-loopa, loop0 :: Time -> a      -> Epic a
-loopa dur = eRepeat dur . eDur dur
-loop0 dur = eRepeat dur . eDur 0
+chPeriod :: Time -> Epic a -> Epic a
+chPeriod t = period .~ Just t
 
-syf = syFreq
+swing :: Time -> Time -> Epic a -> Epic a
+swing bigDur smallDur ep = ep' +- dsh (bigDur - smallDur)
+  where ep' = period .~ Just smallDur $ fast (bigDur / smallDur) ep
+
+
+-- | == parameters
+syp = syParams
+
+-- | Stack a list of Ratios as parameter values
+-- Handy for just intonation: v1 $ tone &* stackaParamR 1 qf_p [1,2,11%4]
+stackaParamR :: Time -> Param -> [Ratio Integer] -> Epic ParamMap
+stackaParamR t p = stacka t . fmap (remapPd p . fromRational)

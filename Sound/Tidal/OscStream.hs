@@ -76,7 +76,7 @@ send s slang shape change tick (on, off, m) = osc
       toF _ = 0
 
 -- type OscMap = Map.Map Param (Maybe Datum)
-              
+
 -- Returns a function that will convert a generic ParamMap into a specific Osc message and send it over UDP to the supplied server
 -- messages will be built according to the given OscSlang
 makeConnection :: String -> Int -> OscSlang -> IO (ToMessageFunc)

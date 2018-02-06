@@ -2,4 +2,6 @@ flags: {}
 packages:
 - '.'
 extra-deps:
-resolver: nightly-2017-12-28
+- Unique-0.4.7.1
+resolver: lts-10.4
+

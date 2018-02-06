@@ -1,9 +1,10 @@
-{-# LANGUAGE TupleSections #-}
+{-# LANGUAGE TupleSections, ScopedTypeVariables #-}
 
 module Sound.Tidal.Epic.Util where
 
 import Control.Arrow (first)
-import Data.List (sortOn)
+import Data.Fixed (div')
+import Data.List (sortOn, partition)
 import Data.List.Unique (sortUniq)
 import qualified Data.Map as M
 import Data.Ratio
@@ -13,7 +14,40 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 
 
+(<*<) :: Applicative f => f (a -> b) -> f a -> f b
+(<*<) = (<*>)
+infixr 4 <*<
+
+(<$<) :: Applicative f => (a -> b) -> f a -> f b
+(<$<) = (<$>)
+infixr 4 <$<
+  
+plist :: Show a => [a] -> IO ()
+plist = mapM_ (putStrLn . show)
+
+composeMaps :: (Ord k, Ord r) => M.Map k r -> M.Map k a -> M.Map r a
+composeMaps f m = let s = S.fromList $ M.keys f
+                      m' = M.restrictKeys m s
+                  in M.mapKeys ((M.!) f) m
+
+roundDownTo :: Time -> Time -> Time
+roundDownTo den num = den * fromIntegral (div' num den)
+
+toPartitions :: forall a b.
+  (a->Bool) -> ([a]->[b]) -> ([a]->[b]) -> [a] -> [b]
+toPartitions test f g as = -- ^ do f to what passes, g to what fails the test
+  let (for_f, for_g) = partition test as
+      (did_f, did_g) = (f for_f, g for_g)
+      reconstruct :: [a] -> [b] -> [b] -> [b]
+      reconstruct [] _ _ = []
+      reconstruct (o:originals) did_f did_g = case test o of
+        True  -> head did_f : reconstruct originals (tail did_f) did_g
+        False -> head did_g : reconstruct originals did_f        (tail did_g)
+  in reconstruct as did_f did_g
+
 -- | ASSUMES a <= b and c <= d.
+ -- A point can overlap with the start (and not the end)
+ -- of an interval, but two intervals sharing a single point have no overlap.
 overlap :: Arc -> Arc -> Maybe Arc
 overlap (a,b) (c,d) | b <  c || d < a = Nothing
                     | b == c && a < b = Nothing
@@ -26,8 +60,11 @@ takeOverlappingEvs :: Arc -> [Ev a] -> [Ev a]
 takeOverlappingEvs (s,e) evs = reverse $ f (s,e) [] evs where
   f :: Arc ->   [Ev a]   ->    [Ev a]  -> [Ev a]
   f     _        ovs           []      =  ovs
-  f (s,e) ovs (e1@((s',e'),a):evsRest)
-    | s >  e'   = f (s,e) ovs evsRest -- the only way discard happens
+  f (s,e) ovs (((s',e'),a):evsRest)
+    | s > e'              = f (s,e) ovs evsRest -- discard
+    | s == e' && s' < e'  = f (s,e) ovs evsRest -- discard
+ -- A point can overlap with the start (and not the end)
+ -- of an interval, but two intervals sharing a single point have no overlap.
     | otherwise = case overlap (s,e) (s',e') of
         Nothing    -> ovs
         Just ovArc -> f (s,e) ((ovArc,a):ovs) evsRest
@@ -54,11 +91,11 @@ partitionArcAtTimes (a:b:ts) (c,d)
 -- | Produces a sorted list of arc endpoints.
 -- If `arcs` includes `(x,x)`, then `x` will appear twice in the output.
 boundaries :: [Arc] -> [Time]
-boundaries arcs = _doubleTheDurationZeroBoundaries arcs
+boundaries arcs = _doubleThforationZeroBoundaries arcs
   $ sortUniq $ map fst arcs ++ map snd arcs
 
-_doubleTheDurationZeroBoundaries :: [Arc] -> [Time] -> [Time]
-_doubleTheDurationZeroBoundaries arcs bounds = concatMap f bounds where
+_doubleThforationZeroBoundaries :: [Arc] -> [Time] -> [Time]
+_doubleThforationZeroBoundaries arcs bounds = concatMap f bounds where
   instants :: S.Set Time
   instants = S.fromList $ map fst $ filter (\(s,e) -> s == e) arcs
   f t = if S.member t instants then [t,t] else [t]

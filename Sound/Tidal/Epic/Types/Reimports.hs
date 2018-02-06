@@ -26,6 +26,7 @@ module Sound.Tidal.Epic.Types.Reimports (
   , BPS
   , Tick
   , TPB
+  , Dur
 
   -- | = from Sound.Tidal.Pattern
   , Pattern(..)
@@ -62,10 +63,10 @@ import Sound.Tidal.Pattern (Pattern(..))
 --     , clockLatency :: Seconds}
 type TimeFrame = Tempo
 
-anchorInSeconds :: Tempo -> UTCTime
+anchorInSeconds :: TimeFrame -> UTCTime
 anchorInSeconds = at
 
-anchorInBeats :: Tempo -> Beats
+anchorInBeats :: TimeFrame -> Beats
 anchorInBeats = beat
 
 -- | = More time types
@@ -78,3 +79,4 @@ type BeatFrac = Double -- ^ only the part after the decimal; valued in [0,1)
 type BPS = Double -- ^ beats per second
 type Tick = Int -- ^ in [0,7]
 type TPB = Int -- ^ ticks per beat
+type Dur = Time

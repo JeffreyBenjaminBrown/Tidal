@@ -22,7 +22,7 @@ import Sound.Tidal.Pattern (filterOnsetsInRange, seqToRelOnsetDeltas)
 import Sound.Tidal.Stream (ticksPerCycle, setter)
 import Sound.Tidal.Time
 import Sound.Tidal.Transition (transition)
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Epic.Types.Reimports hiding (arc)
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Utils
 import Sound.Tidal.Epic.Instances
@@ -32,7 +32,7 @@ import Sound.Tidal.Epic.Transform
 -- | like superDirtSetters, but for Epics, and returning no transitioner
 eSuperDirtSetters :: IO Time -> IO (ParamEpic -> IO ())
 eSuperDirtSetters getNow = do ds <- eSuperDirtState 57120
-                              return (setter ds)
+                              return $ setter ds
 
 eSuperDirtState :: Int -> IO (MVar (ParamEpic, [ParamEpic]))
 eSuperDirtState port = do backend <- superDirtBackend port
@@ -40,7 +40,7 @@ eSuperDirtState port = do backend <- superDirtBackend port
 
 eStartVoice :: Backend a -> Shape -> IO (MVar (ParamEpic, [ParamEpic]))
 eStartVoice backend shape = do
-  epicsM <- newMVar (eSilence, [])
+  epicsM <- newMVar (silence, [])
   let ot = eOnTick backend shape epicsM :: TimeFrame -> Int -> IO ()
   forkIO $ clockedTick ticksPerCycle ot
   return epicsM
@@ -72,7 +72,7 @@ eOnTick     backend     shape          epicsM         change tick = do
 -- (relative to the given arc), durations (PITFALL: relative to
 -- the arc), and values.
 eSeqToRelOnsetDeltas :: Arc -> Epic a -> [(Double, Double, a)]
-eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ eArc ep (s,e)
+eSeqToRelOnsetDeltas (s, e) ep = map f $ filter onsetInRange $ _arc ep (s,e)
   where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
                           , fromRational $ (e'-s) / (e-s)
                           , x)

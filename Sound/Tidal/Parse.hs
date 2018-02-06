@@ -111,7 +111,7 @@ enumFromTo' a b | a > b = listToPat $ reverse $ enumFromTo b a
 enumFromThenTo' a b c | a > c = listToPat $ reverse $ enumFromThenTo c (c + (a-b)) a
                       | otherwise = listToPat $ enumFromThenTo a b c
 
-type ColourD = Colour Double 
+type ColourD = Colour Double
 
 instance Parseable ColourD where
   parseTPat = parseRhythm pColour
@@ -167,9 +167,9 @@ intOrFloat =  do s   <- sign
                         )
 
 r :: Parseable a => String -> Pattern a -> IO (Pattern a)
-r s orig = do E.handle 
+r s orig = do E.handle
                 (\err -> do putStrLn (show (err :: E.SomeException))
-                            return orig 
+                            return orig
                 )
                 (return $ p s)
 
