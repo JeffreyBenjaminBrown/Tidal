@@ -41,7 +41,7 @@ library
                        Sound.Tidal.Epic.Parse.Phoneme.ParamMap
                        Sound.Tidal.Epic.Parse.Phoneme.Scale
                        Sound.Tidal.Epic.Parse.Phoneme.Transform
-                       Sound.Tidal.Epic.Parse.Transform
+                       Sound.Tidal.Epic.Parse.Convert
                        Sound.Tidal.Epic.Parse.Types
                        Sound.Tidal.Epic.Parse.Util
                        Sound.Tidal.Epic.ReadHsAsGhci

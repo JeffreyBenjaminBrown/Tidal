@@ -14,7 +14,7 @@
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Sound.Tidal.Epic.Parse.Transform where
+module Sound.Tidal.Epic.Parse.Convert where
 
 import qualified Data.Set as S
 import qualified Data.List as L

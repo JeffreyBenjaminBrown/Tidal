@@ -25,7 +25,7 @@ import Sound.Tidal.Epic.Parse.Eq as E
 import Sound.Tidal.Epic.Parse.Phoneme.Transform as E
 -- import Sound.Tidal.Epic.Parse.Phoneme.Scale as E
 -- import Sound.Tidal.Epic.Parse.Phoneme.ParamMap as E
-import Sound.Tidal.Epic.Parse.Transform as E
+import Sound.Tidal.Epic.Parse.Convert as E
 import Sound.Tidal.Epic.Parse.Types as E
 import Sound.Tidal.Epic.ReadHsAsGhci as E
 import Sound.Tidal.Epic.Sounds as E

@@ -23,7 +23,7 @@ import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap  as PPM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale     as Sc
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Number    as Number
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Transform as Transform
-import           Sound.Tidal.Epic.Parse.Transform (
+import           Sound.Tidal.Epic.Parse.Convert (
   scanLang, lexemeToAccumEpic, _scanAccumEpicTimeless)
 import           Sound.Tidal.Epic.Parse.Util
 
