@@ -1,14 +1,1 @@
-
-Tidal [![Build Status](https://travis-ci.org/tidalcycles/Tidal.svg?branch=1.0-dev)](https://travis-ci.org/tidalcycles/Tidal)
-=====
-
-Language for live coding of pattern
-
-For documentation, mailing list and more info see here:
-  http://tidal.lurk.org/
-
-(c) Alex McLean and contributors, 2016
-
-Distributed under the terms of the GNU Public license version 3 (or
-later).
-
+This branch was an attempted solution to a problem that I thought was arising because a thunk was not evaluating. I was wrong about that, but in hunting down that imaginary source of the problem I wrote some code that I might refer to later.
