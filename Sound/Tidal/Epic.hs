@@ -32,6 +32,7 @@ import Sound.Tidal.Epic.Sounds as E
 import Sound.Tidal.Epic.SyTimbres as E
 import Sound.Tidal.Epic.Test as E
 import Sound.Tidal.Epic.Transform as E
+import Sound.Tidal.Epic.Tree as E
 import Sound.Tidal.Epic.Types as E
 import Sound.Tidal.Epic.Util as E
 import Sound.Tidal.Epic.Waveforms as E
