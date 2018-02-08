@@ -65,16 +65,17 @@ main = runTestTT $ TestList
   , TestLabel "testWarp" testWarp
   , TestLabel "testRemap" testRemap
   , TestLabel "testPartialScore" testPartialScore
-  , TestLabel "testToTree" testToTree
+  , TestLabel "testDurTree" testDurTree
   ]
 
-testToTree = TestCase $ do
+testDurTree = TestCase $ do
   let list = [(1,'a'),(10,'b'),(100,'c')]
-      tree = Node
+      durTree = Node
              (      DurNode  1 10 100 'b')
              [ Node (DurNode 0 1   0  'a') []
              , Node (DurNode 0 100 0  'c') [] ]
-  assertBool "1" $ toTree list == tree
+  assertBool "toDurTree" $ toDurTree list == durTree
+  assertBool "dtPeriod" $ dtPeriod durTree == 111
 
 testPartialScore = TestCase $ do
   let h = Harmony { baseScale = maj

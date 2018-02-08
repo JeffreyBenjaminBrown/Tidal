@@ -3,6 +3,8 @@ module Sound.Tidal.Epic (
   , cpsUtils''
   ) where
 
+import Data.Tree
+
 import Sound.Tidal.Epic.Types.Reimports as E hiding (arc)
 import Sound.Tidal.Tempo (cpsUtils'')
 

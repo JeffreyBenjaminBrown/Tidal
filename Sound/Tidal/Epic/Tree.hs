@@ -8,9 +8,14 @@ data DurNode a = DurNode {
   , trepicPost :: Dur -- ^ sum of later durations
   , trepicLoad :: a } deriving (Show, Eq, Ord)
 type DurTree a = Tree (DurNode a)
+type Trepic a = Tree (DurNode (Maybe a))
 
-toTree :: [(Dur,a)] -> DurTree a
-toTree = unfoldTree go where
+dtPeriod :: DurTree a -> Dur
+dtPeriod dt = trepicPre n + trepicDur n + trepicPost n
+  where n = rootLabel dt
+
+toDurTree :: [(Dur,a)] -> DurTree a
+toDurTree = unfoldTree go where
   go :: [(Dur,a)] -> (DurNode a, [[(Dur,a)]])
   go [] = error "go only makes sense for nonempty lists."
   go x = let (pre,(t,a):post) =
@@ -24,4 +29,5 @@ toTree = unfoldTree go where
                       , trepicPost = sum $ map fst post
                       , trepicLoad = a }
             , stripNulls [pre, post] )
+
 
