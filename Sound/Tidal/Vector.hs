@@ -4,6 +4,7 @@ module Sound.Tidal.Vector (
   ) where
 
 import Sound.Tidal.Epic.Types.Reimports as E hiding (arc)
+import Sound.Tidal.Epic.Util as E
 import Sound.Tidal.Tempo (cpsUtils'')
 
 import Sound.Tidal.Vector.Types as E
