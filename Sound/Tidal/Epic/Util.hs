@@ -33,9 +33,10 @@ composeMaps f m = let s = S.fromList $ M.keys f
 roundDownTo :: Time -> Time -> Time
 roundDownTo den num = den * fromIntegral (div' num den)
 
+-- ^ in a list, do f to what passes, g to what fails the test
 toPartitions :: forall a b.
   (a->Bool) -> ([a]->[b]) -> ([a]->[b]) -> [a] -> [b]
-toPartitions test f g as = -- ^ do f to what passes, g to what fails the test
+toPartitions test f g as =
   let (for_f, for_g) = partition test as
       (did_f, did_g) = (f for_f, g for_g)
       reconstruct :: [a] -> [b] -> [b] -> [b]
@@ -91,11 +92,11 @@ partitionArcAtTimes (a:b:ts) (c,d)
 -- | Produces a sorted list of arc endpoints.
 -- If `arcs` includes `(x,x)`, then `x` will appear twice in the output.
 boundaries :: [Arc] -> [Time]
-boundaries arcs = _doubleThforationZeroBoundaries arcs
+boundaries arcs = _doubleTheDurationZeroBoundaries arcs
   $ sortUniq $ map fst arcs ++ map snd arcs
 
-_doubleThforationZeroBoundaries :: [Arc] -> [Time] -> [Time]
-_doubleThforationZeroBoundaries arcs bounds = concatMap f bounds where
+_doubleTheDurationZeroBoundaries :: [Arc] -> [Time] -> [Time]
+_doubleTheDurationZeroBoundaries arcs bounds = concatMap f bounds where
   instants :: S.Set Time
   instants = S.fromList $ map fst $ filter (\(s,e) -> s == e) arcs
   f t = if S.member t instants then [t,t] else [t]

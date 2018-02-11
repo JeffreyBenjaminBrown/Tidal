@@ -322,9 +322,9 @@ testMergeEvents = TestCase $ do
     == [((1,1), M.fromList[(crush_p,VF 12),(cut_p,VF 4),(gain_p, VF 3)])]
 
 tDoubleThforationZeroBoundaries = TestCase $ do
-  assertBool "1" $ _doubleThforationZeroBoundaries [(0,0),(0,1)] [0,1]
+  assertBool "1" $ _doubleTheDurationZeroBoundaries [(0,0),(0,1)] [0,1]
     == [0,0,1]
-  assertBool "2" $ _doubleThforationZeroBoundaries
+  assertBool "2" $ _doubleTheDurationZeroBoundaries
     [(0,0),(0,1),(0,2),(1,1),(1,2),(2,3)] [0..3] == [0,0,1,1,2,3]
 
 testMergeNumParamsWith = TestCase $ do

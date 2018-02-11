@@ -4,7 +4,6 @@ module Sound.Tidal.Epic.Types where
 
 import Control.Lens
 import Data.Ratio
-import Data.Typeable
 import Sound.Tidal.Epic.Types.Reimports
 
 
@@ -17,7 +16,7 @@ data Epic a = Epic { _period :: Maybe Time -- ^ Nothing if not repeating
   -- or offset :: Maybe Time and duration :: Maybe Time
   -- (where snd <$> support = (+) <$> offset <*> duration)
   -- Currently period is meaningful for repeating Epics, not others.
-                   } deriving Typeable
+                   }
 makeLenses ''Epic
 
 type ParamEpic = Epic ParamMap

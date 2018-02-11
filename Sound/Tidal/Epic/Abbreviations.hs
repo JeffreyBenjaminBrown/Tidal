@@ -37,7 +37,9 @@ import Sound.Tidal.Stream (mergeNumWith)
 repli = replicate
 
 infixl 4 <**>
+infixr 4 <**<
 (<**>) = meta
+(<**<) = meta
 infixr 3 &*, &+
 (&+) = mergeEpics (+) (+)
 (&*) = mergeEpics (*) (*)
