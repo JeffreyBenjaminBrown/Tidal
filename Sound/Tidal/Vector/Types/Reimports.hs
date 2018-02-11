@@ -1,4 +1,4 @@
-module Sound.Tidal.Epic.Types.Reimports (
+module Sound.Tidal.Vector.Types.Reimports (
   -- | = from Sound.Tidal.Tempo, plus synonyms
   Tempo
   , TimeFrame

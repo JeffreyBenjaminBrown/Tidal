@@ -2,7 +2,10 @@ module Sound.Tidal.Vector.Types where
 
 import qualified Data.List as L
 import qualified Data.Vector as V
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Vector.Types.Reimports
+
+
+type Ev a = (Arc,a) -- like Event, but only one arc
 
 -- | PITFALL: These should be kept sorted (using sortDurVec).
 -- For instance, dvPeriod assumes (something a bit weaker than) that.

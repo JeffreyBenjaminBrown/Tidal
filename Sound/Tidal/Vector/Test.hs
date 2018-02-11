@@ -3,7 +3,7 @@ module Sound.Tidal.Vector.Test where
 import qualified Data.Vector as V
 import Test.HUnit
 
-import Sound.Tidal.Epic.Types.Reimports
+import Sound.Tidal.Vector.Types.Reimports
 import Sound.Tidal.Vector.Types 
 
 ve start duration payload = VecEv {start = start, duration = duration, payload = payload}

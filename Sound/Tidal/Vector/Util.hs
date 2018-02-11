@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections, ScopedTypeVariables #-}
 
-module Sound.Tidal.Epic.Util where
+module Sound.Tidal.Vector.Util where
 
 import Control.Arrow (first)
 import Data.Fixed (div')
@@ -10,8 +10,8 @@ import qualified Data.Map as M
 import Data.Ratio
 import qualified Data.Set as S
 
-import Sound.Tidal.Epic.Types.Reimports
-import Sound.Tidal.Epic.Types
+import Sound.Tidal.Vector.Types.Reimports
+import Sound.Tidal.Vector.Types
 
 
 (<*<) :: Applicative f => f (a -> b) -> f a -> f b

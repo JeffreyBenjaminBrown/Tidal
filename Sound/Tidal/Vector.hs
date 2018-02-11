@@ -3,8 +3,8 @@ module Sound.Tidal.Vector (
   , cpsUtils''
   ) where
 
-import Sound.Tidal.Epic.Types.Reimports as E hiding (arc)
-import Sound.Tidal.Epic.Util as E
+import Sound.Tidal.Vector.Types.Reimports as E hiding (arc)
+import Sound.Tidal.Vector.Util as E
 import Sound.Tidal.Tempo (cpsUtils'')
 import Sound.Tidal.Stream
 import Sound.Tidal.Dirt

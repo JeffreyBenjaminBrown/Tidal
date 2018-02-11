@@ -23,37 +23,14 @@ library
   default-language:    Haskell2010
 
   Exposed-modules:
+
+                       Sound.Tidal.Vector
+                       Sound.Tidal.Vector.Types
+                       Sound.Tidal.Vector.Test
+
                        -- Sound.Tidal.Bjorklund
                        -- Sound.Tidal.Strategies
                        Sound.Tidal.Dirt
-                       Sound.Tidal.Epic
-                       Sound.Tidal.Epic.Abbreviations
-                       Sound.Tidal.Epic.CombineEpics
-                       Sound.Tidal.Epic.DirtNetwork
-                       Sound.Tidal.Epic.Harmony
-                       Sound.Tidal.Epic.Instances
-                       Sound.Tidal.Epic.Params
-                       Sound.Tidal.Epic.Parse.Lexeme
-                       Sound.Tidal.Epic.Parse.Expr
-                       Sound.Tidal.Epic.Parse.Eq
-                       Sound.Tidal.Epic.Parse.Phoneme.Map
-                       Sound.Tidal.Epic.Parse.Phoneme.Number
-                       Sound.Tidal.Epic.Parse.Phoneme.ParamMap
-                       Sound.Tidal.Epic.Parse.Phoneme.Scale
-                       Sound.Tidal.Epic.Parse.Phoneme.Transform
-                       Sound.Tidal.Epic.Parse.Convert
-                       Sound.Tidal.Epic.Parse.Types
-                       Sound.Tidal.Epic.Parse.Util
-                       Sound.Tidal.Epic.ReadHsAsGhci
-                       Sound.Tidal.Epic.Scale
-                       Sound.Tidal.Epic.Sounds
-                       Sound.Tidal.Epic.SyTimbres
-                       Sound.Tidal.Epic.Test
-                       Sound.Tidal.Epic.Transform
-                       Sound.Tidal.Epic.Types
-                       Sound.Tidal.Epic.Types.Reimports
-                       Sound.Tidal.Epic.Util
-                       Sound.Tidal.Epic.Waveforms
                        Sound.Tidal.Pattern
                        Sound.Tidal.Stream
                        Sound.Tidal.OscStream
@@ -68,9 +45,6 @@ library
                        -- Sound.Tidal.Scales
                        -- Sound.Tidal.Chords
                        Sound.Tidal.Sieve
-                       Sound.Tidal.Vector
-                       Sound.Tidal.Vector.Types
-                       Sound.Tidal.Vector.Test
                        Sound.Tidal.Version
                        -- Sound.Tidal.PatternList
 

@@ -1,7 +1,8 @@
+-- I probably won't use this but it's interesting, worth keeping around at least a little while.
+
 module Sound.Tidal.Epic.Tree where
 import Data.Tree (Tree(..), unfoldTree)
 import Sound.Tidal.Epic.Types.Reimports
-
 
 data DurNode a = DurNode {
   trepicPre :: Dur -- ^ sum of earlier durations
@@ -38,5 +39,3 @@ toDurTree = unfoldTree go where
                       , trepicPost = sum $ map fst post
                       , trepicLoad = a }
             , stripNulls [pre, post] )
-
-
