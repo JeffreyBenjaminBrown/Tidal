@@ -10,7 +10,8 @@ import Control.Lens
 
 type Ev a = (Arc,a) -- like Event, but only one arc
 
--- | PITFALL: These should be kept sorted (using sortDurVec).
+-- | An event with durations; what DurVecs are made of.
+-- PITFALL: These should be kept sorted (using sortDurVec).
 -- For instance, dvPeriod assumes (something a bit weaker than) that.
 -- (I would use dependent types if it was easy ...)
 data VecEv a = VecEv { veStart :: Time
@@ -23,9 +24,7 @@ data DurVec a = DurVec { _dvPeriod :: Time
                        , _dvPayload :: V.Vector (VecEv a) }
 makeLenses ''DurVec
 
-dvDur :: V.Vector (VecEv a) -> Time
-dvDur = V.foldl f 0 where f time vecEv = veDuration vecEv + time
-
 sortDurVec :: V.Vector (VecEv a) -> V.Vector (VecEv a)
 sortDurVec = V.fromList . L.sortOn before . V.toList
   where before v = (veStart v, veDuration v)
+        -- before here is not a function, just an Ord
