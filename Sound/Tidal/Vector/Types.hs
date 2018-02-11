@@ -1,24 +1,29 @@
 module Sound.Tidal.Vector.Types where
 
+import qualified Data.List as L
 import qualified Data.Vector as V
 import Sound.Tidal.Epic.Types.Reimports
 
+-- | PITFALL: These should be kept sorted (using sortDurVec).
+-- For instance, dvPeriod assumes (something a bit weaker than) that.
+-- (I would use dependent types if it was easy ...)
 data VecEv a = VecEv { start :: Time
                      , duration :: Time
-                     , payload :: Maybe a }
+                     , payload :: Maybe a } deriving (Show, Eq)
 
--- | a Vector's duration could take a long time to calculate, and
--- (I experimented) it gets recalculated every time it's asked for;
--- better to store it in dvDur.
-data DurVec a = DurVec { dvDur :: Time
-                       , events :: V.Vector (VecEv a) }
+type DurVec a = V.Vector (VecEv a)
 
-vecDur :: V.Vector (VecEv a) -> Time
-vecDur = V.foldl f 0 where f time vecEv = duration vecEv + time
+dvDur :: V.Vector (VecEv a) -> Time
+dvDur = V.foldl f 0 where f time vecEv = duration vecEv + time
 
-checkDurVec :: V.Vector (VecEv a) -> Bool
-checkDurVec v = let durs = V.map duration v
-                    starts = V.map start v
-                    starts' = V.scanl (+) 0 durs -- has an extra element
-                    starts'' = V.slice 0 (V.length starts' - 1) starts'
-                in starts == starts''
+sortDurVec :: V.Vector (VecEv a) -> V.Vector (VecEv a)
+sortDurVec = V.fromList . L.sortOn before . V.toList
+  where before v = (start v, duration v)
+
+-- TODO : What if a long note should keep ringing into the next measure?
+-- Generalizing, what if it "includes" an intro to play before it starts?
+-- I think I should keep period as a separate parameter. (It's nice that
+-- that means something from duration.)
+-- Also, to avoid name conflicts, start a new branch, without Epic.
+dvPeriod :: V.Vector (VecEv a) -> Time
+dvPeriod v = let e = V.last v in start e + duration e
