@@ -6,7 +6,8 @@ import Test.HUnit
 import Sound.Tidal.Vector.Types.Reimports
 import Sound.Tidal.Vector.Types 
 
-ve start duration payload = VecEv {start = start, duration = duration, payload = payload}
+ve start duration payload =
+  VecEv {veStart = start, veDuration = duration, vePayload = payload}
 j = Just
 n = Nothing
 m = n :: Maybe Int
@@ -22,8 +23,7 @@ testVecEv = TestCase $ do
 
 testDvDur = TestCase $ do
   let dv0    = V.fromList []
-      dv     = V.fromList [ve 0 10 $ j 'a', ve 10 20 $ j 'b']
-      dvBad  = V.fromList [ve 0 10 $ j 'a', ve 05 20 $ j 'b']
+      dv     = V.fromList [ve 0 10 'a', ve 10 20 'b']
+      dvBad  = V.fromList [ve 0 10 'a', ve 05 20 'b']
   assertBool "0 length 0" $ dvDur dv0 == 0
   assertBool "1 length 0" $ dvDur dv  == 30
-
