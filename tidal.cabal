@@ -68,6 +68,9 @@ library
                        -- Sound.Tidal.Scales
                        -- Sound.Tidal.Chords
                        Sound.Tidal.Sieve
+                       Sound.Tidal.Vector
+                       Sound.Tidal.Vector.Types
+                       Sound.Tidal.Vector.Test
                        Sound.Tidal.Version
                        -- Sound.Tidal.PatternList
 
@@ -93,6 +96,7 @@ library
               , megaparsec
               , scientific
               , Unique
+              , vector
 
 
 source-repository head
