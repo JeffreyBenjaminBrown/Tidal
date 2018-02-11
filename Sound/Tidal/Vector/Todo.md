@@ -2,14 +2,17 @@ scales
   parser: accept lists, ratios
   types: use an Epic [Float], so that scales can be subsetted
 
-search for "todo" in the code
+search for "todo" in the epic branch
 
-startWhenIWant:
-  Here's a hack. It requires restarting GHCI.
-  Run as three separate lines iin GHCI, pasted all at once:
-    :s env.hs (without MakeVoices)
-    :s ../demo/MakeVoices.hs
-    v0 $ dsh 1 +- pe0 "_cp - /16 **16 _sn"
+startWhenIWant: solutions from Alex
+    do cps $ -1
+       threadDelay 100000
+       cps (160/60/4)
+
+    d1 $ (pure now) ~>
+      stack [
+         slow 4 $ sound "<fband fband fband:1 fband:2 >"
+      ]
 
 scale de-transposer
   Takes an Epic Scale x, returns an Epic (ParamMap -> ParamMap) y,

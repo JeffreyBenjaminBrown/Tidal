@@ -22,8 +22,8 @@ sortDurVec = V.fromList . L.sortOn before . V.toList
 
 -- TODO : What if a long note should keep ringing into the next measure?
 -- Generalizing, what if it "includes" an intro to play before it starts?
--- I think I should keep period as a separate parameter. (It's nice that
--- that means something from duration.)
+-- I think I should keep period as a separate parameter. (Here it's convenient
+-- that period means something distinct from duration.)
 -- Also, to avoid name conflicts, start a new branch, without Epic.
 dvPeriod :: V.Vector (VecEv a) -> Time
 dvPeriod v = let e = V.last v in start e + duration e
