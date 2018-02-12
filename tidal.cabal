@@ -25,6 +25,7 @@ library
   Exposed-modules:
 
                        Sound.Tidal.Vector
+                       Sound.Tidal.Vector.DirtNetwork
                        Sound.Tidal.Vector.Types
                        Sound.Tidal.Vector.Test
 

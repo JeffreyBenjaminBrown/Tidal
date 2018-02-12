@@ -28,3 +28,6 @@ sortDurVec :: V.Vector (VecEv a) -> V.Vector (VecEv a)
 sortDurVec = V.fromList . L.sortOn before . V.toList
   where before v = (veStart v, veDuration v)
         -- before here is not a function, just an Ord
+
+silence :: DurVec ParamMap
+silence = DurVec { _dvPeriod = 1, _dvPayload = mempty }
