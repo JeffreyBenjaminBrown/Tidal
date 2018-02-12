@@ -23,7 +23,6 @@ library
   default-language:    Haskell2010
 
   Exposed-modules:
-
                        Sound.Tidal.Vector
                        Sound.Tidal.Vector.DirtNetwork
                        Sound.Tidal.Vector.Types
@@ -73,22 +72,6 @@ library
               , Unique
               , vector
 
-
 source-repository head
   type:     git
   location: https://github.com/tidalcycles/Tidal
-
--- test-suite test
---   default-language:
---     Haskell2010
---   type:
---     exitcode-stdio-1.0
---   hs-source-dirs:
---     tests
---   main-is:
---     test.hs
---   build-depends:
---       base >= 4 && < 5
---               , tasty >= 0.11
---               , tasty-hunit
---     , tidal
