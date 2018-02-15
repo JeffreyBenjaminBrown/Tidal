@@ -71,6 +71,7 @@ library
               , scientific
               , Unique
               , vector
+              , vector-algorithms
 
 source-repository head
   type:     git
