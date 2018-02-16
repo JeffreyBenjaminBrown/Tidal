@@ -17,5 +17,8 @@ main = runTestTT $ TestList
   ]
 
 testVecEv = TestCase $ do
-  assertBool "1" $ sortDurVec (V.fromList [ve 10  2 m, ve 10 1 m, ve 1  20 m])
-                            == V.fromList [ve 1  20 m, ve 10 1 m, ve 10  2 m]
+  let unsorted = V.fromList [ve 10  2 m, ve 10 1 m, ve 1  20 m]
+      sorted =   V.fromList [ve 1  20 m, ve 10 1 m, ve 10  2 m]
+      dvUnsorted = DurVec {_dvPeriod = 1, _dvPayload = unsorted}
+      dvSorted   = DurVec {_dvPeriod = 1, _dvPayload =   sorted}
+  assertBool "1" $ sortDurVec' dvUnsorted == dvSorted
