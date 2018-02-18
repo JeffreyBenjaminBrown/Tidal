@@ -73,13 +73,8 @@ eOnTick     backend     shape   nowAndHistory         change tick = do
 -- (relative to the given arc), durations (PITFALL: relative to
 -- the arc), and values.
 dvStartsInArc :: Arc -> DurVec a -> [(Double, Double, a)]
-dvStartsInArc (s, e) ep = error "todo"
--- Here's what there used to be:
---   map f $ filter onsetInRange $ _arc ep (s,e)
---   where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
---                           , fromRational $ (e'-s) / (e-s)
---                           , x)
---         onsetInRange ((s',_),_) = s <= s' && s' <= e
--- -- AMBITION ? Rather than filter by onsetInRange, could report only portions
---   -- of events that overlap (s,e), whether or not they started recently.
---   -- Could matter when the synths are playing notes that vary over time.
+dvStartsInArc (s,e) dv = map f $ arc dv (s,e)
+  -- TODO : unfinished : see DurVec.arc / todo
+  where f ((s', e'), x) = ( fromRational $ (s'-s) / (e-s)
+                          , fromRational $ (e'-s) / (e-s)
+                          , x)

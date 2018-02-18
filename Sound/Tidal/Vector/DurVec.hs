@@ -28,6 +28,10 @@ sortDurVec' = dvPayload %~
                    V.freeze v'
 
 -- | Indices for an arc. ASSUMES the input DurVec is sorted.
+-- TODO : make it loop, modeled on Epic.Transform.loope
+  -- rename this function _arc, where arc calls it
+-- TODO : handle duration-zero events with fmap (veDuration %~ 0)
+  -- to avoid lens dependency, could use record notation.
 arc :: DurVec a -> Arc -> [(Arc,a)]
 arc dv (s,e) = 
   let v = _dvPayload dv

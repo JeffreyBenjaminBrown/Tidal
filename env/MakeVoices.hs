@@ -9,4 +9,4 @@ v6 <- eSuperDirtSetters getNow
 v7 <- eSuperDirtSetters getNow
 v8 <- eSuperDirtSetters getNow
 v9 <- eSuperDirtSetters getNow
-hush = mapM_ ($ shh) [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9]
+hush = mapM_ ($ silence) [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9]
