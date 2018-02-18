@@ -32,8 +32,8 @@ arc :: Arc -> DurVec a -> [(Arc,a)]
 arc (s,e) dv =
   let v = _dvPayload dv
       (si,ei) = runST $ do v' <- V.thaw v
-                           first <- binarySearchP (overlapsEv (s,end dv)) v'
-                           last <- binarySearchP (overlapsEv (s,end dv)) v'
+                           first <- binarySearchP (overlapsEv (s,end dv) ) v'
+                           last <-  binarySearchP (overlapsEv (0,e)      ) v'
                            return (first,last)
       subVector = V.slice si (ei - si + 1) v
       subVector' = V.map (clip (s,e)) subVector
