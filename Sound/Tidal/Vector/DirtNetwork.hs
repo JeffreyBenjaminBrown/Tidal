@@ -26,6 +26,7 @@ import Sound.Tidal.Utils
 
 import Sound.Tidal.Vector.Types.Reimports hiding (arc)
 import Sound.Tidal.Vector.Types
+import Sound.Tidal.Vector.DurVec
 
 
 -- | like superDirtSetters, but for DurVecs, and returning no transitioner

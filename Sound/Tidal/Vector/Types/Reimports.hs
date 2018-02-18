@@ -13,7 +13,7 @@ module Sound.Tidal.Vector.Types.Reimports (
   , Value(..)
   , ParamType(..)
   , ParamMap
-  , ParamPattern
+  -- , ParamPattern
 
   -- | = from Sound.Tidal.Time, plus synonyms
   , Time
@@ -29,7 +29,7 @@ module Sound.Tidal.Vector.Types.Reimports (
   , Dur
 
   -- | = from Sound.Tidal.Pattern
-  , Pattern(..)
+  -- , Pattern(..)
   ) where
 
 -- These include functions for historical reasons.

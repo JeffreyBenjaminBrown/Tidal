@@ -25,13 +25,15 @@ library
   Exposed-modules:
                        Sound.Tidal.Vector
                        Sound.Tidal.Vector.DirtNetwork
-                       Sound.Tidal.Vector.Types
+                       Sound.Tidal.Vector.DurVec
                        Sound.Tidal.Vector.Test
+                       Sound.Tidal.Vector.Types
+                       Sound.Tidal.Vector.VecEv
 
                        -- Sound.Tidal.Bjorklund
                        -- Sound.Tidal.Strategies
                        Sound.Tidal.Dirt
-                       Sound.Tidal.Pattern
+                       -- Sound.Tidal.Pattern
                        Sound.Tidal.Stream
                        Sound.Tidal.OscStream
                        Sound.Tidal.Parse
