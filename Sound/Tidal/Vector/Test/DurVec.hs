@@ -38,4 +38,4 @@ testArc = TestCase $ do
                     , vecEv 4 1 'd'
                     , vecEv 5 1 'e'
                     ]        
-  assertBool "1" $ arc (2,4) dv == [((2,4),'b'), ((3,4),'c')]
+  assertBool "1" $ arc dv (2,4) == [((2,4),'b'), ((3,4),'c')]

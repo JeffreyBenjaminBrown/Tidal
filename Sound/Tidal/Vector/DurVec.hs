@@ -28,8 +28,8 @@ sortDurVec' = dvPayload %~
                    V.freeze v'
 
 -- | Indices for an arc. ASSUMES the input DurVec is sorted.
-arc :: Arc -> DurVec a -> [(Arc,a)]
-arc (s,e) dv =
+arc :: DurVec a -> Arc -> [(Arc,a)]
+arc dv (s,e) = 
   let v = _dvPayload dv
       (si,ei) = runST $ do v' <- V.thaw v
                            first <- binarySearchP (overlapsEv (s,end dv) ) v'
