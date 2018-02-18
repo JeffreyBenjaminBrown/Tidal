@@ -31,5 +31,11 @@ testSortDurVec = TestCase $ do
   assertBool "1" $ sortDurVec' dvUnsorted == dvSorted
 
 testArc = TestCase $ do
-  let dv = durVec 5 [vecEv 0 2 'a', vecEv 1 2 'b', vecEv 2 2 'c']
-  assertBool "1" $ arc (0,3) dv == [((1,2),'a'), ((2,3),'b')]
+  let dv = durVec 5 [ vecEv 0 1 'a'
+                    , vecEv 1 1 'a'
+                    , vecEv 2 2 'b'
+                    , vecEv 3 2  'c'
+                    , vecEv 4 1 'd'
+                    , vecEv 5 1 'e'
+                    ]        
+  assertBool "1" $ arc (2,4) dv == [((2,4),'b'), ((3,4),'c')]
