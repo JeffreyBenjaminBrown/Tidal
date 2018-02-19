@@ -167,12 +167,12 @@ pUnOp = NonEpicLexemeUnOp . foldl1 (.) <$> some pSingleUnOp
 
 pSingleUnOp :: Parser (Epic a -> Epic a)
 pSingleUnOp = foldl1 (<|>) $ map try
-  [pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate]
+  [pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeRepeat, pNonEpicLexemeEarly, pNonEpicLexemeLate]
 
 -- PITFALL: These parse functions that operate on the payloads of
 -- a parsed string; they are not the payloads themselves. To parse
 -- an Epic (Epic a -> Epic a), see Parse.Phoneme.Transform
-pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
+pNonEpicLexemeFast, pNonEpicLexemeSlow, pNonEpicLexemeDense, pNonEpicLexemeSparse, pNonEpicLexemeRotate, pNonEpicLexemeRepeat, pNonEpicLexemeEarly, pNonEpicLexemeLate :: Parser (Epic a -> Epic a)
 pNonEpicLexemeFast = lexeme $ do n <- symbol "*" >> ratio
                                  return $ fast n
 pNonEpicLexemeSlow = lexeme $ do n <- symbol "/" >> ratio
@@ -183,6 +183,8 @@ pNonEpicLexemeSparse = lexeme $ do n <- symbol "//" >> ratio
                                    return $ sparse n
 pNonEpicLexemeRotate = lexeme $ do n <- symbol "*//" >> ratio
                                    return $ fast n . sparse n
+pNonEpicLexemeRepeat = lexeme $ do n <- symbol "/**" >> ratio
+                                   return $ slow n . dense n
 pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio
                                   return $ early n
 pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio

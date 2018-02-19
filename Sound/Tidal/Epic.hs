@@ -35,4 +35,3 @@ import Sound.Tidal.Epic.Transform as E
 import Sound.Tidal.Epic.Types as E
 import Sound.Tidal.Epic.Util as E
 import Sound.Tidal.Epic.Waveforms as E
-

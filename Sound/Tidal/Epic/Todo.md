@@ -1,3 +1,5 @@
+transformation patterns should be able to include parameters
+
 scales
   parser: accept lists, ratios
   types: use an Epic [Float], so that scales can be subsetted
