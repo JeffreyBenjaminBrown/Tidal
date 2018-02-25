@@ -67,8 +67,6 @@ data EpicOrOp a = EpicNotOp (EpicWrap a)
 
 
 -- | == TransformWithTarget
-data TWT a = TWT { twtTargets :: S.Set String
-                 , twtTransform :: Transform a }
 instance Monoidoid (TWT a) (TWT a) where
   mempty' = TWT {twtTargets = S.empty, twtTransform = id}
   mappend' a b =
@@ -106,8 +104,6 @@ instance Monoidoid i (Maybe i) where
   mappend' a       b       = a
   null' = isNothing
   unwrap = fromJust
-
-type Transform a = Epic a -> Epic a
 
 instance Monoidoid (Transform a) (Transform a) where
   mempty' = id

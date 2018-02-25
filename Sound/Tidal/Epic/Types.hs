@@ -2,6 +2,7 @@
 
 module Sound.Tidal.Epic.Types where
 
+import qualified Data.Set as S
 import Control.Lens
 import Data.Ratio
 import Sound.Tidal.Epic.Types.Reimports
@@ -21,6 +22,11 @@ makeLenses ''Epic
 
 type ParamEpic = Epic ParamMap
 
+type Transform a = Epic a -> Epic a
+
+-- | transform with target
+data TWT a = TWT { twtTargets :: S.Set String
+                 , twtTransform :: Transform a } deriving Show
 
 -- | = Scales and harmony
 

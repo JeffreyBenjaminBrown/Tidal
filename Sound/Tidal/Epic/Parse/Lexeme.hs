@@ -18,6 +18,7 @@ import           Sound.Tidal.Epic.Parse.Eq
 import           Sound.Tidal.Epic.Transform
 import           Sound.Tidal.Epic.Util (toPartitions)
 import           Sound.Tidal.Epic.Parse.Expr (parseEpicExpr)
+import qualified Sound.Tidal.Epic.Parse.Phoneme.DJ        as DJ
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Map       as PM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.ParamMap  as PPM
 import qualified Sound.Tidal.Epic.Parse.Phoneme.Scale     as Sc
@@ -73,6 +74,11 @@ ptm = _p ptmEpicOrOps loopa
 ptm0 = _p ptmEpicOrOps loop0
 ptm2 = doubleParse ptm ptm0
 
+pdj, pdj0 :: String -> Epic (TWT a)
+pdj = _p pdjEpicOrOps loopa
+pdj0 = _p pdjEpicOrOps loop0
+pdj2 = doubleParse pdj pdj0
+
 pEpicOrOps :: (Monoidoid i o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
 pEpicOrOps p loopx = scanLang loopx <$> p
@@ -95,6 +101,8 @@ ptEpicOrOps = pEpicOrOps ptLang
 ptmEpicOrOps :: (Time -> (Transform ParamMap) -> Epic (Transform ParamMap))
             -> Parser [EpicOrOp (Transform ParamMap)]
 ptmEpicOrOps = pEpicOrOps ptmLang
+pdjEpicOrOps :: (Time -> (TWT a) -> Epic (TWT a)) -> Parser [EpicOrOp (TWT a)]
+pdjEpicOrOps = pEpicOrOps pdjLang
 
 -- | Like pe, pel accumulates parameters across lexemes.
 -- It is useful for building arguments to defaultMap.
@@ -133,6 +141,8 @@ ptLang :: Parser [Lang (Transform a) (Transform a)]
 ptLang = pLang ptLexemes
 ptmLang :: Parser [Lang (Transform ParamMap) (Transform ParamMap)]
 ptmLang = pLang ptmLexemes
+pdjLang :: Parser [Lang (TWT a) (TWT a)]
+pdjLang = pLang pdjLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
@@ -150,6 +160,8 @@ ptLexemes :: Parser [Lexeme (Transform a) (Transform a)]
 ptLexemes = pLexemes ptLexemeEpic
 ptmLexemes :: Parser [Lexeme (Transform ParamMap) (Transform ParamMap)]
 ptmLexemes = pLexemes ptmLexemeEpic
+pdjLexemes :: Parser [Lexeme (TWT a) (TWT a)]
+pdjLexemes = pLexemes pdjLexemeEpic
 
 pLexemeEpic :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
 pLexemeEpic p = lexeme $ LexemeEpic <$> sepBy1 p (some $ char ',')
@@ -167,6 +179,8 @@ ptLexemeEpic :: Parser (Lexeme (Transform a) (Transform a))
 ptLexemeEpic = pLexemeEpic Transform.epicPhoneme
 ptmLexemeEpic :: Parser (Lexeme (Transform ParamMap) (Transform ParamMap))
 ptmLexemeEpic = pLexemeEpic Transform.epicPhonemePm
+pdjLexemeEpic :: Parser (Lexeme (TWT a) (TWT a))
+pdjLexemeEpic = pLexemeEpic DJ.epicPhoneme
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)
