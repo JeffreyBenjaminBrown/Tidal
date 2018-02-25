@@ -2,7 +2,7 @@
 -- to specify that the last argument is a String.
 
 module Sound.Tidal.Epic.Parse.Phoneme.Transform
-  (epicPhoneme, pParamMult)
+  (epicPhoneme, epicPhonemePm, pParamMult)
 where
 
 import           Control.Applicative
@@ -30,6 +30,11 @@ import Sound.Tidal.Epic.Parse.Phoneme.ParamMap (pSingleton)
 epicPhoneme, epicPhonemeOnce :: Parser (EpicPhoneme (Transform a))
 epicPhoneme = foldl1 (<|>) [epicPhonemeOnce, epicLexemeFor, epicLexemeSilence]
 epicPhonemeOnce = EpicPhonemeOnce <$> pTransform
+
+epicPhonemePm, epicPhonemeOncePm :: Parser (EpicPhoneme (Transform ParamMap))
+epicPhonemePm = foldl1 (<|>)
+  [epicPhonemeOncePm, epicLexemeFor, epicLexemeSilence]
+epicPhonemeOncePm = EpicPhonemeOnce <$> pTransformPm
 
 -- >> todo ? make these universal, not just for ParamMaps but scales, etc.
 epicLexemeFor, epicLexemeSilence :: Parser (EpicPhoneme a)

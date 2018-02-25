@@ -63,10 +63,15 @@ pr  = _p prEpicOrOps loopa
 pr0 = _p prEpicOrOps loop0
 pr2 = doubleParse pr pr0
 
-pt :: String -> Epic (Transform a)
+pt, pt0 :: String -> Epic (Transform a)
 pt  = _p ptEpicOrOps loopa
 pt0 = _p ptEpicOrOps loop0
 pt2 = doubleParse pt pt0
+
+ptm, ptm0 :: String -> Epic (Transform ParamMap)
+ptm = _p ptmEpicOrOps loopa
+ptm0 = _p ptmEpicOrOps loop0
+ptm2 = doubleParse ptm ptm0
 
 pEpicOrOps :: (Monoidoid i o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
@@ -87,6 +92,9 @@ prEpicOrOps = pEpicOrOps prLang
 ptEpicOrOps :: (Time -> (Transform a) -> Epic (Transform a))
             -> Parser [EpicOrOp (Transform a)]
 ptEpicOrOps = pEpicOrOps ptLang
+ptmEpicOrOps :: (Time -> (Transform ParamMap) -> Epic (Transform ParamMap))
+            -> Parser [EpicOrOp (Transform ParamMap)]
+ptmEpicOrOps = pEpicOrOps ptmLang
 
 -- | Like pe, pel accumulates parameters across lexemes.
 -- It is useful for building arguments to defaultMap.
@@ -123,6 +131,8 @@ prLang :: Integral a => Parser [Lang (Ratio a) (Maybe (Ratio a))]
 prLang = pLang prLexemes
 ptLang :: Parser [Lang (Transform a) (Transform a)]
 ptLang = pLang ptLexemes
+ptmLang :: Parser [Lang (Transform ParamMap) (Transform ParamMap)]
+ptmLang = pLang ptmLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
@@ -138,6 +148,8 @@ prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
 prLexemes = pLexemes prLexemeEpics
 ptLexemes :: Parser [Lexeme (Transform a) (Transform a)]
 ptLexemes = pLexemes ptLexemeEpics
+ptmLexemes :: Parser [Lexeme (Transform ParamMap) (Transform ParamMap)]
+ptmLexemes = pLexemes ptmLexemeEpics
 
 pLexemeEpics :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
 pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (some $ char ',')
@@ -153,7 +165,8 @@ prLexemeEpics :: Integral a => Parser (Lexeme (Ratio a) (Maybe (Ratio a)))
 prLexemeEpics = pLexemeEpics Number.epicPhonemeRatio
 ptLexemeEpics :: Parser (Lexeme (Transform a) (Transform a))
 ptLexemeEpics = pLexemeEpics Transform.epicPhoneme
-
+ptmLexemeEpics :: Parser (Lexeme (Transform ParamMap) (Transform ParamMap))
+ptmLexemeEpics = pLexemeEpics Transform.epicPhonemePm
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)
 pLexemeNonEpicLexeme :: Parser (Lexeme i o)
