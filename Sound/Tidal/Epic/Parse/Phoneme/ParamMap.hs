@@ -15,6 +15,7 @@ import           Text.Megaparsec.Char (string, char)
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Parse.Types
+import Sound.Tidal.Epic.Parse.Phoneme.Common
 
 import Sound.Tidal.Epic.Params
 import Sound.Tidal.Epic.Parse.Util (
@@ -24,15 +25,9 @@ import Sound.Tidal.Epic.Parse.Util (
 -- | = Boilerplate, common to Scales, (Epic ParamMap) and eventually
 -- (Epic (Map String Value))
 epicPhoneme, epicPhonemePersist, epicPhonemeOnce :: Parser (EpicPhoneme ParamMap)
-epicPhoneme = foldl1 (<|>) [epicPhonemePersist, epicPhonemeOnce, epicLexemeFor, epicLexemeSilence]
+epicPhoneme = foldl1 (<|>) [epicPhonemePersist, epicPhonemeOnce, epicPhonemeFor, epicPhonemeSilence]
 epicPhonemePersist = EpicPhonemeNewPersist <$> pSingleton
 epicPhonemeOnce = EpicPhonemeOnce <$> (ignore (char '1') >> pSingleton)
-
--- >> todo ? make these universal, not just for ParamMaps but scales, etc.
-epicLexemeFor, epicLexemeSilence :: Parser (EpicPhoneme a)
-epicLexemeFor = ignore (char 't') >> EpicPhonemeFor <$> ratio
-  -- >> todo ? accept floats as well as ratios
-epicLexemeSilence = const EpicPhonemeSilent <$> char '_'
 
 
 -- | = (Epic ParamMap)-specific

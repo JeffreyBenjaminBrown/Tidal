@@ -13,6 +13,7 @@ import           Text.Megaparsec.Char (string, char)
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Parse.Types
+import Sound.Tidal.Epic.Parse.Phoneme.Common
 
 import Sound.Tidal.Epic.Util (mergeNumParamsWith)
 import Sound.Tidal.Epic.Params
@@ -26,12 +27,6 @@ epicPhonemeDouble :: Parser (EpicPhoneme (Maybe Double))
 epicPhonemeDouble = foldl1 (<|>)
   [epicPhonemePersistDouble, epicPhonemeFor, epicPhonemeSilence]
 epicPhonemePersistDouble = EpicPhonemeNewPersist <$> pDouble
-
--- >> todo ? make these universal, not just for ParamMaps but scales, etc.
-epicPhonemeFor, epicPhonemeSilence :: Parser (EpicPhoneme a)
-epicPhonemeFor = lexeme $ ignore (char 't') >> EpicPhonemeFor <$> ratio
-  -- >> todo ? accept floats as well as ratios
-epicPhonemeSilence = lexeme $ const EpicPhonemeSilent <$> char '_'
 
 pDouble :: Parser (Maybe Double)
 pDouble = Just <$> double
