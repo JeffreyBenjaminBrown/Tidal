@@ -32,7 +32,7 @@ data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
 data EpicPhoneme o = EpicPhonemeFor     Dur
                    | EpicPhonemeOnce    o
                    | EpicPhonemeNewPersist o -- ^ these get merged with
-                     -- persistentLexemes from earlier LexemeEpics
+                     -- persistent phonemes from earlier LexemeEpics
                    | EpicPhonemeSilent
                    deriving (Show, Eq, Ord)
 

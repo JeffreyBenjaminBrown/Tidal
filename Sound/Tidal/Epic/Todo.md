@@ -1,5 +1,9 @@
 transformation patterns should be able to include parameters
 
+"ptm": a cross between pt and dj
+  "dj": Given a map of patterns, control when which is happening.
+    dj :: Map String (Epic a) -> Epic a
+
 scales
   parser: accept lists, ratios
   types: use an Epic [Float], so that scales can be subsetted
