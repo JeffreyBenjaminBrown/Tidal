@@ -8,6 +8,7 @@ module Sound.Tidal.Epic.Parse.Types where
 
 import           Data.List (foldl')
 import qualified Data.Map as M
+import qualified Data.Set as S
 import           Data.Maybe (isNothing, fromJust)
 import           Data.Proxy (Proxy(..))
 import           Data.Semigroup ((<>))
@@ -64,6 +65,17 @@ data EpicOrOp a = EpicNotOp (EpicWrap a)
                 | BinaryOp (BinaryWrap a)
                 | LeftBracket | RightBracket deriving (Show, Eq, Ord)
 
+
+-- | == TransformWithTarget
+data TWT a = TWT { twtTarget :: S.Set String
+                 , twtTransform :: Transform a }
+instance Monoidoid (TWT a) (TWT a) where
+  mempty' = TWT {twtTarget = S.empty, twtTransform = id}
+  mappend' a b =
+    TWT { twtTarget = S.union (twtTarget a) (twtTarget b)
+        , twtTransform = mappend' (twtTransform a) (twtTransform b) }
+  null' = S.null . twtTarget
+  unwrap = id
 
 -- | == Classes, Instances
 instance Show (EpicWrap a) where show _ = "<EpicWrap>"
