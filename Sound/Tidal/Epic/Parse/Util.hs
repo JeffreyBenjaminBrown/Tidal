@@ -51,7 +51,7 @@ word :: String -> Parser String -- | could fail half-in, so requires "try"
 word w = string w <* notFollowedBy wordChar
 
 anyWord :: Parser String
-anyWord = some wordChar  <* notFollowedBy wordChar
+anyWord = some wordChar <* notFollowedBy wordChar
 
 anyDigitlessWord :: Parser String
 anyDigitlessWord = some letterChar  <* notFollowedBy letterChar
