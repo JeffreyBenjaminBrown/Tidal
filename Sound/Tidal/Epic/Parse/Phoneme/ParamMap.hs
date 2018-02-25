@@ -1,7 +1,9 @@
 -- Pitfall: With OverloadedStrings, `parse` needs a type signature
 -- to specify that the last argument is a String.
 
-module Sound.Tidal.Epic.Parse.Phoneme.ParamMap (epicPhoneme) where
+module Sound.Tidal.Epic.Parse.Phoneme.ParamMap
+  (epicPhoneme, pSingleton)
+where
 
 import           Control.Applicative
 import qualified Data.Map                   as M
