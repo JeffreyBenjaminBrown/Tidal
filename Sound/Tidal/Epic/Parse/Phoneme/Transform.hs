@@ -55,7 +55,7 @@ pTransformPm = foldl1 (<|>) $ map try [pTransform, pParamMult]
 pParamMult :: Parser (Transform ParamMap)
 pParamMult =
   do let multiplyMerge = mergeNumParamsWith (*) (*)
-     m <- between (char '(') (char ')')  $  sepBy pSingleton (char ',')
+     m <- between (char '(') (char ')')  $  sepBy1 pSingleton (char ',')
      return $ fmap $ multiplyMerge $ foldr multiplyMerge (M.empty) m
 
 pId, pRev, pShh

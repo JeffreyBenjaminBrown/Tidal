@@ -4,8 +4,8 @@
 --
 -- The first to run, `lexemeToAccumEpic`, accumulates a set of instructions
 -- like "t1%2 d1" into an AccumEpic (in this case, one with a duration of 1/2
--- carrying a persistent singleton map from deg_p to VF 1) and
--- no temporary map.
+-- carrying a persistent singleton map from deg_p to VF 1 and
+-- no temporary map).
 --
 -- After that, `scanLang` scans across a series of AccumEpics to
 -- creates EpicOrOp values, where each contains the maps not just of the
