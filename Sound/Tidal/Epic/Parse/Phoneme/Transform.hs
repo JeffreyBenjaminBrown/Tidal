@@ -1,7 +1,8 @@
 -- Pitfall: With OverloadedStrings, `parse` needs a type signature
 -- to specify that the last argument is a String.
 
-module Sound.Tidal.Epic.Parse.Phoneme.Transform -- (epicPhoneme)
+module Sound.Tidal.Epic.Parse.Phoneme.Transform
+  (epicPhoneme, pParamMult)
 where
 
 import           Control.Applicative
@@ -44,7 +45,10 @@ pTransform = foldl1 (<|>) $ map try
   , pChPeriod, pSwing, pSpace, pSpace2]
 
 pTransformPm :: Parser (Transform ParamMap)
-pTransformPm =
+pTransformPm = foldl1 (<|>) $ map try [pTransform, pParamMult]
+
+pParamMult :: Parser (Transform ParamMap)
+pParamMult =
   do let multiplyMerge = mergeNumParamsWith (*) (*)
      m <- between (char '(') (char ')')  $  sepBy pSingleton (char ',')
      return $ fmap $ multiplyMerge $ foldr multiplyMerge (M.empty) m

@@ -21,6 +21,7 @@ import Sound.Tidal.Epic.Parse.Lexeme
 import Sound.Tidal.Epic.Scale
 import Sound.Tidal.Epic.Parse.Convert
 import Sound.Tidal.Epic.Parse.Types
+import Sound.Tidal.Epic.Parse.Phoneme.Transform
 import Sound.Tidal.Epic.Sounds
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Util
@@ -56,6 +57,7 @@ main = runTestTT $ TestList
   , TestLabel "testPEpic" testPEpic
   , TestLabel "testSilence" testSilence
   , TestLabel "testParseScale" testParseScale
+  , TestLabel "testParseTransform" testParseTransform
   , TestLabel "testSpace" testSpace
   , TestLabel "testBreathyConcatEpic" testBreathyConcatEpic
   , TestLabel "testBreathyConcatEpicIdea" testBreathyConcatEpicIdea
@@ -174,6 +176,13 @@ testSpace = TestCase $ do
   assertBool "this is just like that, except plus a late" $
     _arc (late 1 $ space 5 $ early 1 x) (0,10) /= []
 
+testParseTransform = TestCase $ do
+  let Right tr = parse pParamMult "" "(g0.7,s3)"
+      ep = pe "_sn"
+  assertBool "1" $ _arc (tr ep) (0,1)
+    == [((0,1), M.fromList [ (gain_p, VF 0.7)
+                           , (sound_p, VS "sn")
+                           , (speed_p, VF 3.0)])]
 
 -- The scale is only in effect for the first period.
 testParseScale = TestCase $ do
