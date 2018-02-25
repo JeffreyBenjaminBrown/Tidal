@@ -30,6 +30,9 @@ append e1@(Epic (Just t1) f1) e2@(Epic (Just t2) f2) =
       e2' = late t1 $ space (t1+t2) e2
   in stack e1' e2'
 
+infixr 3 &*, &+
+(&+) = mergeEpics (+) (+)
+(&*) = mergeEpics (*) (*)
 mergeEpics :: (Int->Int->Int) -> (Double->Double-> Double) ->
               ParamEpic -> ParamEpic -> ParamEpic
 mergeEpics intOp floatOp (Epic ap af) (Epic bp bf) = Epic period func where

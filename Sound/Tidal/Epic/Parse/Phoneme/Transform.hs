@@ -14,7 +14,8 @@ import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
 import Sound.Tidal.Epic.Parse.Types
 
-import Sound.Tidal.Epic.Abbreviations (swing, shh, chPeriod, (&*))
+import Sound.Tidal.Epic.Abbreviations (swing, shh, chPeriod)
+import Sound.Tidal.Epic.CombineEpics ((&*))
 import Sound.Tidal.Epic.Transform
 import Sound.Tidal.Epic.Parse.Util (
   Parser(..), anyWord, double, ignore, ratio)

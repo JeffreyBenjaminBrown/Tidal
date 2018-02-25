@@ -12,7 +12,6 @@ module Sound.Tidal.Epic.Abbreviations (
   -- | == concatenation
   , cat, cata, cat0
   , (<**>)
-  , (&+), (&*)
   , (+-), (+|)
   , chPeriod
   , swing
@@ -40,9 +39,6 @@ infixl 4 <**>
 infixr 4 <**<
 (<**>) = meta
 (<**<) = meta
-infixr 3 &*, &+
-(&+) = mergeEpics (+) (+)
-(&*) = mergeEpics (*) (*)
 infixr 2 +-, +|
 (+-) = append
 (+|) = stack
