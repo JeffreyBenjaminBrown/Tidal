@@ -66,8 +66,8 @@ meta :: Epic (Epic a -> Epic b) -> Epic a -> Epic b
 meta    (Epic md mf)               obj    = Epic d' f' where
   d' = lcmRatios <$> md <*> _period obj
   -- f' :: Arc -> [Ev b]
-  f' a = concatMap h transformEvs
+  f' a = concatMap evalObj transformEvs
     where -- transformEvs :: [(Arc, Epic a -> Epic b)]
           transformEvs = mf a
-          -- h :: (Arc, Epic a -> Epic b) -> [Ev b]
-          h (theArc,tr) = _arc (tr obj) theArc
+          -- evalObj :: (Arc, Epic a -> Epic b) -> [Ev b]
+          evalObj (anArc,aTransform) = _arc (aTransform obj) anArc
