@@ -117,7 +117,7 @@ pel s = case parse (sc >> _pel) "" s of Left e -> error $ show e
 pLang :: (Monoidoid i o) => Parser [Lexeme i o] -> Parser [Lang i o]
 pLang p = map f <$> p where
   f c = case c of
-    LexemeEpics list -> LangEpic $ lexemeToAccumEpic list
+    LexemeEpic list -> LangEpic $ lexemeToAccumEpic list
     LexemeNonEpic nonEpic -> LangNonEpic nonEpic
 peLang :: Parser [Lang ParamMap ParamMap]
 peLang = pLang peLexemes
@@ -137,36 +137,36 @@ ptmLang = pLang ptmLexemes
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
 peLexemes :: Parser [Lexeme ParamMap ParamMap]
-peLexemes = pLexemes peLexemeEpics
+peLexemes = pLexemes peLexemeEpic
 pmLexemes :: Parser [Lexeme PM.MSD PM.MSD]
-pmLexemes = pLexemes pmLexemeEpics
+pmLexemes = pLexemes pmLexemeEpic
 psLexemes :: Parser [Lexeme Scale (Maybe Scale)]
-psLexemes = pLexemes psLexemeEpics
+psLexemes = pLexemes psLexemeEpic
 pdLexemes :: Parser [Lexeme Double (Maybe Double)]
-pdLexemes = pLexemes pdLexemeEpics
+pdLexemes = pLexemes pdLexemeEpic
 prLexemes :: Integral a => Parser [Lexeme (Ratio a) (Maybe (Ratio a))]
-prLexemes = pLexemes prLexemeEpics
+prLexemes = pLexemes prLexemeEpic
 ptLexemes :: Parser [Lexeme (Transform a) (Transform a)]
-ptLexemes = pLexemes ptLexemeEpics
+ptLexemes = pLexemes ptLexemeEpic
 ptmLexemes :: Parser [Lexeme (Transform ParamMap) (Transform ParamMap)]
-ptmLexemes = pLexemes ptmLexemeEpics
+ptmLexemes = pLexemes ptmLexemeEpic
 
-pLexemeEpics :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
-pLexemeEpics p = lexeme $ LexemeEpics <$> sepBy1 p (some $ char ',')
-peLexemeEpics :: Parser (Lexeme ParamMap ParamMap)
-peLexemeEpics = pLexemeEpics PPM.epicPhoneme
-pmLexemeEpics :: Parser (Lexeme PM.MSD PM.MSD)
-pmLexemeEpics = pLexemeEpics PM.epicPhoneme
-psLexemeEpics :: Parser (Lexeme Scale (Maybe Scale))
-psLexemeEpics = pLexemeEpics Sc.epicPhoneme
-pdLexemeEpics :: Parser (Lexeme Double (Maybe Double))
-pdLexemeEpics = pLexemeEpics Number.epicPhonemeDouble
-prLexemeEpics :: Integral a => Parser (Lexeme (Ratio a) (Maybe (Ratio a)))
-prLexemeEpics = pLexemeEpics Number.epicPhonemeRatio
-ptLexemeEpics :: Parser (Lexeme (Transform a) (Transform a))
-ptLexemeEpics = pLexemeEpics Transform.epicPhoneme
-ptmLexemeEpics :: Parser (Lexeme (Transform ParamMap) (Transform ParamMap))
-ptmLexemeEpics = pLexemeEpics Transform.epicPhonemePm
+pLexemeEpic :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
+pLexemeEpic p = lexeme $ LexemeEpic <$> sepBy1 p (some $ char ',')
+peLexemeEpic :: Parser (Lexeme ParamMap ParamMap)
+peLexemeEpic = pLexemeEpic PPM.epicPhoneme
+pmLexemeEpic :: Parser (Lexeme PM.MSD PM.MSD)
+pmLexemeEpic = pLexemeEpic PM.epicPhoneme
+psLexemeEpic :: Parser (Lexeme Scale (Maybe Scale))
+psLexemeEpic = pLexemeEpic Sc.epicPhoneme
+pdLexemeEpic :: Parser (Lexeme Double (Maybe Double))
+pdLexemeEpic = pLexemeEpic Number.epicPhonemeDouble
+prLexemeEpic :: Integral a => Parser (Lexeme (Ratio a) (Maybe (Ratio a)))
+prLexemeEpic = pLexemeEpic Number.epicPhonemeRatio
+ptLexemeEpic :: Parser (Lexeme (Transform a) (Transform a))
+ptLexemeEpic = pLexemeEpic Transform.epicPhoneme
+ptmLexemeEpic :: Parser (Lexeme (Transform ParamMap) (Transform ParamMap))
+ptmLexemeEpic = pLexemeEpic Transform.epicPhonemePm
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)

@@ -250,13 +250,13 @@ testPLang = TestCase $ do
 testLexeme = TestCase $ do
   let str = "s1.2,,1d2 *2 | - _,,t2%3 "
   assertBool "1" $ parse peLexemes "" str == Right
-    [ LexemeEpics [ EpicPhonemeNewPersist $ M.singleton speed_p $ VF 1.2
+    [ LexemeEpic [ EpicPhonemeNewPersist $ M.singleton speed_p $ VF 1.2
                  , EpicPhonemeOnce $ M.singleton deg_p $ VF 2
                  ]
     , LexemeNonEpic (NonEpicLexemeUnOp $ fast 2)
     , LexemeNonEpic (NonEpicLexemeBinOp stack)
     , LexemeNonEpic (NonEpicLexemeBinOp append)
-    , LexemeEpics [ EpicPhonemeSilent
+    , LexemeEpic [ EpicPhonemeSilent
                  , EpicPhonemeFor $ 2%3
                  ]
     ]

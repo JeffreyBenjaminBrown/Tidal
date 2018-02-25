@@ -33,15 +33,15 @@ data NonEpicLexeme i = NonEpicLexemeUnOp (Epic i -> Epic i)
 data EpicPhoneme o = EpicPhonemeFor     Dur
                    | EpicPhonemeOnce    o
                    | EpicPhonemeNewPersist o -- ^ these get merged with
-                     -- persistent phonemes from earlier LexemeEpics
+                     -- persistent phonemes from earlier LexemeEpic
                    | EpicPhonemeSilent
                    deriving (Show, Eq, Ord)
 
-data Lexeme i o = LexemeEpics [EpicPhoneme o]
+data Lexeme i o = LexemeEpic [EpicPhoneme o]
                 | LexemeNonEpic (NonEpicLexeme i) deriving Show
 
 
--- | = Lang: parsing reaches this once LexemeEpics are accumulated
+-- | = Lang: parsing reaches this once LexemeEpic are accumulated
 
 -- | An AccumEpic in a list relies on earlier ones for meaning.
 data AccumEpic o = AccumEpic -- ^ o is usually Map, esp. ParamMap
