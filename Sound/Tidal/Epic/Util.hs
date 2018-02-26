@@ -107,6 +107,9 @@ lcmRatios x y = let (a,b) = (numerator x, denominator x)
                     l = lcm b d
                 in lcm (a * div l b) (c * div l d) % l
 
+mbLcmRatios :: Maybe Time -> Maybe Time -> Maybe Time
+mbLcmRatios a b = lcmRatios <$> a <*> b
+
 -- | like Sound.Tidal.Stream.mergeNumWith, but outside a functor
 mergeNumParamsWith :: (Int -> Int -> Int) -> (Double -> Double ->  Double) ->
   ParamMap -> ParamMap -> ParamMap

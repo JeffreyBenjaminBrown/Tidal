@@ -22,7 +22,7 @@ epicPhonemePm = foldl1 (<|>)
   [epicPhonemeOncePm, epicPhonemeFor, epicPhonemeSilence]
 
 epicPhonemeOncePm :: Parser (EpicPhoneme (TWT ParamMap))
-epicPhonemeOncePm = pTwtTransform <|> pTwtTarget
+epicPhonemeOncePm = pTwtTransformPm <|> pTwtTarget
 
 pTwtTransformPm :: Parser (EpicPhoneme (TWT ParamMap))
 pTwtTransformPm = do

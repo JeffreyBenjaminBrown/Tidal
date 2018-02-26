@@ -65,15 +65,16 @@ mergeEvents intOp floatOp aEvs bEvs =  k aEvs' bEvs' where
 
 -- | applyMetaEpic
 meta :: Epic (Epic a -> Epic b) -> Epic a -> Epic b
-meta    (Epic md mf)               obj    = Epic d' f' where
-  d' = lcmRatios <$> md <*> _period obj
-  -- f' :: Arc -> [Ev b]
-  f' theArc = concatMap evalObj $ mf theArc
+meta    (Epic md mf)               obj    = Epic d f where
+  d = lcmRatios <$> md <*> _period obj
+  -- f :: Arc -> [Ev b]
+  f theArc = concatMap evalObj $ mf theArc
     where -- evalObj :: (Arc, Epic a -> Epic b) -> [Ev b]
           evalObj (anArc,aTransform) = _arc (aTransform obj) anArc
 
 dj :: Epic (TWT a) -> M.Map String (Epic a) -> Epic a -- ^ based on `meta`
-dj ep m = Epic Nothing f' where
+dj ep m = Epic d f where
+  d = foldr1 mbLcmRatios $ _period ep : map _period (M.elems m)
   g (anArc, aTwt) = concatMap h $ S.toList $ twtTargets aTwt
     where h target = _arc (twtTransform aTwt $ m M.! target) anArc
-  f' = concatMap g . _arc ep
+  f = concatMap g . _arc ep
