@@ -65,7 +65,19 @@ main = runTestTT $ TestList
   , TestLabel "testWarp" testWarp
   , TestLabel "testRemap" testRemap
   , TestLabel "testPartialScore" testPartialScore
+  , TestLabel "testDj" testDj
   ]
+
+testDj = TestCase $ do
+  let a = pe0 "_bd _sn"
+      b = pe0 "_hc"
+      theMap = M.fromList [("a",a),("b",b)]
+      theEpic = dj (pdj "id,@a | ea1%2,@b") theMap
+  assertBool "1" $ _arc theEpic (0,2)
+    == [ ((0,0),     M.singleton sound_p $ VS "bd")
+       , ((1/2,1/2), M.singleton sound_p $ VS "hc")
+       , ((1,1),     M.singleton sound_p $ VS "sn")
+       , ((3/2,3/2), M.singleton sound_p $ VS "hc") ]
 
 testPartialScore = TestCase $ do
   let h = Harmony { baseScale = maj
