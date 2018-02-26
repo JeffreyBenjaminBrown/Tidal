@@ -79,6 +79,11 @@ pdj = _p pdjEpicOrOps loopa
 pdj0 = _p pdjEpicOrOps loop0
 pdj2 = doubleParse pdj pdj0
 
+pdjm, pdjm0 :: String -> Epic (TWT ParamMap)
+pdjm = _p pdjmEpicOrOps loopa
+pdjm0 = _p pdjmEpicOrOps loop0
+pdjm2 = doubleParse pdjm pdjm0
+
 pEpicOrOps :: (Monoidoid i o) =>
   Parser [Lang i o] -> (Time -> i -> Epic i) -> Parser [EpicOrOp i]
 pEpicOrOps p loopx = scanLang loopx <$> p
@@ -103,6 +108,9 @@ ptmEpicOrOps :: (Time -> (Transform ParamMap) -> Epic (Transform ParamMap))
 ptmEpicOrOps = pEpicOrOps ptmLang
 pdjEpicOrOps :: (Time -> (TWT a) -> Epic (TWT a)) -> Parser [EpicOrOp (TWT a)]
 pdjEpicOrOps = pEpicOrOps pdjLang
+pdjmEpicOrOps :: (Time -> (TWT ParamMap) -> Epic (TWT ParamMap)) ->
+                Parser [EpicOrOp (TWT ParamMap)]
+pdjmEpicOrOps = pEpicOrOps pdjmLang
 
 -- | Like pe, pel accumulates parameters across lexemes.
 -- It is useful for building arguments to defaultMap.
@@ -143,6 +151,8 @@ ptmLang :: Parser [Lang (Transform ParamMap) (Transform ParamMap)]
 ptmLang = pLang ptmLexemes
 pdjLang :: Parser [Lang (TWT a) (TWT a)]
 pdjLang = pLang pdjLexemes
+pdjmLang :: Parser [Lang (TWT ParamMap) (TWT ParamMap)]
+pdjmLang = pLang pdjmLexemes
 
 pLexemes :: Monoidoid i o => Parser (Lexeme i o) -> Parser [Lexeme i o]
 pLexemes p = some $ try p <|> try pLexemeNonEpicLexeme
@@ -162,6 +172,8 @@ ptmLexemes :: Parser [Lexeme (Transform ParamMap) (Transform ParamMap)]
 ptmLexemes = pLexemes ptmLexemeEpic
 pdjLexemes :: Parser [Lexeme (TWT a) (TWT a)]
 pdjLexemes = pLexemes pdjLexemeEpic
+pdjmLexemes :: Parser [Lexeme (TWT ParamMap) (TWT ParamMap)]
+pdjmLexemes = pLexemes pdjmLexemeEpic
 
 pLexemeEpic :: Monoidoid i o => Parser (EpicPhoneme o) -> Parser (Lexeme i o)
 pLexemeEpic p = lexeme $ LexemeEpic <$> sepBy1 p (some $ char ',')
@@ -181,6 +193,8 @@ ptmLexemeEpic :: Parser (Lexeme (Transform ParamMap) (Transform ParamMap))
 ptmLexemeEpic = pLexemeEpic Transform.epicPhonemePm
 pdjLexemeEpic :: Parser (Lexeme (TWT a) (TWT a))
 pdjLexemeEpic = pLexemeEpic DJ.epicPhoneme
+pdjmLexemeEpic :: Parser (Lexeme (TWT ParamMap) (TWT ParamMap))
+pdjmLexemeEpic = pLexemeEpic DJ.epicPhonemePm
 
 
 -- | = The code below does not depend on the payload (ParamMap, scale, etc.)

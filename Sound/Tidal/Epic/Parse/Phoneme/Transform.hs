@@ -2,7 +2,7 @@
 -- to specify that the last argument is a String.
 
 module Sound.Tidal.Epic.Parse.Phoneme.Transform
-  (epicPhoneme, epicPhonemePm, pParamMult, pTransform)
+  (epicPhoneme, epicPhonemePm, pParamMult, pTransform, pTransformPm)
 where
 
 import           Control.Applicative
