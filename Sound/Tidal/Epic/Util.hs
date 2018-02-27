@@ -26,6 +26,7 @@ infixr 4 <$<
 plist :: Show a => [a] -> IO ()
 plist = mapM_ (putStrLn . show)
 
+-- | = `mapNames "a b"` copies `M.fromList [("a",a),("b",b)]` to the clipboard
 mapNames :: String -> IO ()
 mapNames str = callCommand
                $  "echo " ++ theMap
@@ -34,7 +35,7 @@ mapNames str = callCommand
   where keyValPair :: String -> String
         keyValPair s = "(#" ++ s ++ "#," ++ s ++ ")"
         almostTheMap = concat $ intersperse "," $ map keyValPair $ words str
-        theMap = "\"[" ++ almostTheMap ++ "]\""
+        theMap = "\"M.fromList [" ++ almostTheMap ++ "]\""
 
 composeMaps :: (Ord k, Ord r) => M.Map k r -> M.Map k a -> M.Map r a
 composeMaps f m = let s = S.fromList $ M.keys f
