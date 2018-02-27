@@ -74,6 +74,7 @@ ptm = _p ptmEpicOrOps loopa
 ptm0 = _p ptmEpicOrOps loop0
 ptm2 = doubleParse ptm ptm0
 
+-- | = Epic.Util.mapNames makes these dj parsers more convenient 
 pdj, pdj0 :: String -> Epic (TWT a)
 pdj = _p pdjEpicOrOps loopa
 pdj0 = _p pdjEpicOrOps loop0

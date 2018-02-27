@@ -4,11 +4,12 @@ module Sound.Tidal.Epic.Util where
 
 import Control.Arrow (first)
 import Data.Fixed (div')
-import Data.List (sortOn, partition)
+import Data.List (sortOn, partition, intersperse)
 import Data.List.Unique (sortUniq)
 import qualified Data.Map as M
 import Data.Ratio
 import qualified Data.Set as S
+import System.Process (callCommand)
 
 import Sound.Tidal.Epic.Types.Reimports
 import Sound.Tidal.Epic.Types
@@ -24,6 +25,16 @@ infixr 4 <$<
   
 plist :: Show a => [a] -> IO ()
 plist = mapM_ (putStrLn . show)
+
+mapNames :: String -> IO ()
+mapNames str = callCommand
+               $  "echo " ++ theMap
+               ++ " | sed \"s/#/\\\"/g\""
+               ++ " | xclip -selection clipboard"
+  where keyValPair :: String -> String
+        keyValPair s = "(#" ++ s ++ "#," ++ s ++ ")"
+        almostTheMap = concat $ intersperse "," $ map keyValPair $ words str
+        theMap = "\"[" ++ almostTheMap ++ "]\""
 
 composeMaps :: (Ord k, Ord r) => M.Map k r -> M.Map k a -> M.Map r a
 composeMaps f m = let s = S.fromList $ M.keys f

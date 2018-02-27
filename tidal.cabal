@@ -93,6 +93,7 @@ library
               , megaparsec
               , scientific
               , Unique
+              , process
 
 
 source-repository head
