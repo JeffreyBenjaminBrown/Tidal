@@ -7,7 +7,7 @@ v0 $ meta (pt "/4 id ea1")
   \ | s1 s1.5    \
   \ | pan0 [*2 pan1 pan-1] pan1")
 v1 $ meta (pt "/4 [*//2 ea1%6 la1%6 - shh] | id") $ pe0 "*3%2 _bd _sn"
-v2 $ syHollowBass
+v2 $ syHollowBass' &* pe "f100.5"
   &* (fast 6 $ pe0 " /**3 f1 - /2 fr9%7 fr7%4 - fr4%3 - \
                    \ /3 fr3%2 - /3 fr9%8 - /2 fr7%8 -   \
                    \ /3 f1 - /2 [**2 f1.5] fr7%4 - /8 _")

@@ -35,15 +35,9 @@ pDouble = Just <$> double
 -- | = Ratio
 epicPhonemeRatio :: Integral a => Parser (EpicPhoneme (Maybe (Ratio a)))
 epicPhonemeRatio = foldl1 (<|>)
-  [epicPhonemePersistRatio, epicPhonemeFor', epicPhonemeSilence']
+  [epicPhonemePersistRatio, epicPhonemeFor, epicPhonemeSilence]
 epicPhonemePersistRatio :: Integral a => Parser (EpicPhoneme (Maybe (Ratio a)))
 epicPhonemePersistRatio = lexeme $ EpicPhonemeNewPersist <$> pRatio
-
--- >> todo ? make these universal, not just for ParamMaps but scales, etc.
-epicPhonemeFor', epicPhonemeSilence' :: forall a. Parser (EpicPhoneme a)
-epicPhonemeFor' = lexeme $ ignore (char 't') >> EpicPhonemeFor <$> ratio
-  -- >> todo ? accept floats as well as ratios
-epicPhonemeSilence' = lexeme $ const EpicPhonemeSilent <$> char '_'
 
 pRatio :: Integral a => Parser (Maybe (Ratio a))
 pRatio = Just <$> ratio
