@@ -27,6 +27,8 @@ plist :: Show a => [a] -> IO ()
 plist = mapM_ (putStrLn . show)
 
 -- | = `mapNames "a b"` copies `M.fromList [("a",a),("b",b)]` to the clipboard
+-- todo ? This could make the workflow even faster, at the cost of some
+-- beginner-friendliness: https://stackoverflow.com/questions/49000485/haskell-macro-to-create-a-map-from-their-names-to-some-expressions/49001000?noredirect=1#comment85007301_49001000
 mapNames :: String -> IO ()
 mapNames str = callCommand
                $  "echo " ++ theMap
