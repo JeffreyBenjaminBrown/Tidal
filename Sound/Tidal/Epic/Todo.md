@@ -1,3 +1,5 @@
+- < -- < ||| < ---- etc.
+
 legato: compute duration within patterns
   and tie it to cps somehow
   and let operators like fast change it
