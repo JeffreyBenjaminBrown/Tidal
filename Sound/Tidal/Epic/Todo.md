@@ -1,8 +1,11 @@
+In ptm, ability to target transformations to specific samples
+
 - < -- < ||| < ---- etc.
 
 legato: compute duration within patterns
   and tie it to cps somehow
   and let operators like fast change it
+  and still it'll fuck up if I slow down only part of a pattern
 
 dj ? include a second map, from names to transformations
 
