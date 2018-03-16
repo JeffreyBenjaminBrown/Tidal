@@ -33,11 +33,11 @@ epicPhonemeOnce = EpicPhonemeOnce <$> (ignore (char '1') >> pSingleton)
 -- | = (Epic ParamMap)-specific
 pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try [parseSpeed, parseSpeedr, parseGain
-  , parseSound, parseSample, parseDegree, parseSustain, parsePan
+  , parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape
   , parseQf, parseQfr, parseAmp
   , parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf ]
 
-parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
+parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape, parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
 parseSpeed   = pSingletonFloat  speed_p            $ ignore $ char 's'
 parseSpeedr  = pSingletonFloatFromRational speed_p $ ignore $ string "sr"
 parseGain    = pSingletonFloat  gain_p             $ ignore $ char 'g'
@@ -46,6 +46,8 @@ parseSample  = pSingletonString sample_p           $ ignore $ char ':'
 parseDegree  = pSingletonFloat  deg_p              $ ignore $ char 'd'
 parseSustain = pSingletonFloat  sustain_p          $ ignore $ string "sus"
 parsePan     = pSingletonFloat  pan_p              $ ignore $ string "pan"
+parseShape   = pSingletonFloat  shape_p            $ ignore $ string "shape"
+  -- "shape" = distortion
 parseQfa     = pSingletonFloat  qfa_p              $ ignore $ string "fa"
 parseQff     = pSingletonFloat  qff_p              $ ignore $ string "ff"
 parseQffabs  = pSingletonFloat  qffabs_p           $ ignore $ string "ffabs"
