@@ -34,8 +34,8 @@ epicPhonemeOnce = EpicPhonemeOnce <$> (ignore (char '1') >> pSingleton)
 pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try [parseSpeed, parseSpeedr, parseGain
   , parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape
-  , parseQf, parseQfr, parseAmp
-  , parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf ]
+  , parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf
+  , parseQfr, parseQf, parseAmp ]
 
 parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape, parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
 parseSpeed   = pSingletonFloat  speed_p            $ ignore $ char 's'
@@ -55,8 +55,8 @@ parseQpa     = pSingletonFloat  qpa_p              $ ignore $ string "pa"
 parseQpf     = pSingletonFloat  qpf_p              $ ignore $ string "pf"
 parseQaa     = pSingletonFloat  qaa_p              $ ignore $ string "aa"
 parseQaf     = pSingletonFloat  qaf_p              $ ignore $ string "af"
-parseQf      = pSingletonFloat  qf_p               $ ignore $ string "f"
 parseQfr     = pSingletonFloatFromRational  qf_p   $ ignore $ string "fr"
+parseQf      = pSingletonFloat  qf_p               $ ignore $ string "f"
 parseAmp     = pSingletonFloat              qa_p   $ ignore $ string "a"
 
 pSingletonFloat :: Param -> Parser () -> Parser ParamMap
