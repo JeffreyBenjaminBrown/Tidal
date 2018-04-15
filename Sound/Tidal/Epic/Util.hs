@@ -19,7 +19,7 @@ import Sound.Tidal.Epic.Types
 (<*<) = (<*>)
 infixr 4 <*<
 
-(<$<) :: Applicative f => (a -> b) -> f a -> f b
+(<$<) :: Functor f => (a -> b) -> f a -> f b
 (<$<) = (<$>)
 infixr 4 <$<
   
