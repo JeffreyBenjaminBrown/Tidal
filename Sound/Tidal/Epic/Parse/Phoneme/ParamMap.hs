@@ -35,7 +35,7 @@ pSingleton :: Parser ParamMap
 pSingleton = foldl1 (<|>) $ map try [parseSpeed, parseSpeedr, parseGain
   , parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape
   , parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf
-  , parseQfr, parseQf, parseAmp ]
+  , parseQfr, parseQf12, parseQf, parseAmp ]
 
 parseSpeed, parseSpeedr, parseGain, parseSound, parseSample, parseDegree, parseSustain, parsePan, parseShape, parseQfa, parseQff, parseQffabs, parseQpa, parseQpf, parseQaa, parseQaf, parseQf, parseQfr, parseAmp :: Parser ParamMap
 parseSpeed   = pSingletonFloat  speed_p            $ ignore $ char 's'
@@ -56,6 +56,9 @@ parseQpf     = pSingletonFloat  qpf_p              $ ignore $ string "pf"
 parseQaa     = pSingletonFloat  qaa_p              $ ignore $ string "aa"
 parseQaf     = pSingletonFloat  qaf_p              $ ignore $ string "af"
 parseQfr     = pSingletonFloatFromRational  qf_p   $ ignore $ string "fr"
+parseQf12    = parse_12et                          $ ignore $ string "up"
+  where parse_12et prefix = -- like pSingletonFloat
+          M.singleton qf_p . VF <$> (prefix >> (\x->2**(x/12)) <$> double)
 parseQf      = pSingletonFloat  qf_p               $ ignore $ string "f"
 parseAmp     = pSingletonFloat              qa_p   $ ignore $ string "a"
 
