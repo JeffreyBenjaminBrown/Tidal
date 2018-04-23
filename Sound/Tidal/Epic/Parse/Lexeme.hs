@@ -225,9 +225,9 @@ pNonEpicLexemeDense = lexeme $ do n <- symbol "**" >> ratio
 pNonEpicLexemeSparse = lexeme $ do n <- symbol "//" >> ratio
                                    return $ sparse n
 pNonEpicLexemeRotate = lexeme $ do n <- symbol "*//" >> ratio
-                                   return $ fast n . sparse n
+                                   return $ rotate n -- ^ = fast n . sparse n
 pNonEpicLexemeRepeat = lexeme $ do n <- symbol "/**" >> ratio
-                                   return $ slow n . dense n
+                                   return $ rep n -- ^ = slow n . dense n
 pNonEpicLexemeEarly = lexeme $ do n <- symbol "<" >> ratio
                                   return $ early n
 pNonEpicLexemeLate = lexeme $ do n <- symbol ">" >> ratio
