@@ -1,3 +1,8 @@
+BUG in rev: in unit length loop, events at 0, 1/2 become events at 1/2, 1
+  the one that happens on 1/2 is fine, but
+  the reversed event that happens on 1 ought to be on 0
+  the result: double events, which are extra loud
+
 In ptm, ability to target transformations to specific samples
 
 - < -- < ||| < ---- etc.
