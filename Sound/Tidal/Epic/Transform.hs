@@ -54,11 +54,23 @@ sparse t (Epic d f) = Epic d            $ \(s,e) -> g $ f (s/t, e/t) where
 rotate t = fast t . sparse t
 rep n = slow n . dense n
 
-rev :: Epic a -> Epic a
-rev (Epic d f) = Epic d $ \arc ->
-  let reflect (s,e) = (-e,-s)
+-- | Originally, `rev` looked like this:
+-- rev' :: Epic a -> Epic a
+-- rev' (Epic d f) = Epic d $ \arc ->
+--   let reflect (s,e) = (-e,-s)
+--   in reverse -- sort by first element, which takeOverlappingEvs requires
+--        $ map (first reflect) $ f $ reflect arc
+-- But that gives the events in [-e,-s), whereas we need (-e,-s].
+-- Hence the complications below.
+rev :: forall a. Epic a -> Epic a
+rev (Epic d f) = Epic d $ \(s,e) -> 
+  let epsilon = 1%256 :: Time
+      evs = f (-e,-s+epsilon) :: [(Arc,a)]
+      keeper :: Time -> Bool
+      keeper t = (t > -e) && (t <= -s) 
+      evsKept = filter (keeper . fst . fst) evs
   in reverse -- sort by first element, which takeOverlappingEvs requires
-       $ map (first reflect) $ f $ reflect arc
+       $ map (first $ \(s,e)->(-e,-s)) evsKept
 
 -- | use the value from the old param in the new param
 chParam :: Param -> Param -> ParamMap -> ParamMap
