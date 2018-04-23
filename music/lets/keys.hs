@@ -8,7 +8,7 @@ keysVerse = (keys $ slow 8 $ pd
   &* pe0 "<1%2 s1"
 keysBridge = (keys $ slow 2 $ 
   pd "[4 | 7 | 11 | 14] [2 | 5 | 9 | 12] [0 | 4 | 7 | 11] [-1 | 2 | 5 | 8]"
-  +- rep 4 (pd "[-3 | 0 | 4 | 9]"))
+  +- rep 4 (pd "[-3 | 0 | 4 | 11]"))
   &* pe0 "<1%2 s1"
 keysChor = (keys $ slow 8 $ 
             pd "[2 | 5 | 9 | 12] [4 | 7 | 11 | 14] [2 | 5 | 9 | 12]")

@@ -23,3 +23,4 @@ v1 $ pe0 "_hh,g1.2 _hh"
   +- verse +- bridge +- verse +- bridge +- chor +- happy +- weird
   +- happy +- verse +- bridge +- chor +- happy +- chor  +- happy
 
+start
