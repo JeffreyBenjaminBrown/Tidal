@@ -23,7 +23,7 @@ import qualified Control.Exception as E
 import Sound.Tidal.Dirt (dirt, superDirtBackend)
 import Sound.Tidal.Time
 import Sound.Tidal.Transition (transition)
-import Sound.Tidal.Pattern (seqToRelOnsetDeltas, slow)
+import Sound.Tidal.Pattern (seqToRelOnsetDeltas)
 import Sound.Tidal.Stream (ticksPerCycle)
 
 import Sound.Tidal.Epic.Types.Reimports hiding (arc)
@@ -55,9 +55,10 @@ rotate t = fast t . sparse t
 rep n = slow n . dense n
 
 rev :: Epic a -> Epic a
-rev    (Epic d f) = Epic d $ \(s,e) -> reverse $ g $ f (-e, -s)
-  -- reversal sorts by first element, because takeOverlappingEvs needs that
-  where g = map $ first $ \(s,e) -> (-e,-s)
+rev (Epic d f) = Epic d $ \arc ->
+  let reflect (s,e) = (-e,-s)
+  in reverse -- sort by first element, which takeOverlappingEvs requires
+       $ map (first reflect) $ f $ reflect arc
 
 -- | use the value from the old param in the new param
 chParam :: Param -> Param -> ParamMap -> ParamMap
