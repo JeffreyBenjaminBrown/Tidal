@@ -3,4 +3,4 @@ packages:
 - '.'
 extra-deps:
 - Unique-0.4.7.1
-resolver: lts-10.8
+resolver: lts-11.7

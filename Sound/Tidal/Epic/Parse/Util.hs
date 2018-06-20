@@ -4,6 +4,7 @@ import           Control.Applicative
 import           Data.Ratio
 import           Data.Void (Void)
 import           Text.Megaparsec
+import           Text.Megaparsec as Megp
 import           Text.Megaparsec.Char (
   satisfy, string, char, space, space1, anyChar, tab
   , alphaNumChar, letterChar)
@@ -51,7 +52,7 @@ word :: String -> Parser String -- | could fail half-in, so requires "try"
 word w = string w <* notFollowedBy wordChar
 
 anyWord :: Parser String
-anyWord = some wordChar <* notFollowedBy wordChar
+anyWord = Megp.some wordChar <* notFollowedBy wordChar
 
 anyDigitlessWord :: Parser String
-anyDigitlessWord = some letterChar  <* notFollowedBy letterChar
+anyDigitlessWord = Megp.some letterChar  <* notFollowedBy letterChar

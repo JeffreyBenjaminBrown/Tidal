@@ -2,16 +2,16 @@ In ptm, ability to target transformations to specific samples
 
 - < -- < ||| < ---- etc.
 
+scales
+  parser: accept lists, ratios
+  types: use an Epic [Float], so that scales can be subsetted
+
 legato: compute duration within patterns
   and tie it to cps somehow
   and let operators like fast change it
   and still it'll fuck up if I slow down only part of a pattern
 
 dj ? include a second map, from names to transformations
-
-scales
-  parser: accept lists, ratios
-  types: use an Epic [Float], so that scales can be subsetted
 
 search for "todo" in the code
 

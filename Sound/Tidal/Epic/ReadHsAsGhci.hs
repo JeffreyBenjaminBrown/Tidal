@@ -16,6 +16,7 @@ module Sound.Tidal.Epic.ReadHsAsGhci (
 import           Control.Applicative
 import           Data.Void (Void)
 import           Text.Megaparsec
+import           Text.Megaparsec as Megp
 import           Text.Megaparsec.Char
   (satisfy, string, char, space, space1, anyChar, tab, alphaNumChar)
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -41,12 +42,12 @@ comment = space >> satisfy (== '-') >> satisfy (== '-')
 
 start :: Parser Line
 start = do c <- satisfy (/= ' ')
-           rest <- many anyChar
+           rest <- Megp.many anyChar
            return $ Start $ c : rest
 
 more :: Parser Line
 more = do c <- satisfy (== ' ')
-          rest <- many anyChar
+          rest <- Megp.many anyChar
           return $ More $ c : rest
 
 hsToGhci :: String -> Either (ParseError (Token String) Void) String
