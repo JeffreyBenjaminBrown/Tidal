@@ -1,7 +1,3 @@
-In ptm, ability to target transformations to specific samples
-
-- < -- < ||| < ---- etc.
-
 scales
   parser: accept lists, ratios
   types: use an Epic [Float], so that scales can be subsetted
@@ -10,6 +6,12 @@ legato: compute duration within patterns
   and tie it to cps somehow
   and let operators like fast change it
   and still it'll fuck up if I slow down only part of a pattern
+
+In ptm, ability to target transformations to specific samples
+  EDIT: or scale degrees
+    I don't remember whether ptm is scale degree-aware, but something is
+
+- < -- < ||| < ---- etc.
 
 dj ? include a second map, from names to transformations
 
@@ -36,4 +38,4 @@ Music theory- and across voice-aware scale, degree, chord sequence manipulations
 
 In parsed strings, duration control is still kind of verbose.
 
-t1%2, for 1,2 in [0,9], should affect bracketed exprs, not just lexemes.
+tx%y, for x,y in [0,9], should affect bracketed exprs, not just lexemes.
