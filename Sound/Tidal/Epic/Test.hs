@@ -44,6 +44,7 @@ main = runTestTT $ TestList
   , TestLabel "testStack" testStack
   , TestLabel "testLaws" testLaws
   , TestLabel "testPartitionArcAtBoundaries" testPartitionArcAtBoundaries
+  , TestLabel "testBoundaries" testBoundaries
   , TestLabel "testPartitionAndGroupEvents" testPartitionAndGroupEvents
   , TestLabel "testOverlap" testOverlap
   , TestLabel "tDoubleThforationZeroBoundaries" tDoubleThforationZeroBoundaries
@@ -371,6 +372,9 @@ testPartitionAndGroupEvents = TestCase $ do
 testPartitionArcAtBoundaries = TestCase $ do
   assertBool "1" $ partitionArcAtTimes [0,1,2,3,4] (1,3)
     == [(1,2),(2,3)]
+
+testBoundaries = TestCase $ do
+  assertBool "1" $ boundaries [(0,0), (1,5), (1,3), (3,5)] == [0,0,1,3,5]
 
 testLaws = TestCase $ do
   let f1 = pure id :: Epic (a -> a)
