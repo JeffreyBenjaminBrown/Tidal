@@ -46,6 +46,8 @@ main = runTestTT $ TestList
   , TestLabel "testPartitionArcAtBoundaries" testPartitionArcAtBoundaries
   , TestLabel "testBoundaries" testBoundaries
   , TestLabel "testPartitionAndGroupEvents" testPartitionAndGroupEvents
+  , TestLabel "testPartitionAndGroupEventsAtBoundaries"
+    testPartitionAndGroupEventsAtBoundaries
   , TestLabel "testOverlap" testOverlap
   , TestLabel "tDoubleThforationZeroBoundaries" tDoubleThforationZeroBoundaries
   , TestLabel "testApplyMetaEpic" testApplyMetaEpic
@@ -360,14 +362,25 @@ testMergeNumParamsWith = TestCase $ do
 testPartitionAndGroupEvents = TestCase $ do
   assertBool "1" $
     S.fromList ( partitionAndGroupEvents
-                   [((1,2),'c'), ((0,1),'a'), ((0,2),'b')] )
-    == S.fromList [((0,1),'a'), ((0,1),'b'), ((1,2),'b'), ((1,2),'c')]
+                   [((1,2),'c'), ((0,1),'z'), ((0,2),'b')] )
+    == S.fromList [((0,1),'z'), ((0,1),'b'), ((1,2),'b'), ((1,2),'c')]
   assertBool "1" $
     S.fromList ( partitionAndGroupEvents
                    [((1,2),'c'), ((0,1),'a'), ((0,2),'b'), ((1,1),'z')] )
     == S.fromList [ ((0,1),'a'), ((0,1),'b')
                     , ((1,1),'z'), ((1,1),'c'), ((1,1),'b')
                     , ((1,2),'b'), ((1,2),'c')]
+
+testPartitionAndGroupEventsAtBoundaries = TestCase $ do
+  assertBool "1" $
+    partitionAndGroupEventsAtBoundaries [0,1,3,7,8] [ ((0,8),"a") 
+                                                    , ((1,7),"b")]
+    == [((0 % 1,1 % 1),"a")
+       ,((1 % 1,3 % 1),"a")
+       ,((1 % 1,3 % 1),"b")
+       ,((3 % 1,7 % 1),"a")
+       ,((3 % 1,7 % 1),"b")
+       ,((7 % 1,8 % 1),"a")]
 
 testPartitionArcAtBoundaries = TestCase $ do
   assertBool "1" $ partitionArcAtTimes [0,1,2,3,4] (1,3)

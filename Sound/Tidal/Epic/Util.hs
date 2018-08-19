@@ -84,18 +84,19 @@ takeOverlappingEvs (s,e) evs = reverse $ f (s,e) [] evs where
         Nothing    -> ovs
         Just ovArc -> f (s,e) ((ovArc,a):ovs) evsRest
 
--- | Produces a sorted list of nonoverlapping events.
+-- | Produces a list of nonoverlapping events, sorted on (start,end) times.
 partitionAndGroupEvents :: [Ev a] -> [Ev a]
 partitionAndGroupEvents evs =
   partitionAndGroupEventsAtBoundaries (boundaries $ map fst evs) evs
 
+-- | ASSUMES the Times input includes every Time in the Evs input
 partitionAndGroupEventsAtBoundaries :: [Time] -> [Ev a] -> [Ev a]
 partitionAndGroupEventsAtBoundaries bs evs =
   let partitionEv :: Ev a -> [Ev a]
       partitionEv (arc,x) = map (,x) $ partitionArcAtTimes bs arc
   in sortOn fst $ concatMap partitionEv evs
 
--- | Assumes the times are sorted and uniqe (ala Data.List.sortUniq),
+-- | ASSUMES the times are sorted and uniqe (ala Data.List.sortUniq),
 -- and that they include the endpoints of `arc`.
 partitionArcAtTimes :: [Time] -> Arc -> [Arc]
 partitionArcAtTimes (a:b:ts) (c,d)
